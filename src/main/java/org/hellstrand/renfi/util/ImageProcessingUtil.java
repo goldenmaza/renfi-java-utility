@@ -1,4 +1,4 @@
-package org.hellstrand.renfi;
+package org.hellstrand.renfi.util;
 
 import com.drew.imaging.ImageMetadataReader;
 import com.drew.imaging.ImageProcessingException;
@@ -14,12 +14,12 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.TimeZone;
 
-import static org.hellstrand.renfi.Constants.DATE_COUNTRY;
-import static org.hellstrand.renfi.Constants.DATE_LANGUAGE;
-import static org.hellstrand.renfi.Constants.DATE_TIMESTAMP_FORMAT;
-import static org.hellstrand.renfi.Constants.DATE_TIMEZONE;
-import static org.hellstrand.renfi.Constants.MESSAGE_LOADED_PREPARED;
-import static org.hellstrand.renfi.Constants.MESSAGE_RESOURCE_MISSING_FIELD;
+import static org.hellstrand.renfi.util.Constants.DATE_COUNTRY;
+import static org.hellstrand.renfi.util.Constants.DATE_LANGUAGE;
+import static org.hellstrand.renfi.util.Constants.DATE_TIMESTAMP_FORMAT;
+import static org.hellstrand.renfi.util.Constants.DATE_TIMEZONE;
+import static org.hellstrand.renfi.util.Constants.MESSAGE_LOADED_PREPARED;
+import static org.hellstrand.renfi.util.Constants.MESSAGE_RESOURCE_MISSING_FIELD;
 
 /**
  * @author (Mats Richard Hellstrand)

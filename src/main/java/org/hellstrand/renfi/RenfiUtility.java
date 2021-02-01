@@ -1,5 +1,9 @@
 package org.hellstrand.renfi;
 
+import org.hellstrand.renfi.util.FileProcessingUtil;
+import org.hellstrand.renfi.util.ImageProcessingUtil;
+import org.hellstrand.renfi.util.VideoProcessingUtil;
+
 import java.io.File;
 import java.io.PrintWriter;
 import java.util.Arrays;
@@ -7,31 +11,31 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Scanner;
 
-import static org.hellstrand.renfi.Constants.BRANCH_INDEX;
-import static org.hellstrand.renfi.Constants.COMMAND_INDEX;
-import static org.hellstrand.renfi.Constants.DIRECTORY_INDEX;
-import static org.hellstrand.renfi.Constants.EXTENSION_INDEX;
-import static org.hellstrand.renfi.Constants.FAILURE;
-import static org.hellstrand.renfi.Constants.FILE_PROCESSING;
-import static org.hellstrand.renfi.Constants.IMAGE_PROCESSING;
-import static org.hellstrand.renfi.Constants.LIST_PROCESSING;
-import static org.hellstrand.renfi.Constants.MESSAGE_CONTINUE_RENAMING;
-import static org.hellstrand.renfi.Constants.MESSAGE_DIRECTORY_UNAVAILABLE;
-import static org.hellstrand.renfi.Constants.MESSAGE_FAILED_MISMATCH;
-import static org.hellstrand.renfi.Constants.MESSAGE_INVALID_USE;
-import static org.hellstrand.renfi.Constants.MESSAGE_LOADING_DIRECTORY;
-import static org.hellstrand.renfi.Constants.MESSAGE_LOADING_FILES;
-import static org.hellstrand.renfi.Constants.MESSAGE_PROCESSING_TASK;
-import static org.hellstrand.renfi.Constants.MESSAGE_RENAMING_ABORT;
-import static org.hellstrand.renfi.Constants.MESSAGE_RENAMING_PROCESS;
-import static org.hellstrand.renfi.Constants.MESSAGE_RESOURCES_UNAVAILABLE;
-import static org.hellstrand.renfi.Constants.MESSAGE_UNDO_ABORT;
-import static org.hellstrand.renfi.Constants.MESSAGE_UNDO_CONTINUE;
-import static org.hellstrand.renfi.Constants.NAMES_SOURCE;
-import static org.hellstrand.renfi.Constants.ORIGIN_PROCESSING;
-import static org.hellstrand.renfi.Constants.PROCESSING_SUPPORT;
-import static org.hellstrand.renfi.Constants.SUCCESSFUL;
-import static org.hellstrand.renfi.Constants.VIDEO_PROCESSING;
+import static org.hellstrand.renfi.util.Constants.BRANCH_INDEX;
+import static org.hellstrand.renfi.util.Constants.COMMAND_INDEX;
+import static org.hellstrand.renfi.util.Constants.DIRECTORY_INDEX;
+import static org.hellstrand.renfi.util.Constants.EXTENSION_INDEX;
+import static org.hellstrand.renfi.util.Constants.FAILURE;
+import static org.hellstrand.renfi.util.Constants.FILE_PROCESSING;
+import static org.hellstrand.renfi.util.Constants.IMAGE_PROCESSING;
+import static org.hellstrand.renfi.util.Constants.LIST_PROCESSING;
+import static org.hellstrand.renfi.util.Constants.MESSAGE_CONTINUE_RENAMING;
+import static org.hellstrand.renfi.util.Constants.MESSAGE_DIRECTORY_UNAVAILABLE;
+import static org.hellstrand.renfi.util.Constants.MESSAGE_FAILED_MISMATCH;
+import static org.hellstrand.renfi.util.Constants.MESSAGE_INVALID_USE;
+import static org.hellstrand.renfi.util.Constants.MESSAGE_LOADING_DIRECTORY;
+import static org.hellstrand.renfi.util.Constants.MESSAGE_LOADING_FILES;
+import static org.hellstrand.renfi.util.Constants.MESSAGE_PROCESSING_TASK;
+import static org.hellstrand.renfi.util.Constants.MESSAGE_RENAMING_ABORT;
+import static org.hellstrand.renfi.util.Constants.MESSAGE_RENAMING_PROCESS;
+import static org.hellstrand.renfi.util.Constants.MESSAGE_RESOURCES_UNAVAILABLE;
+import static org.hellstrand.renfi.util.Constants.MESSAGE_UNDO_ABORT;
+import static org.hellstrand.renfi.util.Constants.MESSAGE_UNDO_CONTINUE;
+import static org.hellstrand.renfi.util.Constants.NAMES_SOURCE;
+import static org.hellstrand.renfi.util.Constants.ORIGIN_PROCESSING;
+import static org.hellstrand.renfi.util.Constants.PROCESSING_SUPPORT;
+import static org.hellstrand.renfi.util.Constants.SUCCESSFUL;
+import static org.hellstrand.renfi.util.Constants.VIDEO_PROCESSING;
 
 /**
  * @author (Mats Richard Hellstrand)

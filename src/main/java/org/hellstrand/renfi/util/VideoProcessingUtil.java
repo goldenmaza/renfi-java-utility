@@ -1,4 +1,4 @@
-package org.hellstrand.renfi;
+package org.hellstrand.renfi.util;
 
 import com.drew.imaging.ImageProcessingException;
 import com.drew.imaging.avi.AviMetadataReader;
@@ -17,12 +17,12 @@ import java.time.format.DateTimeFormatter;
 import java.util.Date;
 import java.util.Map;
 
-import static org.hellstrand.renfi.Constants.EXTENSION_AVI;
-import static org.hellstrand.renfi.Constants.EXTENSION_MP4;
-import static org.hellstrand.renfi.Constants.MESSAGE_CORRUPT_SOURCE;
-import static org.hellstrand.renfi.Constants.MESSAGE_LOADED_PREPARED;
-import static org.hellstrand.renfi.Constants.MESSAGE_RESOURCE_MISSING_FIELD;
-import static org.hellstrand.renfi.Constants.DATE_TIMESTAMP_FORMAT;
+import static org.hellstrand.renfi.util.Constants.EXTENSION_AVI;
+import static org.hellstrand.renfi.util.Constants.EXTENSION_MP4;
+import static org.hellstrand.renfi.util.Constants.MESSAGE_CORRUPT_SOURCE;
+import static org.hellstrand.renfi.util.Constants.MESSAGE_LOADED_PREPARED;
+import static org.hellstrand.renfi.util.Constants.MESSAGE_RESOURCE_MISSING_FIELD;
+import static org.hellstrand.renfi.util.Constants.DATE_TIMESTAMP_FORMAT;
 
 /**
  * @author (Mats Richard Hellstrand)

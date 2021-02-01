@@ -1,4 +1,4 @@
-package org.hellstrand.renfi;
+package org.hellstrand.renfi.util;
 
 import java.util.ArrayList;
 import java.util.Arrays;

@@ -1,4 +1,4 @@
-package org.hellstrand.renfi;
+package org.hellstrand.renfi.util;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -9,11 +9,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
 
-import static org.hellstrand.renfi.Constants.MESSAGE_FAILURE_SOURCES;
-import static org.hellstrand.renfi.Constants.MESSAGE_RENAMING_ALERT;
-import static org.hellstrand.renfi.Constants.MESSAGE_RENAMING_FAILURE;
-import static org.hellstrand.renfi.Constants.MESSAGE_SORTING_FILES;
-import static org.hellstrand.renfi.Constants.MESSAGE_UNDO_ALERT;
+import static org.hellstrand.renfi.util.Constants.MESSAGE_FAILURE_SOURCES;
+import static org.hellstrand.renfi.util.Constants.MESSAGE_RENAMING_ALERT;
+import static org.hellstrand.renfi.util.Constants.MESSAGE_RENAMING_FAILURE;
+import static org.hellstrand.renfi.util.Constants.MESSAGE_SORTING_FILES;
+import static org.hellstrand.renfi.util.Constants.MESSAGE_UNDO_ALERT;
 
 /**
  * @author (Mats Richard Hellstrand)
