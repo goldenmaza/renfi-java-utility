@@ -39,7 +39,7 @@ import static org.hellstrand.renfi.Constants.VIDEO_PROCESSING;
  *
  * Example command: java -jar Renfi.jar -l -v 1 /c/directory/
  */
-public final class RenameFilesUtility {
+public final class RenfiUtility {
 	public static void main(String[] args) {
 		if (args.length == 0) { // TODO: Refactor to include flags...
 			System.out.println(MESSAGE_INVALID_USE);
