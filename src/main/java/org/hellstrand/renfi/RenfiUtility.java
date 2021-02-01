@@ -18,6 +18,12 @@ import static org.hellstrand.renfi.util.Constants.EXTENSION_INDEX;
 import static org.hellstrand.renfi.util.Constants.FAILURE;
 import static org.hellstrand.renfi.util.Constants.FILE_PROCESSING;
 import static org.hellstrand.renfi.util.Constants.IMAGE_PROCESSING;
+import static org.hellstrand.renfi.util.Constants.LABEL_CREATED;
+import static org.hellstrand.renfi.util.Constants.LABEL_FILE;
+import static org.hellstrand.renfi.util.Constants.LABEL_FILENAMES;
+import static org.hellstrand.renfi.util.Constants.LABEL_IMAGES;
+import static org.hellstrand.renfi.util.Constants.LABEL_NEVER_REACHED;
+import static org.hellstrand.renfi.util.Constants.LABEL_VIDEOS;
 import static org.hellstrand.renfi.util.Constants.LIST_PROCESSING;
 import static org.hellstrand.renfi.util.Constants.MESSAGE_CONTINUE_RENAMING;
 import static org.hellstrand.renfi.util.Constants.MESSAGE_DIRECTORY_UNAVAILABLE;
@@ -56,13 +62,12 @@ public final class RenfiUtility {
 			String command = args[COMMAND_INDEX];
 			int index = Integer.parseInt(args[EXTENSION_INDEX]);
 			String extension = PROCESSING_SUPPORT.get(command).get(index);
-			String branchTask = (
-				branch.equals(ORIGIN_PROCESSING) ? "Created Date" :
-					branch.equals(LIST_PROCESSING) ? "From File" :
-						branch.equals(FILE_PROCESSING) ? "Save Filenames" :
-							"IT SHOULD NEVER BE REACHED!"
-			);
-			String commandTask = command.equals(IMAGE_PROCESSING) ? "Images" : "Videos";
+			String branchTask =
+				branch.equals(ORIGIN_PROCESSING) ? LABEL_CREATED :
+					branch.equals(LIST_PROCESSING) ? LABEL_FILE :
+						branch.equals(FILE_PROCESSING) ? LABEL_FILENAMES :
+								LABEL_NEVER_REACHED;
+			String commandTask = command.equals(IMAGE_PROCESSING) ? LABEL_IMAGES : LABEL_VIDEOS;
 			System.out.printf(MESSAGE_PROCESSING_TASK, branchTask, commandTask, extension);
 
 			// Verify that the target directory exist...
@@ -95,18 +100,18 @@ public final class RenfiUtility {
 				Map<String, String> history = new HashMap<>();
 				if (branch.equals(ORIGIN_PROCESSING)) { // Prepare conversion history based on origin data...
 					if (command.equals(VIDEO_PROCESSING)) {
-						VideoProcessingUtil.prepareConversionHistory(files, history, extension);
+						VideoProcessingUtil.prepareHistoryProcess(files, history, extension);
 					} else if (command.equals(IMAGE_PROCESSING)) {
-						ImageProcessingUtil.prepareConversionHistory(files, history, extension);
+						ImageProcessingUtil.prepareHistoryProcess(files, history, extension);
 					} else { // TODO: Refactor to confirm in the beginning of application...
 						System.out.println(MESSAGE_INVALID_USE);
 						System.exit(FAILURE);
 					}
 				} else if (branch.equals(LIST_PROCESSING)) { // Prepare conversion history based on file input...
 					if (command.equals(VIDEO_PROCESSING)) {
-						VideoProcessingUtil.prepareConversionHistory(files, history, target, extension);
+						VideoProcessingUtil.prepareHistoryProcess(files, history, target, extension);
 					} else if (command.equals(IMAGE_PROCESSING)) {
-						ImageProcessingUtil.prepareConversionHistory(files, history, target, extension);
+						ImageProcessingUtil.prepareHistoryProcess(files, history, target, extension);
 					} else { // TODO: Refactor to confirm in the beginning of application...
 						System.out.println(MESSAGE_INVALID_USE);
 						System.exit(FAILURE);

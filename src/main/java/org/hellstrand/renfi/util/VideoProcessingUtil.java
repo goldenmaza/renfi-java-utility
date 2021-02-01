@@ -29,7 +29,7 @@ import static org.hellstrand.renfi.util.Constants.DATE_TIMESTAMP_FORMAT;
  * @version (1st of February, 2021)
  */
 public final class VideoProcessingUtil extends FileProcessingUtil {
-    public static void prepareConversionHistory(File[] files, Map<String, String> history, String extension) {
+    public static void prepareHistoryProcess(File[] files, Map<String, String> history, String extension) {
         try {
             System.out.println(MESSAGE_LOADED_PREPARED);
             DateTimeFormatter pattern = DateTimeFormatter.ofPattern(DATE_TIMESTAMP_FORMAT);

@@ -26,7 +26,7 @@ import static org.hellstrand.renfi.util.Constants.MESSAGE_RESOURCE_MISSING_FIELD
  * @version (1st of February, 2021)
  */
 public final class ImageProcessingUtil extends FileProcessingUtil {
-    public static void prepareConversionHistory(File[] files, Map<String, String> history, String extension) {
+    public static void prepareHistoryProcess(File[] files, Map<String, String> history, String extension) {
         try {
             System.out.println(MESSAGE_LOADED_PREPARED);
             Locale locale = new Locale(DATE_LANGUAGE, DATE_COUNTRY);

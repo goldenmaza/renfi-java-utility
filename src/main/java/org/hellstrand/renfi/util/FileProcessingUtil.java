@@ -20,7 +20,7 @@ import static org.hellstrand.renfi.util.Constants.MESSAGE_UNDO_ALERT;
  * @version (1st of February, 2021)
  */
 public abstract class FileProcessingUtil {
-    public static void prepareConversionHistory(File[] files, Map<String, String> history, String target, String extension) {
+    public static void prepareHistoryProcess(File[] files, Map<String, String> history, String target, String extension) {
         try {
             System.out.println(MESSAGE_SORTING_FILES);
             Arrays.sort(files, Comparator.comparingLong(File::lastModified));

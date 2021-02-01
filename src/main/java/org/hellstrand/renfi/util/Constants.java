@@ -42,6 +42,14 @@ public final class Constants {
     public static final String DATE_COUNTRY = "SE";
     public static final String DATE_LANGUAGE = "se";
 
+    // Labels used by the application...
+    public static final String LABEL_VIDEOS = "Videos";
+    public static final String LABEL_IMAGES = "Images";
+    public static final String LABEL_CREATED = "Created Date";
+    public static final String LABEL_FILE = "From File";
+    public static final String LABEL_FILENAMES = "Save Filenames";
+    public static final String LABEL_NEVER_REACHED = "IT SHOULD NEVER BE REACHED!";
+
     // Message variables used for displaying states, or actions, in the application...
     public static final String MESSAGE_INVALID_USE = " === Invalid use of application ===";
     public static final String MESSAGE_DIRECTORY_UNAVAILABLE = " === No directory found with that path ===";
