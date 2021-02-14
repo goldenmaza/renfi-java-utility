@@ -8,7 +8,7 @@ import java.util.Map;
 
 /**
  * @author (Mats Richard Hellstrand)
- * @version (1st of February, 2021)
+ * @version (14th of February, 2021)
  */
 public final class Constants {
     // Application states and actions...
@@ -25,6 +25,13 @@ public final class Constants {
     public static final String FILE_PROCESSING = "-f";
     public static final String IMAGE_PROCESSING = "-i";
     public static final String VIDEO_PROCESSING = "-v";
+    public static final List<String> ALLOWED_FLAGS = new ArrayList<>() {{
+        add(FILE_PROCESSING);
+        add(ORIGIN_PROCESSING);
+        add(LIST_PROCESSING);
+        add(VIDEO_PROCESSING);
+        add(IMAGE_PROCESSING);
+    }};
 
     // Filenames and supported extensions for manipulation...
     public static final String NAMES_SOURCE = "names.txt";
@@ -32,8 +39,13 @@ public final class Constants {
     public static final String EXTENSION_MP4 = ".mp4";
     public static final String EXTENSION_JPG = ".jpg";
     public static final Map<String, List<String>> PROCESSING_SUPPORT = new HashMap<>() {{
-        put(IMAGE_PROCESSING, new ArrayList<>(Arrays.asList(EXTENSION_JPG, ".png-NOT_SUPPORTED")));
-        put(VIDEO_PROCESSING, new ArrayList<>(Arrays.asList(EXTENSION_AVI, EXTENSION_MP4)));
+        put(VIDEO_PROCESSING, new ArrayList<>() {{
+            add(EXTENSION_AVI);
+            add(EXTENSION_MP4);
+        }});
+        put(IMAGE_PROCESSING, new ArrayList<>() {{
+            add(EXTENSION_JPG);
+        }});
     }};
 
     // Date, Timezone, Timestamp format etc...

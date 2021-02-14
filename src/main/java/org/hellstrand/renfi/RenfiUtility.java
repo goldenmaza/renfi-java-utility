@@ -11,6 +11,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Scanner;
 
+import static org.hellstrand.renfi.util.Constants.ALLOWED_FLAGS;
 import static org.hellstrand.renfi.util.Constants.BRANCH_INDEX;
 import static org.hellstrand.renfi.util.Constants.COMMAND_INDEX;
 import static org.hellstrand.renfi.util.Constants.DIRECTORY_INDEX;
@@ -45,31 +46,39 @@ import static org.hellstrand.renfi.util.Constants.VIDEO_PROCESSING;
 
 /**
  * @author (Mats Richard Hellstrand)
- * @version (1st of February, 2021)
+ * @version (14th of February, 2021)
  *
  * Example command: java -jar Renfi.jar -l -v 1 /c/directory/
  */
 public final class RenfiUtility {
 	public static void main(String[] args) {
-		if (args.length == 0) { // TODO: Refactor to include flags...
+		if (args.length < 4) {
 			System.out.println(MESSAGE_INVALID_USE);
 			System.exit(FAILURE);
 		}
 
-		try {
-			// "Determine" the flow of the application...
-			String branch = args[BRANCH_INDEX];
-			String command = args[COMMAND_INDEX];
-			int index = Integer.parseInt(args[EXTENSION_INDEX]);
-			String extension = PROCESSING_SUPPORT.get(command).get(index);
-			String branchTask =
-				branch.equals(ORIGIN_PROCESSING) ? LABEL_CREATED :
-					branch.equals(LIST_PROCESSING) ? LABEL_FILE :
-						branch.equals(FILE_PROCESSING) ? LABEL_FILENAMES :
-								LABEL_NEVER_REACHED;
-			String commandTask = command.equals(IMAGE_PROCESSING) ? LABEL_IMAGES : LABEL_VIDEOS;
-			System.out.printf(MESSAGE_PROCESSING_TASK, branchTask, commandTask, extension);
+		// "Prepare" the flow of the application...
+		String branch = args[BRANCH_INDEX];
+		String command = args[COMMAND_INDEX];
+		int index = Integer.parseInt(args[EXTENSION_INDEX]);
+		if (!ALLOWED_FLAGS.contains(branch) || !ALLOWED_FLAGS.contains(command)
+			|| (index >= PROCESSING_SUPPORT.get(command).size())) {
+			System.out.println(MESSAGE_INVALID_USE);
+			System.exit(FAILURE);
+		}
 
+		// TODO: Display more of an interface on how to use the application...
+		String extension = PROCESSING_SUPPORT.get(command).get(index);
+		String branchTask =
+			branch.equals(ORIGIN_PROCESSING) ? LABEL_CREATED :
+				branch.equals(LIST_PROCESSING) ? LABEL_FILE :
+					branch.equals(FILE_PROCESSING) ? LABEL_FILENAMES :
+						LABEL_NEVER_REACHED;
+		String commandTask = command.equals(IMAGE_PROCESSING) ? LABEL_IMAGES : LABEL_VIDEOS;
+		System.out.printf(MESSAGE_PROCESSING_TASK, branchTask, commandTask, extension);
+		// TODO: Ask if the selected processing task should continue...
+
+		try {
 			// Verify that the target directory exist...
 			System.out.println(MESSAGE_LOADING_DIRECTORY);
 			String directory = args[DIRECTORY_INDEX];
@@ -100,25 +109,16 @@ public final class RenfiUtility {
 				Map<String, String> history = new HashMap<>();
 				if (branch.equals(ORIGIN_PROCESSING)) { // Prepare conversion history based on origin data...
 					if (command.equals(VIDEO_PROCESSING)) {
-						VideoProcessingUtil.prepareHistoryProcess(files, history, extension);
+						VideoProcessingUtil.prepareHistoryByOrigin(files, history, extension);
 					} else if (command.equals(IMAGE_PROCESSING)) {
-						ImageProcessingUtil.prepareHistoryProcess(files, history, extension);
-					} else { // TODO: Refactor to confirm in the beginning of application...
-						System.out.println(MESSAGE_INVALID_USE);
-						System.exit(FAILURE);
+						ImageProcessingUtil.prepareHistoryByOrigin(files, history, extension);
 					}
 				} else if (branch.equals(LIST_PROCESSING)) { // Prepare conversion history based on file input...
 					if (command.equals(VIDEO_PROCESSING)) {
-						VideoProcessingUtil.prepareHistoryProcess(files, history, target, extension);
+						VideoProcessingUtil.prepareHistoryByInput(files, history, target, extension);
 					} else if (command.equals(IMAGE_PROCESSING)) {
-						ImageProcessingUtil.prepareHistoryProcess(files, history, target, extension);
-					} else { // TODO: Refactor to confirm in the beginning of application...
-						System.out.println(MESSAGE_INVALID_USE);
-						System.exit(FAILURE);
+						ImageProcessingUtil.prepareHistoryByInput(files, history, target, extension);
 					}
-				} else { // TODO: Refactor to confirm in the beginning of application...
-					System.out.println(MESSAGE_INVALID_USE);
-					System.exit(FAILURE);
 				}
 
 				// Display available conversion history...
