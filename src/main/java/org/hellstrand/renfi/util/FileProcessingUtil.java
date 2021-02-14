@@ -17,10 +17,10 @@ import static org.hellstrand.renfi.util.Constants.MESSAGE_UNDO_ALERT;
 
 /**
  * @author (Mats Richard Hellstrand)
- * @version (1st of February, 2021)
+ * @version (14th of February, 2021)
  */
 public abstract class FileProcessingUtil {
-    public static void prepareHistoryProcess(File[] files, Map<String, String> history, String target, String extension) {
+    public static void prepareHistoryByInput(File[] files, Map<String, String> history, String target, String extension) {
         try {
             System.out.println(MESSAGE_SORTING_FILES);
             Arrays.sort(files, Comparator.comparingLong(File::lastModified));
@@ -45,12 +45,12 @@ public abstract class FileProcessingUtil {
     }
 
     public static void renamingProcess(Map<String, String> history, File[] files, String directory) {
-        for (File f : files) {
-            String previousName = f.getName();
+        for (File file : files) {
+            String previousName = file.getName();
             String newName = history.get(previousName);
 
             if (newName != null) {
-                if (f.renameTo(new File(directory + newName))) {
+                if (file.renameTo(new File(directory + newName))) {
                     System.out.printf(MESSAGE_RENAMING_ALERT, previousName, newName);
                 } else {
                     System.out.println(MESSAGE_RENAMING_FAILURE);
