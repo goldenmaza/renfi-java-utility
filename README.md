@@ -1,5 +1,13 @@
 # Renfi (Java version) &middot; [![GitHub license](https://img.shields.io/badge/license-ISC-blue.svg)](https://github.com/goldenmaza/renfi-java-utility/blob/master/LICENSE.md)
 
+* [Purpose](##purpose)
+* [File descriptions](#file-descriptions)
+  + [RenfiUtility](#renfiutility)
+  + [Constants](#constants)
+  + [FileProcessingUtil](#fileprocessingutil)
+  + [ImageProcessingUtil](#imageprocessingutil)
+  + [VideoProcessingUtil](#videoprocessingutil)
+
 ## Purpose
 The purpose with this project was to increase my knowledge of file manipulation in Java 8. I had to use a custom library
 made by [drewnoakes](https://github.com/drewnoakes) to fetch Metadata from multimedia files (such as creation date etc).
