@@ -97,38 +97,38 @@ public final class Constants {
     private Constants() {}
 
     public static void displayHelpGuide() {
-        final List <String> imageExtensions = PROCESSING_SUPPORT.get(IMAGE_PROCESSING);
-        final List <String> videoExtensions = PROCESSING_SUPPORT.get(VIDEO_PROCESSING);
+        StringBuilder sb = new StringBuilder();
+        List <String> imageExtensions = PROCESSING_SUPPORT.get(IMAGE_PROCESSING);
+        List <String> videoExtensions = PROCESSING_SUPPORT.get(VIDEO_PROCESSING);
 
-        final String HELP_GUIDE = "  === Help Guide ==="
-            + "\n"
-            + "\n  Operation legend:"
-            + "\n"
-            + "\n  java -jar Renfi.jar <BRANCH> <COMMAND> <INDEX> <PATH>"
-            + "\n"
-            + "\n  (BRANCH)\t\tdesired flow of the application, file handling: " + BRANCH_FLAGS.toString()
-            + "\n  (COMMAND)\t\tfocus on either file type: " + COMMAND_FLAGS.toString()
-            + "\n  (INDEX)\t\tselect file extension based on index: <INTEGER> (view 'Extension legend' below)"
-            + "\n  (PATH)\t\tdirectory path to where the files are located: c:/directory/"
-            + "\n"
-            + "\n  Extension legend:"
-            + "\n  (IMAGE)\t\tsupported extensions and their indexes: " + printExtensionWithIndex(imageExtensions)
-            + "\n  (VIDEO)\t\tsupported extensions and their indexes: " + printExtensionWithIndex(videoExtensions)
-            + "\n"
-            + "\n  Flag legend:"
-            + "\n  (" + FILE_PROCESSING + ")\t\t\tprepare a SOURCE FILE based on directory files"
-            + "\n  (" + ORIGIN_PROCESSING + ")\t\t\tprepare history and execute conversion based on ORIGIN DATA"
-            + "\n  (" + LIST_PROCESSING + ")\t\t\tprepare history and execute conversion based on SOURCE FILE"
-            + "\n  (" + IMAGE_PROCESSING + ")\t\t\tprocess IMAGE files based on extension stated"
-            + "\n  (" + VIDEO_PROCESSING + ")\t\t\tprocess VIDEO files based on extension stated"
-            + "\n"
-            + "\n  (<EMPTY> | help | -h | -help | --help)\t\tdisplay this help guide"
-            + "\n";
+        sb.append("  === Help Guide ===")
+            .append("\n")
+            .append("\n  Operation legend:")
+            .append("\n")
+            .append("\n  java -jar Renfi.jar <BRANCH> <COMMAND> <INDEX> <PATH>")
+            .append("\n")
+            .append("\n  (BRANCH)\t\tdesired flow of the application: ").append(BRANCH_FLAGS.toString())
+            .append("\n  (COMMAND)\t\tfocus on either file type: ").append(COMMAND_FLAGS.toString())
+            .append("\n  (INDEX)\t\tselect file extension based on index: <INTEGER> (view 'Extension legend' below)")
+            .append("\n  (PATH)\t\tdirectory path to where the files are located: c:/directory/")
+            .append("\n")
+            .append("\n  Extension legend:")
+            .append("\n  (IMAGE)\t\tsupported extensions and their indexes: ").append(printValues(imageExtensions))
+            .append("\n  (VIDEO)\t\tsupported extensions and their indexes: ").append(printValues(videoExtensions))
+            .append("\n")
+            .append("\n  Flag legend:")
+            .append("\n  (" + FILE_PROCESSING + ")\t\t\tprepare a SOURCE FILE based on directory files")
+            .append("\n  (" + ORIGIN_PROCESSING + ")\t\t\tprepare history and execute conversion based on ORIGIN DATA")
+            .append("\n  (" + LIST_PROCESSING + ")\t\t\tprepare history and execute conversion based on SOURCE FILE")
+            .append("\n  (" + IMAGE_PROCESSING + ")\t\t\tprocess IMAGE files based on extension stated")
+            .append("\n  (" + VIDEO_PROCESSING + ")\t\t\tprocess VIDEO files based on extension stated")
+            .append("\n")
+            .append("\n  (<EMPTY> | help | -h | -help | --help)\t\tdisplay this help guide");
 
-        System.out.println(HELP_GUIDE);
+        System.out.println(sb.toString());
     }
 
-    private static String printExtensionWithIndex(List<String> strings) {
+    private static String printValues(List<String> strings) {
         StringBuilder sb = new StringBuilder();
 
         for (String s : strings) {
