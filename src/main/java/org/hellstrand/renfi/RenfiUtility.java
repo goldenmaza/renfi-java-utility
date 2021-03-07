@@ -1,5 +1,6 @@
 package org.hellstrand.renfi;
 
+import org.hellstrand.renfi.util.Constants;
 import org.hellstrand.renfi.util.FileProcessingUtil;
 import org.hellstrand.renfi.util.ImageProcessingUtil;
 import org.hellstrand.renfi.util.VideoProcessingUtil;
@@ -7,7 +8,7 @@ import org.hellstrand.renfi.util.VideoProcessingUtil;
 import java.io.File;
 import java.io.PrintWriter;
 import java.util.Arrays;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Scanner;
 
@@ -46,13 +47,16 @@ import static org.hellstrand.renfi.util.Constants.VIDEO_PROCESSING;
 
 /**
  * @author (Mats Richard Hellstrand)
- * @version (14th of February, 2021)
- *
- * Example command: java -jar Renfi.jar -l -v 1 /c/directory/
+ * @version (7th of March, 2021)
  */
 public final class RenfiUtility {
     public static void main(String[] args) {
-        if (args.length < 4) {
+        if (args.length == 0
+            || args.length == 1 && args[0].contains("help")
+                                || args[0].contains("-h")) {
+            Constants.displayHelpGuide();
+            System.exit(SUCCESSFUL);
+        } else if (args.length < 4) {
             System.out.println(MESSAGE_INVALID_USE);
             System.exit(FAILURE);
         }
@@ -60,14 +64,13 @@ public final class RenfiUtility {
         // "Prepare" the flow of the application...
         String branch = args[BRANCH_INDEX];
         String command = args[COMMAND_INDEX];
-        int index = Integer.parseInt(args[EXTENSION_INDEX]);
+        int index = Integer.parseInt(args[EXTENSION_INDEX]); // TODO: Refactor so user states extension...
         if (!ALLOWED_FLAGS.contains(branch) || !ALLOWED_FLAGS.contains(command)
             || (index >= PROCESSING_SUPPORT.get(command).size())) {
             System.out.println(MESSAGE_INVALID_USE);
             System.exit(FAILURE);
         }
 
-        // TODO: Display more of an interface on how to use the application...
         String extension = PROCESSING_SUPPORT.get(command).get(index);
         String branchTask =
             branch.equals(ORIGIN_PROCESSING) ? LABEL_CREATED :
@@ -75,8 +78,8 @@ public final class RenfiUtility {
                     branch.equals(FILE_PROCESSING) ? LABEL_FILENAMES :
                         LABEL_NEVER_REACHED;
         String commandTask = command.equals(IMAGE_PROCESSING) ? LABEL_IMAGES : LABEL_VIDEOS;
-        System.out.printf(MESSAGE_PROCESSING_TASK, branchTask, commandTask, extension);
-        // TODO: Ask if the selected processing task should continue...
+        System.out.printf(MESSAGE_PROCESSING_TASK, branchTask, commandTask, extension.substring(1));
+        System.out.println();
 
         try {
             // Verify that the target directory exist...
@@ -91,7 +94,7 @@ public final class RenfiUtility {
             // Load the files into memory under the target directory...
             System.out.println(MESSAGE_LOADING_FILES);
             File[] files = path.listFiles((dir, name) -> name.toLowerCase().endsWith(extension));
-            if (files != null) {
+            if (files != null && files.length > 0) {
                 System.out.println(Arrays.toString(files));
             } else {
                 System.out.println(MESSAGE_RESOURCES_UNAVAILABLE);
@@ -106,7 +109,7 @@ public final class RenfiUtility {
                 }
                 printWriter.close();
             } else { // Otherwise, prepare and process conversion...
-                Map<String, String> history = new HashMap<>();
+                Map<String, String> history = new LinkedHashMap<>();
                 if (branch.equals(ORIGIN_PROCESSING)) { // Prepare conversion history based on origin data...
                     if (command.equals(VIDEO_PROCESSING)) {
                         VideoProcessingUtil.prepareHistoryByOrigin(files, history, extension);
@@ -154,6 +157,7 @@ public final class RenfiUtility {
             System.err.println(e.getMessage());
             System.exit(FAILURE);
         }
+
         System.exit(SUCCESSFUL);
     }
 }
