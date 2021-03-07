@@ -28,7 +28,9 @@ import static org.hellstrand.renfi.util.Constants.LABEL_NEVER_REACHED;
 import static org.hellstrand.renfi.util.Constants.LABEL_VIDEOS;
 import static org.hellstrand.renfi.util.Constants.LIST_PROCESSING;
 import static org.hellstrand.renfi.util.Constants.MESSAGE_CONTINUE_RENAMING;
+import static org.hellstrand.renfi.util.Constants.MESSAGE_DESIRED_EXECUTION;
 import static org.hellstrand.renfi.util.Constants.MESSAGE_DIRECTORY_UNAVAILABLE;
+import static org.hellstrand.renfi.util.Constants.MESSAGE_EXECUTION_ABORT;
 import static org.hellstrand.renfi.util.Constants.MESSAGE_FAILED_MISMATCH;
 import static org.hellstrand.renfi.util.Constants.MESSAGE_INVALID_USE;
 import static org.hellstrand.renfi.util.Constants.MESSAGE_LOADING_DIRECTORY;
@@ -81,82 +83,90 @@ public final class RenfiUtility {
         System.out.printf(MESSAGE_PROCESSING_TASK, branchTask, commandTask, extension.substring(1));
         System.out.println();
 
-        try {
-            // Verify that the target directory exist...
-            System.out.println(MESSAGE_LOADING_DIRECTORY);
-            String directory = args[DIRECTORY_INDEX];
-            File path = new File(directory);
-            if (!path.exists() && !path.isDirectory()) {
-                System.out.println(MESSAGE_DIRECTORY_UNAVAILABLE);
-                System.exit(FAILURE);
-            }
-
-            // Load the files into memory under the target directory...
-            System.out.println(MESSAGE_LOADING_FILES);
-            File[] files = path.listFiles((dir, name) -> name.toLowerCase().endsWith(extension));
-            if (files != null && files.length > 0) {
-                System.out.println(Arrays.toString(files));
-            } else {
-                System.out.println(MESSAGE_RESOURCES_UNAVAILABLE);
-                System.exit(FAILURE);
-            }
-
-            String target = directory + NAMES_SOURCE;
-            if (branch.equals(FILE_PROCESSING)) { // Prepare a source file based on directory files...
-                PrintWriter printWriter = new PrintWriter(target);
-                for (File file : files) {
-                    printWriter.println(file.getName());
+        System.out.println(MESSAGE_DESIRED_EXECUTION);
+        Scanner scanner = new Scanner(System.in);
+        String key = scanner.nextLine();
+        if (key.equals("y")) { // Should the processing task continue?
+            try {
+                // Verify that the target directory exist...
+                System.out.println(MESSAGE_LOADING_DIRECTORY);
+                String directory = args[DIRECTORY_INDEX];
+                File path = new File(directory);
+                if (!path.exists() && !path.isDirectory()) {
+                    System.out.println(MESSAGE_DIRECTORY_UNAVAILABLE);
+                    System.exit(FAILURE);
                 }
-                printWriter.close();
-            } else { // Otherwise, prepare and process conversion...
-                Map<String, String> history = new LinkedHashMap<>();
-                if (branch.equals(ORIGIN_PROCESSING)) { // Prepare conversion history based on origin data...
-                    if (command.equals(VIDEO_PROCESSING)) {
-                        VideoProcessingUtil.prepareHistoryByOrigin(files, history, extension);
-                    } else if (command.equals(IMAGE_PROCESSING)) {
-                        ImageProcessingUtil.prepareHistoryByOrigin(files, history, extension);
+
+                // Load the files into memory under the target directory...
+                System.out.println(MESSAGE_LOADING_FILES);
+                File[] files = path.listFiles((dir, name) -> name.toLowerCase().endsWith(extension));
+                if (files != null && files.length > 0) {
+                    System.out.println(Arrays.toString(files));
+                } else {
+                    System.out.println(MESSAGE_RESOURCES_UNAVAILABLE);
+                    System.exit(FAILURE);
+                }
+
+                String target = directory + NAMES_SOURCE;
+                if (branch.equals(FILE_PROCESSING)) { // Prepare a source file based on directory files...
+                    PrintWriter printWriter = new PrintWriter(target);
+                    for (File file : files) {
+                        printWriter.println(file.getName());
                     }
-                } else if (branch.equals(LIST_PROCESSING)) { // Prepare conversion history based on file input...
-                    if (command.equals(VIDEO_PROCESSING)) {
-                        VideoProcessingUtil.prepareHistoryByInput(files, history, target, extension);
-                    } else if (command.equals(IMAGE_PROCESSING)) {
-                        ImageProcessingUtil.prepareHistoryByInput(files, history, target, extension);
+                    printWriter.close();
+                } else { // Otherwise, prepare and process conversion...
+                    Map<String, String> history = new LinkedHashMap<>();
+                    if (branch.equals(ORIGIN_PROCESSING)) { // Prepare conversion history based on origin data...
+                        if (command.equals(VIDEO_PROCESSING)) {
+                            VideoProcessingUtil.prepareHistoryByOrigin(files, history, extension);
+                        } else if (command.equals(IMAGE_PROCESSING)) {
+                            ImageProcessingUtil.prepareHistoryByOrigin(files, history, extension);
+                        }
+                    } else if (branch.equals(LIST_PROCESSING)) { // Prepare conversion history based on file input...
+                        if (command.equals(VIDEO_PROCESSING)) {
+                            VideoProcessingUtil.prepareHistoryByInput(files, history, target, extension);
+                        } else if (command.equals(IMAGE_PROCESSING)) {
+                            ImageProcessingUtil.prepareHistoryByInput(files, history, target, extension);
+                        }
                     }
-                }
 
-                // Display available conversion history...
-                for (Map.Entry<String, String> entry : history.entrySet()) {
-                    System.out.println("Entry: " + entry.getKey() + ": " + entry.getValue());
-                }
+                    // Display available conversion history...
+                    for (Map.Entry<String, String> entry : history.entrySet()) {
+                        System.out.println("Entry: " + entry.getKey() + ": " + entry.getValue());
+                    }
 
-                // Begin the renaming process...
-                System.out.println(MESSAGE_CONTINUE_RENAMING);
-                Scanner scanner = new Scanner(System.in);
-                String key = scanner.nextLine();
-                if (key.equals("y")) { // Should the renaming process be executed?
-                    System.out.println(MESSAGE_RENAMING_PROCESS);
-                    if (history.size() > 0) {
-                        FileProcessingUtil.renamingProcess(history, files, directory);
+                    // Begin the renaming process...
+                    System.out.println(MESSAGE_CONTINUE_RENAMING);
+                    scanner = new Scanner(System.in);
+                    key = scanner.nextLine();
+                    if (key.equals("y")) { // Should the renaming process be executed?
+                        System.out.println(MESSAGE_RENAMING_PROCESS);
+                        if (history.size() > 0) {
+                            FileProcessingUtil.renamingProcess(history, files, directory);
 
-                        System.out.println(MESSAGE_UNDO_CONTINUE);
-                        key = scanner.nextLine();
-                        if (key.equals("y")) { // Should the undo process be executed?
-                            FileProcessingUtil.renamingUndoProcess(history, path, directory);
+                            System.out.println(MESSAGE_UNDO_CONTINUE);
+                            key = scanner.nextLine();
+                            if (key.equals("y")) { // Should the undo process be executed?
+                                FileProcessingUtil.renamingUndoProcess(history, path, directory);
+                            } else {
+                                System.out.println(MESSAGE_UNDO_ABORT);
+                            }
                         } else {
-                            System.out.println(MESSAGE_UNDO_ABORT);
+                            System.out.println(MESSAGE_FAILED_MISMATCH);
                         }
                     } else {
-                        System.out.println(MESSAGE_FAILED_MISMATCH);
+                        System.out.println(MESSAGE_RENAMING_ABORT);
                     }
-                } else {
-                    System.out.println(MESSAGE_RENAMING_ABORT);
+                    scanner.close();
                 }
-                scanner.close();
+            } catch (Exception e) {
+                System.err.println(e.getMessage());
+                System.exit(FAILURE);
             }
-        } catch (Exception e) {
-            System.err.println(e.getMessage());
-            System.exit(FAILURE);
+        } else {
+            System.out.println(MESSAGE_EXECUTION_ABORT);
         }
+        scanner.close();
 
         System.exit(SUCCESSFUL);
     }

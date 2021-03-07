@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Scanner;
 
 /**
  * @author (Mats Richard Hellstrand)
@@ -70,6 +69,7 @@ public final class Constants {
 
     // Message variables used for displaying states, or actions, in the application...
     public static final String MESSAGE_INVALID_USE = " === Invalid use of application ===";
+    public static final String MESSAGE_DESIRED_EXECUTION = " === Are you happy with the current task? (y/n) ===";
     public static final String MESSAGE_DIRECTORY_UNAVAILABLE = " === No directory found with that path ===";
     public static final String MESSAGE_RESOURCES_UNAVAILABLE = " === No resources found with the desired command and predefined extensions ===";
     public static final String MESSAGE_PROCESSING_TASK = " === The task you have selected is: %s, %s, %s ===";
@@ -92,6 +92,7 @@ public final class Constants {
     public static final String MESSAGE_UNDO_ABORT = " === You chose not to undo the last renaming process, aborting the undo process ===";
     public static final String MESSAGE_FAILED_MISMATCH = " === The amount of generated names and amount of files do not match ===";
     public static final String MESSAGE_RENAMING_ABORT = " === You chose not to rename files, aborting the renaming process ===";
+    public static final String MESSAGE_EXECUTION_ABORT = " === You chose not to continue with the execution, aborting the process ===";
 
     private Constants() {}
 
