@@ -9,22 +9,28 @@ import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
 
+import static org.hellstrand.renfi.util.Constants.MESSAGE_FAILED_UNDO_LOADING;
 import static org.hellstrand.renfi.util.Constants.MESSAGE_FAILURE_SOURCES;
 import static org.hellstrand.renfi.util.Constants.MESSAGE_RENAMING_ALERT;
 import static org.hellstrand.renfi.util.Constants.MESSAGE_RENAMING_FAILURE;
 import static org.hellstrand.renfi.util.Constants.MESSAGE_SORTING_FILES;
 import static org.hellstrand.renfi.util.Constants.MESSAGE_UNDO_ALERT;
+import static org.hellstrand.renfi.util.Constants.MESSAGE_UNDO_RELOADING;
+import static org.hellstrand.renfi.util.Constants.MESSAGE_UNDO_RESTORING;
+import static org.hellstrand.renfi.util.Constants.printMessage;
 
 /**
  * @author (Mats Richard Hellstrand)
- * @version (14th of February, 2021)
+ * @version (10th of March, 2021)
  */
 public abstract class FileProcessingUtil {
     public static void prepareHistoryByInput(File[] files, Map<String, String> history, String target, String extension) {
         try {
-            System.out.println(MESSAGE_SORTING_FILES);
+            printMessage(MESSAGE_SORTING_FILES);
             Arrays.sort(files, Comparator.comparingLong(File::lastModified));
-            System.out.println(Arrays.toString(files));
+            for (File file : files) {
+                System.out.println(file.getName());
+            }
 
             File source = new File(target);
             Scanner scanner = new Scanner(source);
@@ -53,7 +59,7 @@ public abstract class FileProcessingUtil {
                 if (file.renameTo(new File(directory + newName))) {
                     System.out.printf(MESSAGE_RENAMING_ALERT, previousName, newName);
                 } else {
-                    System.out.println(MESSAGE_RENAMING_FAILURE);
+                    printMessage(MESSAGE_RENAMING_FAILURE);
                     System.out.printf(MESSAGE_FAILURE_SOURCES, previousName, newName);
                 }
             } else {
@@ -63,11 +69,14 @@ public abstract class FileProcessingUtil {
     }
 
     public static void renamingUndoProcess(Map<String, String> history, File path, String directory) {
-        System.out.println(Constants.MESSAGE_UNDO_RELOADING);
+        printMessage(MESSAGE_UNDO_RELOADING);
         File[] undo = path.listFiles((dir, name) -> history.values().stream().anyMatch(n -> n.equals(name)));
+        for (File file : undo) {
+            System.out.println(file.getName());
+        }
 
-        if (undo != null && undo.length > 0) {
-            System.out.println(Constants.MESSAGE_UNDO_RESTORING);
+        if (undo.length > 0) {
+            printMessage(MESSAGE_UNDO_RESTORING);
             for (File file : undo) {
                 String undoName = file.getName();
                 String previousName = history.entrySet().stream()
@@ -79,12 +88,12 @@ public abstract class FileProcessingUtil {
                 if (previousName != null && file.renameTo(new File(directory + previousName))) {
                     System.out.printf(MESSAGE_UNDO_ALERT, undoName, previousName);
                 } else {
-                    System.out.println(MESSAGE_RENAMING_FAILURE);
+                    printMessage(MESSAGE_RENAMING_FAILURE);
                     System.out.printf(MESSAGE_FAILURE_SOURCES, undoName, previousName);
                 }
             }
         } else {
-            System.out.println(Constants.MESSAGE_FAILED_UNDO_LOADING);
+            printMessage(MESSAGE_FAILED_UNDO_LOADING);
         }
     }
 }

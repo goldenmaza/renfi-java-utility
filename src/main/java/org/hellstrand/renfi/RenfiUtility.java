@@ -1,13 +1,11 @@
 package org.hellstrand.renfi;
 
-import org.hellstrand.renfi.util.Constants;
 import org.hellstrand.renfi.util.FileProcessingUtil;
 import org.hellstrand.renfi.util.ImageProcessingUtil;
 import org.hellstrand.renfi.util.VideoProcessingUtil;
 
 import java.io.File;
 import java.io.PrintWriter;
-import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Scanner;
@@ -19,6 +17,7 @@ import static org.hellstrand.renfi.util.Constants.DIRECTORY_INDEX;
 import static org.hellstrand.renfi.util.Constants.EXTENSION_INDEX;
 import static org.hellstrand.renfi.util.Constants.FAILURE;
 import static org.hellstrand.renfi.util.Constants.FILE_PROCESSING;
+import static org.hellstrand.renfi.util.Constants.HELP_FLAGS;
 import static org.hellstrand.renfi.util.Constants.IMAGE_PROCESSING;
 import static org.hellstrand.renfi.util.Constants.LABEL_CREATED;
 import static org.hellstrand.renfi.util.Constants.LABEL_FILE;
@@ -28,6 +27,7 @@ import static org.hellstrand.renfi.util.Constants.LABEL_NEVER_REACHED;
 import static org.hellstrand.renfi.util.Constants.LABEL_VIDEOS;
 import static org.hellstrand.renfi.util.Constants.LIST_PROCESSING;
 import static org.hellstrand.renfi.util.Constants.MESSAGE_CONTINUE_RENAMING;
+import static org.hellstrand.renfi.util.Constants.MESSAGE_CONVERSION_HISTORY;
 import static org.hellstrand.renfi.util.Constants.MESSAGE_DESIRED_EXECUTION;
 import static org.hellstrand.renfi.util.Constants.MESSAGE_DIRECTORY_UNAVAILABLE;
 import static org.hellstrand.renfi.util.Constants.MESSAGE_EXECUTION_ABORT;
@@ -39,6 +39,8 @@ import static org.hellstrand.renfi.util.Constants.MESSAGE_PROCESSING_TASK;
 import static org.hellstrand.renfi.util.Constants.MESSAGE_RENAMING_ABORT;
 import static org.hellstrand.renfi.util.Constants.MESSAGE_RENAMING_PROCESS;
 import static org.hellstrand.renfi.util.Constants.MESSAGE_RESOURCES_UNAVAILABLE;
+import static org.hellstrand.renfi.util.Constants.MESSAGE_SOURCE_CONTAINS;
+import static org.hellstrand.renfi.util.Constants.MESSAGE_SOURCE_UNAVAILABLE;
 import static org.hellstrand.renfi.util.Constants.MESSAGE_UNDO_ABORT;
 import static org.hellstrand.renfi.util.Constants.MESSAGE_UNDO_CONTINUE;
 import static org.hellstrand.renfi.util.Constants.NAMES_SOURCE;
@@ -46,34 +48,50 @@ import static org.hellstrand.renfi.util.Constants.ORIGIN_PROCESSING;
 import static org.hellstrand.renfi.util.Constants.PROCESSING_SUPPORT;
 import static org.hellstrand.renfi.util.Constants.SUCCESSFUL;
 import static org.hellstrand.renfi.util.Constants.VIDEO_PROCESSING;
+import static org.hellstrand.renfi.util.Constants.displayHelpGuide;
+import static org.hellstrand.renfi.util.Constants.printMessage;
 
 /**
  * @author (Mats Richard Hellstrand)
- * @version (7th of March, 2021)
+ * @version (10th of March, 2021)
  */
 public final class RenfiUtility {
-    public static void main(String[] args) {
+    public static void main(String[] args) {// TODO: Refactor printf output...
         if (args.length == 0
-            || args.length == 1 && args[0].contains("help")
-                                || args[0].contains("-h")) {
-            Constants.displayHelpGuide();
+            || args.length == 1 && HELP_FLAGS.contains(args[0])) {
+            displayHelpGuide();
             System.exit(SUCCESSFUL);
         } else if (args.length < 4) {
-            System.out.println(MESSAGE_INVALID_USE);
+            printMessage(MESSAGE_INVALID_USE);
             System.exit(FAILURE);
         }
 
         // "Prepare" the flow of the application...
         String branch = args[BRANCH_INDEX];
         String command = args[COMMAND_INDEX];
-        int index = Integer.parseInt(args[EXTENSION_INDEX]); // TODO: Refactor so user states extension...
-        if (!ALLOWED_FLAGS.contains(branch) || !ALLOWED_FLAGS.contains(command)
-            || (index >= PROCESSING_SUPPORT.get(command).size())) {
-            System.out.println(MESSAGE_INVALID_USE);
+        String index = args[EXTENSION_INDEX];
+        if (!ALLOWED_FLAGS.contains(branch)
+            || !ALLOWED_FLAGS.contains(command)
+            || !PROCESSING_SUPPORT.containsKey(command)) {
+            printMessage(MESSAGE_INVALID_USE);
             System.exit(FAILURE);
         }
 
-        String extension = PROCESSING_SUPPORT.get(command).get(index);
+        int commandIndex = -1;
+        if (index.length() == 1) {
+            commandIndex = Integer.parseInt(index);
+            if (commandIndex >= PROCESSING_SUPPORT.get(command).size()) {
+                printMessage(MESSAGE_INVALID_USE);
+                System.exit(FAILURE);
+            }
+        } else if (PROCESSING_SUPPORT.get(command).contains(index)) {
+            commandIndex = PROCESSING_SUPPORT.get(command).indexOf(index);
+        } else {
+            printMessage(MESSAGE_INVALID_USE);
+            System.exit(FAILURE);
+        }
+
+        String extension = PROCESSING_SUPPORT.get(command).get(commandIndex);
         String branchTask =
             branch.equals(ORIGIN_PROCESSING) ? LABEL_CREATED :
                 branch.equals(LIST_PROCESSING) ? LABEL_FILE :
@@ -83,34 +101,47 @@ public final class RenfiUtility {
         System.out.printf(MESSAGE_PROCESSING_TASK, branchTask, commandTask, extension.substring(1));
         System.out.println();
 
-        System.out.println(MESSAGE_DESIRED_EXECUTION);
+        printMessage(MESSAGE_DESIRED_EXECUTION);
         Scanner scanner = new Scanner(System.in);
         String key = scanner.nextLine();
         if (key.equals("y")) { // Should the processing task continue?
             try {
                 // Verify that the target directory exist...
-                System.out.println(MESSAGE_LOADING_DIRECTORY);
+                printMessage(MESSAGE_LOADING_DIRECTORY);
                 String directory = args[DIRECTORY_INDEX];
                 File path = new File(directory);
                 if (!path.exists() && !path.isDirectory()) {
-                    System.out.println(MESSAGE_DIRECTORY_UNAVAILABLE);
+                    printMessage(MESSAGE_DIRECTORY_UNAVAILABLE);
                     System.exit(FAILURE);
+                } else {
+                    System.out.println(path.toString());
                 }
 
                 // Load the files into memory under the target directory...
-                System.out.println(MESSAGE_LOADING_FILES);
+                printMessage(MESSAGE_LOADING_FILES);
                 File[] files = path.listFiles((dir, name) -> name.toLowerCase().endsWith(extension));
                 if (files != null && files.length > 0) {
-                    System.out.println(Arrays.toString(files));
+                    for (File file : files) {
+                        System.out.println(file.getName());
+                    }
                 } else {
-                    System.out.println(MESSAGE_RESOURCES_UNAVAILABLE);
+                    printMessage(MESSAGE_RESOURCES_UNAVAILABLE);
                     System.exit(FAILURE);
                 }
 
                 String target = directory + NAMES_SOURCE;
                 if (branch.equals(FILE_PROCESSING)) { // Prepare a source file based on directory files...
+                    // Verify that the source file exist...
+                    File source = new File(target);
+                    if (!source.isFile() && !source.exists()) {
+                        printMessage(MESSAGE_SOURCE_UNAVAILABLE);
+                        System.exit(FAILURE);
+                    }
+
+                    printMessage(MESSAGE_SOURCE_CONTAINS);
                     PrintWriter printWriter = new PrintWriter(target);
                     for (File file : files) {
+                        System.out.println(file.getName());
                         printWriter.println(file.getName());
                     }
                     printWriter.close();
@@ -131,31 +162,32 @@ public final class RenfiUtility {
                     }
 
                     // Display available conversion history...
+                    printMessage(MESSAGE_CONVERSION_HISTORY);
                     for (Map.Entry<String, String> entry : history.entrySet()) {
                         System.out.println("Entry: " + entry.getKey() + ": " + entry.getValue());
                     }
 
                     // Begin the renaming process...
-                    System.out.println(MESSAGE_CONTINUE_RENAMING);
+                    printMessage(MESSAGE_CONTINUE_RENAMING);
                     scanner = new Scanner(System.in);
                     key = scanner.nextLine();
                     if (key.equals("y")) { // Should the renaming process be executed?
-                        System.out.println(MESSAGE_RENAMING_PROCESS);
+                        printMessage(MESSAGE_RENAMING_PROCESS);
                         if (history.size() > 0) {
                             FileProcessingUtil.renamingProcess(history, files, directory);
 
-                            System.out.println(MESSAGE_UNDO_CONTINUE);
+                            printMessage(MESSAGE_UNDO_CONTINUE);
                             key = scanner.nextLine();
                             if (key.equals("y")) { // Should the undo process be executed?
                                 FileProcessingUtil.renamingUndoProcess(history, path, directory);
                             } else {
-                                System.out.println(MESSAGE_UNDO_ABORT);
+                                printMessage(MESSAGE_UNDO_ABORT);
                             }
                         } else {
-                            System.out.println(MESSAGE_FAILED_MISMATCH);
+                            printMessage(MESSAGE_FAILED_MISMATCH);
                         }
                     } else {
-                        System.out.println(MESSAGE_RENAMING_ABORT);
+                        printMessage(MESSAGE_RENAMING_ABORT);
                     }
                     scanner.close();
                 }
@@ -164,7 +196,7 @@ public final class RenfiUtility {
                 System.exit(FAILURE);
             }
         } else {
-            System.out.println(MESSAGE_EXECUTION_ABORT);
+            printMessage(MESSAGE_EXECUTION_ABORT);
         }
         scanner.close();
 

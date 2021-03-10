@@ -23,15 +23,16 @@ import static org.hellstrand.renfi.util.Constants.MESSAGE_CORRUPT_SOURCE;
 import static org.hellstrand.renfi.util.Constants.MESSAGE_LOADED_PREPARED;
 import static org.hellstrand.renfi.util.Constants.MESSAGE_RESOURCE_MISSING_FIELD;
 import static org.hellstrand.renfi.util.Constants.DATE_TIMESTAMP_FORMAT;
+import static org.hellstrand.renfi.util.Constants.printMessage;
 
 /**
  * @author (Mats Richard Hellstrand)
- * @version (14th of February, 2021)
+ * @version (10th of March, 2021)
  */
 public final class VideoProcessingUtil extends FileProcessingUtil {
     public static void prepareHistoryByOrigin(File[] files, Map<String, String> history, String extension) {
         try {
-            System.out.println(MESSAGE_LOADED_PREPARED);
+            printMessage(MESSAGE_LOADED_PREPARED);
             DateTimeFormatter pattern = DateTimeFormatter.ofPattern(DATE_TIMESTAMP_FORMAT);
 
             Metadata metadata = null;
@@ -62,7 +63,7 @@ public final class VideoProcessingUtil extends FileProcessingUtil {
                                 history.put(oldName, newName);
                                 break;
                             } else {
-                                System.out.println(MESSAGE_RESOURCE_MISSING_FIELD);
+                                printMessage(MESSAGE_RESOURCE_MISSING_FIELD);
                             }
                         } else {
                             System.out.printf(MESSAGE_CORRUPT_SOURCE, file.getName());

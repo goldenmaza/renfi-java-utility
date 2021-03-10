@@ -20,15 +20,16 @@ import static org.hellstrand.renfi.util.Constants.DATE_TIMESTAMP_FORMAT;
 import static org.hellstrand.renfi.util.Constants.DATE_TIMEZONE;
 import static org.hellstrand.renfi.util.Constants.MESSAGE_LOADED_PREPARED;
 import static org.hellstrand.renfi.util.Constants.MESSAGE_RESOURCE_MISSING_FIELD;
+import static org.hellstrand.renfi.util.Constants.printMessage;
 
 /**
  * @author (Mats Richard Hellstrand)
- * @version (14th of February, 2021)
+ * @version (10th of March, 2021)
  */
 public final class ImageProcessingUtil extends FileProcessingUtil {
     public static void prepareHistoryByOrigin(File[] files, Map<String, String> history, String extension) {
         try {
-            System.out.println(MESSAGE_LOADED_PREPARED);
+            printMessage(MESSAGE_LOADED_PREPARED);
             Locale locale = new Locale(DATE_LANGUAGE, DATE_COUNTRY);
             SimpleDateFormat simpleDateFormat = new SimpleDateFormat(DATE_TIMESTAMP_FORMAT, locale);
             simpleDateFormat.setTimeZone(TimeZone.getTimeZone(DATE_TIMEZONE));
@@ -42,7 +43,7 @@ public final class ImageProcessingUtil extends FileProcessingUtil {
                         String newName = simpleDateFormat.format(originalDate) + extension;
                         history.put(oldName, newName);
                     } else {
-                        System.out.println(MESSAGE_RESOURCE_MISSING_FIELD);
+                        printMessage(MESSAGE_RESOURCE_MISSING_FIELD);
                     }
                 }
             }
