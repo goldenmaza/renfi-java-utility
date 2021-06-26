@@ -7,6 +7,7 @@ import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Scanner;
 
 import static org.hellstrand.renfi.util.Constants.MESSAGE_FAILED_UNDO_LOADING;
@@ -17,11 +18,11 @@ import static org.hellstrand.renfi.util.Constants.MESSAGE_SORTING_FILES;
 import static org.hellstrand.renfi.util.Constants.MESSAGE_UNDO_ALERT;
 import static org.hellstrand.renfi.util.Constants.MESSAGE_UNDO_RELOADING;
 import static org.hellstrand.renfi.util.Constants.MESSAGE_UNDO_RESTORING;
-import static org.hellstrand.renfi.util.Constants.printMessage;
+import static org.hellstrand.renfi.util.HelpGuideUtil.printMessage;
 
 /**
  * @author (Mats Richard Hellstrand)
- * @version (10th of March, 2021)
+ * @version (26th of June, 2021)
  */
 public abstract class FileProcessingUtil {
     public static void prepareHistoryByInput(File[] files, Map<String, String> history, String target, String extension) {
@@ -55,7 +56,7 @@ public abstract class FileProcessingUtil {
             String previousName = file.getName();
             String newName = history.get(previousName);
 
-            if (newName != null) {
+            if (Objects.nonNull(newName)) {
                 if (file.renameTo(new File(directory + newName))) {
                     System.out.printf(MESSAGE_RENAMING_ALERT, previousName, newName);
                 } else {
@@ -71,11 +72,11 @@ public abstract class FileProcessingUtil {
     public static void renamingUndoProcess(Map<String, String> history, File path, String directory) {
         printMessage(MESSAGE_UNDO_RELOADING);
         File[] undo = path.listFiles((dir, name) -> history.values().stream().anyMatch(n -> n.equals(name)));
-        for (File file : undo) {
-            System.out.println(file.getName());
-        }
+        if (Objects.requireNonNull(undo).length > 0) {
+            for (File file : undo) {
+                System.out.println(file.getName());
+            }
 
-        if (undo.length > 0) {
             printMessage(MESSAGE_UNDO_RESTORING);
             for (File file : undo) {
                 String undoName = file.getName();
@@ -85,7 +86,7 @@ public abstract class FileProcessingUtil {
                     .findFirst()
                     .orElse(null);
 
-                if (previousName != null && file.renameTo(new File(directory + previousName))) {
+                if (Objects.nonNull(previousName) && file.renameTo(new File(directory + previousName))) {
                     System.out.printf(MESSAGE_UNDO_ALERT, undoName, previousName);
                 } else {
                     printMessage(MESSAGE_RENAMING_FAILURE);

@@ -7,7 +7,7 @@ import java.util.Map;
 
 /**
  * @author (Mats Richard Hellstrand)
- * @version (10th of March, 2021)
+ * @version (26th of June, 2021)
  */
 public final class Constants {
     // Application states and actions...
@@ -73,12 +73,12 @@ public final class Constants {
     public static final String LABEL_CREATED = "Created Date";
     public static final String LABEL_FILE = "From File";
     public static final String LABEL_FILENAMES = "Save Filenames";
-    public static final String LABEL_NEVER_REACHED = "IT SHOULD NEVER BE REACHED!";
+    public static final String LABEL_UNKNOWN_EXECUTION = "UNKNOWN";
 
     // Message variables used for displaying states, or actions, in the application...
     public static final String MESSAGE_INVALID_USE = "Invalid use of application";
     public static final String MESSAGE_DESIRED_EXECUTION = "Are you happy with the current task? (y/n)";
-    public static final String MESSAGE_DIRECTORY_UNAVAILABLE = "No directory found with stated path";
+    public static final String MESSAGE_DIRECTORY_UNAVAILABLE = "No directory found with the stated path";
     public static final String MESSAGE_RESOURCES_UNAVAILABLE = "No resources found with the desired command and predefined extensions";
     public static final String MESSAGE_SOURCE_UNAVAILABLE = "No source file found under the current path";
     public static final String MESSAGE_SOURCE_CONTAINS = "Source file contains";
@@ -106,60 +106,4 @@ public final class Constants {
     public static final String MESSAGE_EXECUTION_ABORT = "You chose not to continue with the execution, aborting the process";
 
     private Constants() {}
-
-    public static void displayHelpGuide() {
-        StringBuilder sb = new StringBuilder();
-        List <String> imageExtensions = PROCESSING_SUPPORT.get(IMAGE_PROCESSING);
-        List <String> videoExtensions = PROCESSING_SUPPORT.get(VIDEO_PROCESSING);
-        String helpFlags = HELP_FLAGS.toString()
-            .replace("[", "(")
-            .replace("]", ")");
-
-        sb.append("  === Help Guide ===")
-            .append("\n")
-            .append("\n  Operation legend:")
-            .append("\n")
-            .append("\n  java -jar Renfi.jar <BRANCH> <COMMAND> <INDEX> <PATH>")
-            .append("\n")
-            .append("\n  (BRANCH)\t\tdesired flow of the application: ").append(BRANCH_FLAGS.toString())
-            .append("\n  (COMMAND)\t\tfocus on either file type: ").append(COMMAND_FLAGS.toString())
-            .append("\n  (INDEX)\t\tselect file extension based on index: <INTEGER> (view 'Extension legend' below)")
-            .append("\n  (PATH)\t\tdirectory path to where the files are located: c:/directory/")
-            .append("\n")
-            .append("\n  Extension legend:")
-            .append("\n  (IMAGE)\t\tsupported extensions and their indexes: ").append(printValues(imageExtensions))
-            .append("\n  (VIDEO)\t\tsupported extensions and their indexes: ").append(printValues(videoExtensions))
-            .append("\n")
-            .append("\n  Flag legend:")
-            .append("\n  (" + FILE_PROCESSING + ")\t\t\tprepare a SOURCE FILE based on directory files")
-            .append("\n  (" + ORIGIN_PROCESSING + ")\t\t\tprepare history conversion based on ORIGIN DATA")
-            .append("\n  (" + LIST_PROCESSING + ")\t\t\tprepare history conversion based on SOURCE FILE")
-            .append("\n  (" + IMAGE_PROCESSING + ")\t\t\tprocess IMAGE files based on extension stated")
-            .append("\n  (" + VIDEO_PROCESSING + ")\t\t\tprocess VIDEO files based on extension stated")
-            .append("\n")
-            .append("\n  ").append(helpFlags).append("\t\t\tdisplay this help guide");
-
-        System.out.println(sb.toString());
-    }
-
-    private static String printValues(List<String> strings) {
-        StringBuilder sb = new StringBuilder();
-
-        for (String s : strings) {
-            sb.append(s.substring(1))
-                .append(" (")
-                .append(strings.indexOf(s))
-                .append("), ");
-        }
-
-        return sb.toString();
-    }
-
-    public static void printMessage(String message) {
-        StringBuilder sb = new StringBuilder();
-
-        sb.append("===== ##### ### ##### ####### ##### ### ##### =====\n\t").append(message);
-
-        System.out.println(sb.toString());
-    }
 }

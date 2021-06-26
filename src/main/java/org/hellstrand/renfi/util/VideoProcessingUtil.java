@@ -16,6 +16,7 @@ import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.Date;
 import java.util.Map;
+import java.util.Objects;
 
 import static org.hellstrand.renfi.util.Constants.EXTENSION_AVI;
 import static org.hellstrand.renfi.util.Constants.EXTENSION_MP4;
@@ -23,11 +24,11 @@ import static org.hellstrand.renfi.util.Constants.MESSAGE_CORRUPT_SOURCE;
 import static org.hellstrand.renfi.util.Constants.MESSAGE_LOADED_PREPARED;
 import static org.hellstrand.renfi.util.Constants.MESSAGE_RESOURCE_MISSING_FIELD;
 import static org.hellstrand.renfi.util.Constants.DATE_TIMESTAMP_FORMAT;
-import static org.hellstrand.renfi.util.Constants.printMessage;
+import static org.hellstrand.renfi.util.HelpGuideUtil.printMessage;
 
 /**
  * @author (Mats Richard Hellstrand)
- * @version (10th of March, 2021)
+ * @version (26th of June, 2021)
  */
 public final class VideoProcessingUtil extends FileProcessingUtil {
     public static void prepareHistoryByOrigin(File[] files, Map<String, String> history, String extension) {
@@ -57,7 +58,7 @@ public final class VideoProcessingUtil extends FileProcessingUtil {
                             Instant instant = Instant.ofEpochMilli(date.getTime());
                             localDateTime = LocalDateTime.ofInstant(instant, ZoneId.systemDefault());
                             LocalDateTime originalDate = localDateTime.plusHours(1);//WTF, WHY IS THIS NECESSARY?!
-                            if (originalDate != null) {
+                            if (Objects.nonNull(originalDate)) {
                                 String oldName = file.getName();
                                 String newName = originalDate.format(pattern) + extension;
                                 history.put(oldName, newName);

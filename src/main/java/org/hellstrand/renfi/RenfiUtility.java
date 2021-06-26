@@ -8,6 +8,7 @@ import java.io.File;
 import java.io.PrintWriter;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Scanner;
 
 import static org.hellstrand.renfi.util.Constants.ALLOWED_FLAGS;
@@ -23,7 +24,7 @@ import static org.hellstrand.renfi.util.Constants.LABEL_CREATED;
 import static org.hellstrand.renfi.util.Constants.LABEL_FILE;
 import static org.hellstrand.renfi.util.Constants.LABEL_FILENAMES;
 import static org.hellstrand.renfi.util.Constants.LABEL_IMAGES;
-import static org.hellstrand.renfi.util.Constants.LABEL_NEVER_REACHED;
+import static org.hellstrand.renfi.util.Constants.LABEL_UNKNOWN_EXECUTION;
 import static org.hellstrand.renfi.util.Constants.LABEL_VIDEOS;
 import static org.hellstrand.renfi.util.Constants.LIST_PROCESSING;
 import static org.hellstrand.renfi.util.Constants.MESSAGE_CONTINUE_RENAMING;
@@ -48,15 +49,15 @@ import static org.hellstrand.renfi.util.Constants.ORIGIN_PROCESSING;
 import static org.hellstrand.renfi.util.Constants.PROCESSING_SUPPORT;
 import static org.hellstrand.renfi.util.Constants.SUCCESSFUL;
 import static org.hellstrand.renfi.util.Constants.VIDEO_PROCESSING;
-import static org.hellstrand.renfi.util.Constants.displayHelpGuide;
-import static org.hellstrand.renfi.util.Constants.printMessage;
+import static org.hellstrand.renfi.util.HelpGuideUtil.displayHelpGuide;
+import static org.hellstrand.renfi.util.HelpGuideUtil.printMessage;
 
 /**
  * @author (Mats Richard Hellstrand)
- * @version (10th of March, 2021)
+ * @version (26th of June, 2021)
  */
 public final class RenfiUtility {
-    public static void main(String[] args) {// TODO: Refactor printf output...
+    public static void main(String[] args) {
         if (args.length == 0
             || args.length == 1 && HELP_FLAGS.contains(args[0])) {
             displayHelpGuide();
@@ -96,7 +97,7 @@ public final class RenfiUtility {
             branch.equals(ORIGIN_PROCESSING) ? LABEL_CREATED :
                 branch.equals(LIST_PROCESSING) ? LABEL_FILE :
                     branch.equals(FILE_PROCESSING) ? LABEL_FILENAMES :
-                        LABEL_NEVER_REACHED;
+                        LABEL_UNKNOWN_EXECUTION;
         String commandTask = command.equals(IMAGE_PROCESSING) ? LABEL_IMAGES : LABEL_VIDEOS;
         System.out.printf(MESSAGE_PROCESSING_TASK, branchTask, commandTask, extension.substring(1));
         System.out.println();
@@ -120,7 +121,7 @@ public final class RenfiUtility {
                 // Load the files into memory under the target directory...
                 printMessage(MESSAGE_LOADING_FILES);
                 File[] files = path.listFiles((dir, name) -> name.toLowerCase().endsWith(extension));
-                if (files != null && files.length > 0) {
+                if (Objects.nonNull(files) && files.length > 0) {
                     for (File file : files) {
                         System.out.println(file.getName());
                     }
