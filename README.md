@@ -4,6 +4,7 @@
 * [File descriptions](#file-descriptions)
   + [RenfiUtility](#renfiutility)
   + [Constants](#constants)
+  + [HelpGuideUtil](#helpguideutil)
   + [FileProcessingUtil](#fileprocessingutil)
   + [ImageProcessingUtil](#imageprocessingutil)
   + [VideoProcessingUtil](#videoprocessingutil)
@@ -27,6 +28,9 @@ txt file.
 
 ### Constants
 A central location of all logging output, available flags, extensions and more.
+
+### HelpGuideUtil
+The code for printout of the HelpGuide can be found here.
 
 ### FileProcessingUtil
 This utility handles the processing of actually renaming the files. This is an abstract class which the other two
