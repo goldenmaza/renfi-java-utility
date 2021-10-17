@@ -7,7 +7,7 @@ import java.util.Map;
 
 /**
  * @author (Mats Richard Hellstrand)
- * @version (26th of June, 2021)
+ * @version (17th of October, 2021)
  */
 public final class Constants {
     // Application states and actions...
@@ -74,6 +74,7 @@ public final class Constants {
     public static final String LABEL_FILE = "From File";
     public static final String LABEL_FILENAMES = "Save Filenames";
     public static final String LABEL_UNKNOWN_EXECUTION = "UNKNOWN";
+    public static final String LABEL_PROCESSED_DIRECTORY = "processed\\";
 
     // Message variables used for displaying states, or actions, in the application...
     public static final String MESSAGE_INVALID_USE = "Invalid use of application";
@@ -82,19 +83,21 @@ public final class Constants {
     public static final String MESSAGE_RESOURCES_UNAVAILABLE = "No resources found with the desired command and predefined extensions";
     public static final String MESSAGE_SOURCE_UNAVAILABLE = "No source file found under the current path";
     public static final String MESSAGE_SOURCE_CONTAINS = "Source file contains";
-    public static final String MESSAGE_PROCESSING_TASK = "The task you have selected is: %s, %s, %s";
+    public static final String MESSAGE_PROCESSING_TASK = "The task you have selected is: %s, %s, %s%n";
     public static final String MESSAGE_LOADING_DIRECTORY = "Loading directory";
     public static final String MESSAGE_LOADING_FILES = "Available files";
     public static final String MESSAGE_SORTING_FILES = "Sorting files";
     public static final String MESSAGE_CONVERSION_HISTORY = "Conversion history";
     public static final String MESSAGE_LOADED_PREPARED = "New names being loaded/prepared";
-    public static final String MESSAGE_RESOURCE_MISSING_FIELD = "The resource file was missing the datetime original field";
+    public static final String MESSAGE_RESOURCE_MISSING_FIELD = "The resource file was missing the datetime original field: ";
     public static final String MESSAGE_CONTINUE_RENAMING = "Do you want to continue with the renaming process? (y/n)";
     public static final String MESSAGE_RENAMING_PROCESS = "The process of renaming has begun";
-    public static final String MESSAGE_CORRUPT_SOURCE = "The file was corrupt: %s";
+    public static final String MESSAGE_CREATING_PROCESSED_DIRECTORY = "Creating the 'processed' directory";
+    public static final String MESSAGE_CORRUPT_SOURCE = "The file was corrupt: %s%n";
     public static final String MESSAGE_RENAMING_ALERT = "%s was renamed to %s%n";
     public static final String MESSAGE_RENAMING_FAILURE = "The renaming process failed with a specific file";
-    public static final String MESSAGE_FAILURE_SOURCES = "Specific file: %s, Failed because: %s";
+    public static final String MESSAGE_FAILURE_SOURCES = "Specific file: %s, Failed because: %s%n";
+    public static final String MESSAGE_FAILURE_NEWNAME = "newName.equals(NULL)";
     public static final String MESSAGE_UNDO_CONTINUE = "Do you want to undo the renaming process? (y/n)";
     public static final String MESSAGE_UNDO_RELOADING = "Reloading undo files";
     public static final String MESSAGE_UNDO_RESTORING = "The process of renaming back has begun";

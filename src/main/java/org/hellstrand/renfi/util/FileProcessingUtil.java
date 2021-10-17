@@ -10,7 +10,10 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Scanner;
 
+import static org.hellstrand.renfi.util.Constants.LABEL_PROCESSED_DIRECTORY;
+import static org.hellstrand.renfi.util.Constants.MESSAGE_CREATING_PROCESSED_DIRECTORY;
 import static org.hellstrand.renfi.util.Constants.MESSAGE_FAILED_UNDO_LOADING;
+import static org.hellstrand.renfi.util.Constants.MESSAGE_FAILURE_NEWNAME;
 import static org.hellstrand.renfi.util.Constants.MESSAGE_FAILURE_SOURCES;
 import static org.hellstrand.renfi.util.Constants.MESSAGE_RENAMING_ALERT;
 import static org.hellstrand.renfi.util.Constants.MESSAGE_RENAMING_FAILURE;
@@ -22,7 +25,7 @@ import static org.hellstrand.renfi.util.HelpGuideUtil.printMessage;
 
 /**
  * @author (Mats Richard Hellstrand)
- * @version (26th of June, 2021)
+ * @version (17th of October, 2021)
  */
 public abstract class FileProcessingUtil {
     public static void prepareHistoryByInput(File[] files, Map<String, String> history, String target, String extension) {
@@ -52,21 +55,35 @@ public abstract class FileProcessingUtil {
     }
 
     public static void renamingProcess(Map<String, String> history, File[] files, String directory) {
+        String fullDirectory = createProcessedDirectory(directory);
+
         for (File file : files) {
             String previousName = file.getName();
             String newName = history.get(previousName);
 
             if (Objects.nonNull(newName)) {
-                if (file.renameTo(new File(directory + newName))) {
+                if (file.renameTo(new File(fullDirectory + newName))) {
                     System.out.printf(MESSAGE_RENAMING_ALERT, previousName, newName);
                 } else {
                     printMessage(MESSAGE_RENAMING_FAILURE);
                     System.out.printf(MESSAGE_FAILURE_SOURCES, previousName, newName);
                 }
             } else {
-                System.out.printf(MESSAGE_FAILURE_SOURCES, previousName, null);
+                System.out.printf(MESSAGE_FAILURE_SOURCES, previousName, MESSAGE_FAILURE_NEWNAME);
             }
         }
+    }
+
+    private static String createProcessedDirectory(String directory) {
+        String fullDirectory = directory + LABEL_PROCESSED_DIRECTORY;
+
+        File processed = new File(fullDirectory);
+        if (!processed.exists()) {
+            printMessage(MESSAGE_CREATING_PROCESSED_DIRECTORY);
+            processed.mkdir();
+        }
+
+        return fullDirectory;
     }
 
     public static void renamingUndoProcess(Map<String, String> history, File path, String directory) {

@@ -14,7 +14,7 @@ import static org.hellstrand.renfi.util.Constants.VIDEO_PROCESSING;
 
 /**
  * @author (Mats Richard Hellstrand)
- * @version (26th of June, 2021)
+ * @version (17th of October, 2021)
  */
 public class HelpGuideUtil {
     public static void displayHelpGuide() {
@@ -34,7 +34,7 @@ public class HelpGuideUtil {
             .append("\n  (BRANCH)\t\tdesired flow of the application: ").append(BRANCH_FLAGS.toString())
             .append("\n  (COMMAND)\t\tfocus on either file type: ").append(COMMAND_FLAGS.toString())
             .append("\n  (INDEX)\t\tselect file extension based on index: <INTEGER> (view 'Extension legend' below)")
-            .append("\n  (PATH)\t\tdirectory path to where the files are located: c:/directory/")
+            .append("\n  (PATH)\t\tdirectory path to where the files are located, e.g. c:/directory/ OR c/directory/")
             .append("\n")
             .append("\n  Extension legend:")
             .append("\n  (IMAGE)\t\tsupported extensions and their indexes: ").append(printValues(imageExtensions))
@@ -49,7 +49,7 @@ public class HelpGuideUtil {
             .append("\n")
             .append("\n  ").append(helpFlags).append("\t\t\tdisplay this help guide");
 
-        System.out.println(sb.toString());
+        System.out.println(sb);
     }
 
     private static String printValues(List<String> strings) {
@@ -70,7 +70,7 @@ public class HelpGuideUtil {
 
         sb.append("===== ##### ### ##### ####### ##### ### ##### =====\n\t").append(message);
 
-        System.out.println(sb.toString());
+        System.out.println(sb);
     }
 
     private HelpGuideUtil() {}

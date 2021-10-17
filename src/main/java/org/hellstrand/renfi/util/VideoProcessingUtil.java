@@ -15,6 +15,7 @@ import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.Date;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Objects;
 
@@ -28,13 +29,14 @@ import static org.hellstrand.renfi.util.HelpGuideUtil.printMessage;
 
 /**
  * @author (Mats Richard Hellstrand)
- * @version (26th of June, 2021)
+ * @version (17th of October, 2021)
  */
 public final class VideoProcessingUtil extends FileProcessingUtil {
     public static void prepareHistoryByOrigin(File[] files, Map<String, String> history, String extension) {
         try {
             printMessage(MESSAGE_LOADED_PREPARED);
             DateTimeFormatter pattern = DateTimeFormatter.ofPattern(DATE_TIMESTAMP_FORMAT);
+            Map<String, String> mapOfFailures = new LinkedHashMap<>();
 
             Metadata metadata = null;
             for (File file : files) {
@@ -64,13 +66,17 @@ public final class VideoProcessingUtil extends FileProcessingUtil {
                                 history.put(oldName, newName);
                                 break;
                             } else {
-                                printMessage(MESSAGE_RESOURCE_MISSING_FIELD);
+                                mapOfFailures.put(file.getName(), MESSAGE_RESOURCE_MISSING_FIELD + file.getName());
                             }
                         } else {
                             System.out.printf(MESSAGE_CORRUPT_SOURCE, file.getName());
                         }
                     }
                 }
+            }
+
+            for (Map.Entry<String, String> entry : mapOfFailures.entrySet()) {
+                System.out.println(entry.getValue());
             }
         } catch (ImageProcessingException | IOException e) {
             System.err.println(e.getMessage());
