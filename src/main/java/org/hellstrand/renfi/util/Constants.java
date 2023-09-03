@@ -7,7 +7,7 @@ import java.util.Map;
 
 /**
  * @author (Mats Richard Hellstrand)
- * @version (17th of October, 2021)
+ * @version (3rd of September, 2023)
  */
 public final class Constants {
     // Application states and actions...
@@ -17,14 +17,20 @@ public final class Constants {
     public static final int COMMAND_INDEX = 1;
     public static final int EXTENSION_INDEX = 2;
     public static final int DIRECTORY_INDEX = 3;
+    public static final int DATE_TYPE_INDEX = 4;
 
     // Application flags for processing of source files...
+    public static final String JAVA_PROCESSING = "-j";
     public static final String FILE_PROCESSING = "-s";
     public static final String ORIGIN_PROCESSING = "-o";
     public static final String LIST_PROCESSING = "-l";
     public static final String IMAGE_PROCESSING = "-i";
     public static final String VIDEO_PROCESSING = "-v";
+    public static final String CREATION_TIME_FLAG = "-ct";
+    public static final String LAST_MODIFIED_TIME_FLAG = "-lmt";
+    public static final String LAST_ACCESS_TIME_FLAG = "-lat";
     public static final List<String> BRANCH_FLAGS = new ArrayList<>() {{
+        add(JAVA_PROCESSING);
         add(FILE_PROCESSING);
         add(ORIGIN_PROCESSING);
         add(LIST_PROCESSING);
@@ -33,9 +39,15 @@ public final class Constants {
         add(IMAGE_PROCESSING);
         add(VIDEO_PROCESSING);
     }};
+    public static final List<String> TYPE_FLAGS = new ArrayList<>() {{
+        add(CREATION_TIME_FLAG);
+        add(LAST_MODIFIED_TIME_FLAG);
+        add(LAST_ACCESS_TIME_FLAG);
+    }};
     public static final List<String> ALLOWED_FLAGS = new ArrayList<>() {{
         addAll(BRANCH_FLAGS);
         addAll(COMMAND_FLAGS);
+        addAll(TYPE_FLAGS);
     }};
     public static final String FULL_HELP_FLAG = "help";
     public static final String HYPHEN_HELP_FLAG = "-h";

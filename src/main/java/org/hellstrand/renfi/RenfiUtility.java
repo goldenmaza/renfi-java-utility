@@ -2,6 +2,7 @@ package org.hellstrand.renfi;
 
 import org.hellstrand.renfi.util.FileProcessingUtil;
 import org.hellstrand.renfi.util.ImageProcessingUtil;
+import org.hellstrand.renfi.util.NioProcessingUtil;
 import org.hellstrand.renfi.util.VideoProcessingUtil;
 
 import java.io.File;
@@ -14,12 +15,15 @@ import java.util.Scanner;
 import static org.hellstrand.renfi.util.Constants.ALLOWED_FLAGS;
 import static org.hellstrand.renfi.util.Constants.BRANCH_INDEX;
 import static org.hellstrand.renfi.util.Constants.COMMAND_INDEX;
+import static org.hellstrand.renfi.util.Constants.CREATION_TIME_FLAG;
+import static org.hellstrand.renfi.util.Constants.DATE_TYPE_INDEX;
 import static org.hellstrand.renfi.util.Constants.DIRECTORY_INDEX;
 import static org.hellstrand.renfi.util.Constants.EXTENSION_INDEX;
 import static org.hellstrand.renfi.util.Constants.FAILURE;
 import static org.hellstrand.renfi.util.Constants.FILE_PROCESSING;
 import static org.hellstrand.renfi.util.Constants.HELP_FLAGS;
 import static org.hellstrand.renfi.util.Constants.IMAGE_PROCESSING;
+import static org.hellstrand.renfi.util.Constants.JAVA_PROCESSING;
 import static org.hellstrand.renfi.util.Constants.LABEL_CREATED;
 import static org.hellstrand.renfi.util.Constants.LABEL_FILE;
 import static org.hellstrand.renfi.util.Constants.LABEL_FILENAMES;
@@ -54,7 +58,7 @@ import static org.hellstrand.renfi.util.HelpGuideUtil.printMessage;
 
 /**
  * @author (Mats Richard Hellstrand)
- * @version (26th of June, 2021)
+ * @version (3rd of September, 2023)
  */
 public final class RenfiUtility {
     public static void main(String[] args) {
@@ -99,6 +103,7 @@ public final class RenfiUtility {
                     branch.equals(FILE_PROCESSING) ? LABEL_FILENAMES :
                         LABEL_UNKNOWN_EXECUTION;
         String commandTask = command.equals(IMAGE_PROCESSING) ? LABEL_IMAGES : LABEL_VIDEOS;
+        String dateTypeFlag = args[DATE_TYPE_INDEX] != null ? args[DATE_TYPE_INDEX] : CREATION_TIME_FLAG;
         System.out.printf(MESSAGE_PROCESSING_TASK, branchTask, commandTask, extension.substring(1));
         System.out.println();
 
@@ -148,17 +153,21 @@ public final class RenfiUtility {
                     printWriter.close();
                 } else { // Otherwise, prepare and process conversion...
                     Map<String, String> history = new LinkedHashMap<>();
-                    if (branch.equals(ORIGIN_PROCESSING)) { // Prepare conversion history based on origin data...
-                        if (command.equals(VIDEO_PROCESSING)) {
-                            VideoProcessingUtil.prepareHistoryByOrigin(files, history, extension);
-                        } else if (command.equals(IMAGE_PROCESSING)) {
-                            ImageProcessingUtil.prepareHistoryByOrigin(files, history, extension);
-                        }
-                    } else if (branch.equals(LIST_PROCESSING)) { // Prepare conversion history based on file input...
-                        if (command.equals(VIDEO_PROCESSING)) {
-                            VideoProcessingUtil.prepareHistoryByInput(files, history, target, extension);
-                        } else if (command.equals(IMAGE_PROCESSING)) {
-                            ImageProcessingUtil.prepareHistoryByInput(files, history, target, extension);
+                    if (branch.equals(JAVA_PROCESSING)) { // Prepare conversion history based on Java +7...
+                        NioProcessingUtil.javaProcessing(files, history, extension, dateTypeFlag);
+                    } else { // Prepare conversion history based on Drew Noakes's extractor...
+                        if (branch.equals(ORIGIN_PROCESSING)) { // Prepare conversion history based on origin data...
+                            if (command.equals(VIDEO_PROCESSING)) {
+                                VideoProcessingUtil.prepareHistoryByOrigin(files, history, extension);
+                            } else if (command.equals(IMAGE_PROCESSING)) {
+                                ImageProcessingUtil.prepareHistoryByOrigin(files, history, extension);
+                            }
+                        } else if (branch.equals(LIST_PROCESSING)) { // Prepare conversion history based on file input...
+                            if (command.equals(VIDEO_PROCESSING)) {
+                                VideoProcessingUtil.prepareHistoryByInput(files, history, target, extension);
+                            } else if (command.equals(IMAGE_PROCESSING)) {
+                                ImageProcessingUtil.prepareHistoryByInput(files, history, target, extension);
+                            }
                         }
                     }
 
