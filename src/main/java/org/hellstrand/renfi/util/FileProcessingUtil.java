@@ -11,6 +11,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -369,6 +370,95 @@ public abstract class FileProcessingUtil {
             System.out.println("Elapsed time: " + convertingProcessHours);
             printWriter.println("Processing Batch results...");
             printWriter.println("Elapsed time: " + convertingProcessHours);
+            printWriter.close();
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static void detectBlackBorders(File[] files, String directory, String logging) {
+        Set<String> processHistory = Collections.synchronizedSet(new HashSet<>());
+        Map<String, List<String>> borderMapping = Collections.synchronizedMap(new HashMap<>());
+
+        try {
+            PrintWriter printWriter = new PrintWriter(logging);
+
+            printMessage("Detection starts...");
+            long detectionProcessStart = System.currentTimeMillis();
+
+            Arrays.stream(files).parallel().forEach(originalFile -> {
+                long threadProcessStart = System.currentTimeMillis();
+                String originalName = originalFile.getName();
+
+                try {
+                    BufferedImage originalImage = ImageIO.read(originalFile);
+                    int height = originalImage.getHeight();
+                    int width = originalImage.getWidth();
+
+                    imageCheck:
+                    for (int y = 0; y < height; y++) {
+                        String key = String.valueOf(y);
+                        for (int x = 0; x < width; x++) {
+                            if ((originalImage.getRGB(x, y) & 0x00FFFFFF) != 0) {
+                                if (x == width - 1) {
+                                    List<String> values = borderMapping.get(key);
+                                    if (values == null) {
+                                        values = new ArrayList<>();
+                                    }
+                                    values.add(originalName);
+                                    borderMapping.put(key, values);
+
+                                    String oldKey = String.valueOf(y - 1);
+                                    List<String> mappedValues = borderMapping.get(oldKey);
+                                    if (Objects.nonNull(mappedValues) && mappedValues.contains(originalName)) {
+                                        borderMapping.get(oldKey).remove(originalName);
+                                    }
+                                }
+                            } else {
+                                break imageCheck;
+                            }
+                        }
+                    }
+                } catch (IOException e) {
+                    System.err.println("Error: Can't read image");
+                }
+                processHistory.add(originalName);
+                long threadProcessEnd = System.currentTimeMillis();
+
+                float processingStatus = ((Float.intBitsToFloat(processHistory.size()) / Float.intBitsToFloat(files.length)) * 100.0f);
+                printMessage("Processing Thread results...");
+                System.out.println("=== === === === ===");
+                System.out.println("Processing status (%): " + String.format("%.02f", processingStatus));
+                System.out.println("=== === === === ===");
+                System.out.println("Thread name: " + Thread.currentThread().getName());
+                System.out.println("Thread runtime: " + TimeUnit.MILLISECONDS.toSeconds(threadProcessEnd - threadProcessStart));
+                System.out.println("Threads available: " + Thread.activeCount());
+                System.out.println("=== === === === ===");
+            });
+
+            long detectionProcessEnd = System.currentTimeMillis();
+            long detectionProcessHours = TimeUnit.MILLISECONDS.toHours(detectionProcessEnd - detectionProcessStart);
+            printMessage("Processing Batch results...");
+            System.out.println("Elapsed time: " + detectionProcessHours);
+            printWriter.println("Processing Batch results...");
+            printWriter.println("Elapsed time: " + detectionProcessHours);
+
+            printWriter.println("Moving resources begins...");
+            for (Map.Entry<String, List<String>> entry : borderMapping.entrySet()) {
+                String path = directory + entry.getKey() + "/";
+                new File(path).mkdirs();
+                for (String originalName : entry.getValue()) {
+                    for (File originalFile : files) {
+                        if (originalName.equals(originalFile.getName())) {
+                            if (originalFile.renameTo(new File(path + originalName))) {
+                                System.out.println("Moved file: " + originalName);
+                                printWriter.println("Moved file: " + originalName);
+                            }
+                        }
+                    }
+                }
+            }
+
             printWriter.close();
         } catch (FileNotFoundException e) {
             e.printStackTrace();
