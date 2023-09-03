@@ -3,7 +3,6 @@ package org.hellstrand.renfi.util;
 import static org.hellstrand.renfi.util.Constants.DATE_TIMESTAMP_FORMAT;
 import static org.hellstrand.renfi.util.Constants.LAST_ACCESS_TIME_FLAG;
 import static org.hellstrand.renfi.util.Constants.LAST_MODIFIED_TIME_FLAG;
-import static org.hellstrand.renfi.util.Constants.MESSAGE_CORRUPT_SOURCE;
 import static org.hellstrand.renfi.util.Constants.MESSAGE_LOADED_PREPARED;
 import static org.hellstrand.renfi.util.Constants.MESSAGE_RESOURCE_MISSING_FIELD;
 import static org.hellstrand.renfi.util.HelpGuideUtil.printMessage;
@@ -19,7 +18,6 @@ import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.LinkedHashMap;
 import java.util.Map;
-import java.util.Objects;
 
 /**
  * @author (Mats Richard Hellstrand)
@@ -52,15 +50,13 @@ public class NioProcessingUtil {
 
                     if (instant != null) {
                         LocalDateTime localDateTime = LocalDateTime.ofInstant(instant, ZoneId.systemDefault());
-                        if (Objects.nonNull(localDateTime)) {
-                            String oldName = file.getFileName().toString();
-                            String newName = localDateTime.format(pattern) + extension;
-                            history.put(oldName, newName);
-                        } else {
-                            mapOfFailures.put(file.getFileName().toString(), MESSAGE_RESOURCE_MISSING_FIELD + file.getFileName().toString());
-                        }
+                        String oldName = file.getFileName().toString();
+                        String newName = localDateTime.format(pattern) + extension;
+                        history.put(oldName, newName);
                     } else {
-                        System.out.printf(MESSAGE_CORRUPT_SOURCE, file.getFileName().toString());
+                        mapOfFailures.put(
+                            file.getFileName().toString(),
+                            MESSAGE_RESOURCE_MISSING_FIELD.concat(file.getFileName().toString()));
                     }
                 }
             }

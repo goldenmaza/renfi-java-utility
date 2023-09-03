@@ -146,7 +146,6 @@ public final class Constants {
     public static final String MESSAGE_CONTINUE_RENAMING = "Do you want to continue with the renaming process? (y/n)";
     public static final String MESSAGE_RENAMING_PROCESS = "The process of renaming has begun";
     public static final String MESSAGE_CREATING_PROCESSED_DIRECTORY = "Creating the 'processed' directory";
-    public static final String MESSAGE_CORRUPT_SOURCE = "The file was corrupt: %s%n";
     public static final String MESSAGE_RENAMING_ALERT = "%s was renamed to %s%n";
     public static final String MESSAGE_RENAMING_FAILURE = "The renaming process failed with a specific file";
     public static final String MESSAGE_FAILURE_SOURCES = "Specific file: %s, Failed because: %s%n";

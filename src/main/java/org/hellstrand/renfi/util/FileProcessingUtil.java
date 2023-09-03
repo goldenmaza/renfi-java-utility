@@ -72,7 +72,7 @@ public abstract class FileProcessingUtil {
             String newName = history.get(previousName);
 
             if (Objects.nonNull(newName)) {
-                if (file.renameTo(new File(fullDirectory + newName))) {
+                if (file.renameTo(new File(fullDirectory.concat(newName)))) {
                     System.out.printf(MESSAGE_RENAMING_ALERT, previousName, newName);
                 } else {
                     printMessage(MESSAGE_RENAMING_FAILURE);

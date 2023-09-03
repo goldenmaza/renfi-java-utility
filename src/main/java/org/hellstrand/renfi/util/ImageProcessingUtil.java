@@ -45,7 +45,7 @@ public final class ImageProcessingUtil extends FileProcessingUtil {
                         String newName = simpleDateFormat.format(originalDate).concat(extension);
                         history.put(oldName, newName);
                     } else {
-                        mapOfFailures.put(file.getName(), MESSAGE_RESOURCE_MISSING_FIELD + file.getName());
+                        mapOfFailures.put(file.getName(), MESSAGE_RESOURCE_MISSING_FIELD.concat(file.getName()));
                     }
                 }
             }
