@@ -324,4 +324,54 @@ public abstract class FileProcessingUtil {
             e.printStackTrace();
         }
     }
+
+    public static void convertResources(File[] files, String directory, String target, String fromExtension, String toExtension) {
+        Set<String> processHistory = Collections.synchronizedSet(new HashSet<>());
+
+        try {
+            PrintWriter printWriter = new PrintWriter(new FileOutputStream(target), true);
+            String path = directory + "done/";
+            new File(path).mkdirs();
+
+            printMessage("Converting starts...");
+            long convertingProcessStart = System.currentTimeMillis();
+
+            Arrays.stream(files).parallel().forEach(originalFile -> {
+                long threadProcessStart = System.currentTimeMillis();
+                String originalName = originalFile.getName();
+
+                try {
+                    BufferedImage bufferedImage = ImageIO.read(originalFile);
+                    File toConvertedFile = new File(path + originalName.replace(fromExtension, toExtension));
+                    ImageIO.write(bufferedImage, toExtension.substring(1), toConvertedFile);
+                } catch (IOException e) {
+                    System.err.println(e.getMessage());
+                }
+                processHistory.add(originalName);
+                long threadProcessEnd = System.currentTimeMillis();
+
+                float processingStatus = ((Float.intBitsToFloat(processHistory.size()) / Float.intBitsToFloat(files.length)) * 100.0f);
+                printMessage("Processing Thread results...");
+                System.out.println("=== === === === ===");
+                System.out.println("Processing status (%): " + String.format("%.02f", processingStatus));
+                System.out.println("=== === === === ===");
+                System.out.println("Thread name: " + Thread.currentThread().getName());
+                System.out.println("Thread runtime: " + TimeUnit.MILLISECONDS.toSeconds(threadProcessEnd - threadProcessStart));
+                System.out.println("Threads available: " + Thread.activeCount());
+                System.out.println("=== === === === ===");
+                System.out.println("Current: " + originalName);
+                System.out.println("Processed: " + processHistory.size());
+            });
+
+            long convertingProcessEnd = System.currentTimeMillis();
+            long convertingProcessHours = TimeUnit.MILLISECONDS.toHours(convertingProcessEnd - convertingProcessStart);
+            printMessage("Processing Batch results...");
+            System.out.println("Elapsed time: " + convertingProcessHours);
+            printWriter.println("Processing Batch results...");
+            printWriter.println("Elapsed time: " + convertingProcessHours);
+            printWriter.close();
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+    }
 }

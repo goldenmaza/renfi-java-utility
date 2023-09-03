@@ -27,6 +27,7 @@ public final class Constants {
     public static final String FILE_PROCESSING = "-f";
     public static final String COMPARE_PROCESSING = "-vs";
     public static final String CROP_PROCESSING = "-crop";
+    public static final String CONVERT_PROCESSING = "-con";
     public static final String DATA_PROCESSING = "-d";
     public static final String JAVA_PROCESSING = "-j";
     public static final String SOURCE_PROCESSING = "-s";
@@ -44,6 +45,7 @@ public final class Constants {
     public static final List<String> BRANCH_FLAGS = new ArrayList<>() {{
         add(COMPARE_PROCESSING);
         add(CROP_PROCESSING);
+        add(CONVERT_PROCESSING);
         add(JAVA_PROCESSING);
         add(SOURCE_PROCESSING);
         add(ORIGIN_PROCESSING);
@@ -99,6 +101,7 @@ public final class Constants {
     public static final String LABEL_FILE_PROCESSING = "File handling";
     public static final String LABEL_COMPARE = "Compare resources";
     public static final String LABEL_CROP = "Crop resources";
+    public static final String LABEL_CONVERT = "Convert resources";
     public static final String LABEL_DATA_PROCESSING = "Data handling";
     public static final String LABEL_VIDEOS = "Videos";
     public static final String LABEL_IMAGES = "Images";
