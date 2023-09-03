@@ -22,6 +22,7 @@ public final class Constants {
 
     // Application flags for handling files...
     public static final String FILE_PROCESSING = "-f";
+    public static final String COMPARE_PROCESSING = "-vs";
     public static final String DATA_PROCESSING = "-d";
     public static final String JAVA_PROCESSING = "-j";
     public static final String SOURCE_PROCESSING = "-s";
@@ -37,6 +38,7 @@ public final class Constants {
         add(DATA_PROCESSING);
     }};
     public static final List<String> BRANCH_FLAGS = new ArrayList<>() {{
+        add(COMPARE_PROCESSING);
         add(JAVA_PROCESSING);
         add(SOURCE_PROCESSING);
         add(ORIGIN_PROCESSING);
@@ -67,6 +69,7 @@ public final class Constants {
     }};
 
     // Filenames and supported extensions for manipulation...
+    public static final String OUTPUT_SOURCE = "output.txt";
     public static final String NAMES_SOURCE = "names.txt";
     public static final String EXTENSION_AVI = ".avi";
     public static final String EXTENSION_MP4 = ".mp4";
@@ -89,6 +92,7 @@ public final class Constants {
 
     // Labels used by the application...
     public static final String LABEL_FILE_PROCESSING = "File handling";
+    public static final String LABEL_COMPARE = "Compare resources";
     public static final String LABEL_DATA_PROCESSING = "Data handling";
     public static final String LABEL_VIDEOS = "Videos";
     public static final String LABEL_IMAGES = "Images";

@@ -1,14 +1,23 @@
 package org.hellstrand.renfi.util;
 
+import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Scanner;
+import java.util.Set;
+import java.util.concurrent.TimeUnit;
 
 import static org.hellstrand.renfi.util.Constants.LABEL_PROCESSED_DIRECTORY;
 import static org.hellstrand.renfi.util.Constants.MESSAGE_CREATING_PROCESSED_DIRECTORY;
@@ -112,6 +121,155 @@ public abstract class FileProcessingUtil {
             }
         } else {
             printMessage(MESSAGE_FAILED_UNDO_LOADING);
+        }
+    }
+
+    public static void compareResources(File[] files, String directory, String logging) {
+        Set<String> processHistory = Collections.synchronizedSet(new HashSet<>());
+        Set<String> duplicates = Collections.synchronizedSet(new HashSet<>());
+        Set<String> matching = Collections.synchronizedSet(new HashSet<>());
+
+        try {
+            PrintWriter printWriter = new PrintWriter(new FileOutputStream(logging), true);
+
+            printMessage("Comparison starts...");
+            long comparisonProcessStart = System.currentTimeMillis();
+
+            Arrays.stream(files).parallel().forEach(originalFile -> {
+                long threadProcessStart = System.currentTimeMillis();
+                String originalName = originalFile.getName();
+                int index = 0;
+
+                for (File comparedFile : files) {
+                    String comparedName = comparedFile.getName();
+                    index++;
+
+                    if (!duplicates.contains(originalName) || !matching.contains(originalName)) {
+                        BufferedImage originalImage = null, comparedImage = null;
+                        try {
+                            originalImage = ImageIO.read(originalFile);
+                            comparedImage = ImageIO.read(comparedFile);
+                        } catch (IOException e) {
+                            System.err.println("Error: Can't read images");
+                        }
+
+                        int width1 = originalImage.getWidth();
+                        int width2 = comparedImage.getWidth();
+                        int height1 = originalImage.getHeight();
+                        int height2 = comparedImage.getHeight();
+
+                        if (width1 == width2 && height1 == height2) {
+                            long difference = 0;
+
+                            for (int y = 0; y < height1; y++) {
+                                for (int x = 0; x < width1; x++) {
+                                    int rgbA = originalImage.getRGB(x, y);
+                                    int redA = (rgbA >> 16) & 0xff;
+                                    int greenA = (rgbA >> 8) & 0xff;
+                                    int blueA = (rgbA) & 0xff;
+                                    int rgbB = comparedImage.getRGB(x, y);
+                                    int redB = (rgbB >> 16) & 0xff;
+                                    int greenB = (rgbB >> 8) & 0xff;
+                                    int blueB = (rgbB) & 0xff;
+
+                                    difference += Math.abs(redA - redB);
+                                    difference += Math.abs(greenA - greenB);
+                                    difference += Math.abs(blueA - blueB);
+                                }
+                            }
+
+                            double total_pixels = width1 * height1 * 3;
+                            double avg_different_pixels = difference / total_pixels;
+                            double percentage = (avg_different_pixels / 255) * 100;
+
+                            if (!duplicates.contains(originalName) || !matching.contains(originalName)) {
+                                if (!originalName.equals(comparedName)) {
+                                    if (Double.compare(percentage, 0.0) == 0) {
+                                        printMessage("Comparison results (DUPLICATES)...");
+                                        System.out.println("OriginalFile: " + originalName);
+                                        System.out.println("ComparedFile: " + comparedName);
+                                        System.out.println("Difference Percentage: " + percentage);
+                                        printWriter.println("Comparison results (DUPLICATES)...");
+                                        printWriter.println("OriginalFile: " + originalName);
+                                        printWriter.println("ComparedFile: " + comparedName);
+                                        printWriter.println("Difference Percentage: " + percentage);
+                                        duplicates.add(originalName);
+                                        duplicates.add(comparedName);
+                                    } else if (Double.compare(percentage, 10.0) < 0) {
+                                        printMessage("Comparison results (MATCHING)...");
+                                        System.out.println("OriginalFile: " + originalName);
+                                        System.out.println("ComparedFile: " + comparedName);
+                                        System.out.println("Difference Percentage: " + percentage);
+                                        printWriter.println("Comparison results (MATCHING)...");
+                                        printWriter.println("OriginalFile: " + originalName);
+                                        printWriter.println("ComparedFile: " + comparedName);
+                                        printWriter.println("Difference Percentage: " + percentage);
+                                        matching.add(originalName);
+                                        matching.add(comparedName);
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+                processHistory.add(originalName);
+                long threadProcessEnd = System.currentTimeMillis();
+
+                float processingStatus = ((Float.intBitsToFloat(processHistory.size()) / Float.intBitsToFloat(files.length)) * 100.0f);
+                printMessage("Processing Thread results...");
+                System.out.println("=== === === === ===");
+                System.out.println("Processing status (%): " + String.format("%.02f", processingStatus));
+                System.out.println("=== === === === ===");
+                System.out.println("Thread name: " + Thread.currentThread().getName());
+                System.out.println("Thread runtime: " + TimeUnit.MILLISECONDS.toSeconds(threadProcessEnd - threadProcessStart));
+                System.out.println("Threads available: " + Thread.activeCount());
+                System.out.println("=== === === === ===");
+                System.out.println("Parent: " + originalName);
+                System.out.println("Child: " + index + "/" + files.length);
+                System.out.println("History: " + processHistory.size());
+                System.out.println("Duplicates: " + duplicates.size());
+                System.out.println("Matching: " + matching.size());
+            });
+
+            long comparisonProcessEnd = System.currentTimeMillis();
+            long comparisonProcessHours = TimeUnit.MILLISECONDS.toHours(comparisonProcessEnd - comparisonProcessStart);
+            printMessage("Processing Batch results...");
+            System.out.println("Elapsed time: " + comparisonProcessHours);
+            System.out.println("Duplicates: " + duplicates.size());
+            System.out.println("Matching: " + matching.size());
+            printWriter.println("Processing Batch results...");
+            printWriter.println("Elapsed time: " + comparisonProcessHours);
+            printWriter.println("Duplicates: " + duplicates.size());
+            printWriter.println("Matching: " + matching.size());
+
+            if (!duplicates.isEmpty()) {
+                String path = directory + "duplicates/";
+                new File(path).mkdirs();
+                for (String duplicate : duplicates) {
+                    for (File file : files) {
+                        if (file.getName().equals(duplicate) && file.renameTo(new File(path + duplicate))) {
+                            System.out.println("Moved file (duplicates): " + duplicate);
+                            printWriter.println("Moved file (duplicates): " + duplicate);
+                        }
+                    }
+                }
+            }
+            if (!matching.isEmpty()) {
+                String path = directory + "matching/";
+                new File(path).mkdirs();
+                for (String match : matching) {
+                    for (File file : files) {
+                        if (file.getName().equals(match) && file.renameTo(new File(path + match))) {
+                            System.out.println("Moved file (matching): " + match);
+                            printWriter.println("Moved file (matching): " + match);
+                        }
+                    }
+                }
+            }
+
+            printWriter.close();
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
         }
     }
 }

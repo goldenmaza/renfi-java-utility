@@ -15,6 +15,7 @@ import java.util.Scanner;
 import static org.hellstrand.renfi.util.Constants.ALLOWED_FLAGS;
 import static org.hellstrand.renfi.util.Constants.BRANCH_INDEX;
 import static org.hellstrand.renfi.util.Constants.COMMAND_INDEX;
+import static org.hellstrand.renfi.util.Constants.COMPARE_PROCESSING;
 import static org.hellstrand.renfi.util.Constants.CREATION_TIME_FLAG;
 import static org.hellstrand.renfi.util.Constants.DATA_PROCESSING;
 import static org.hellstrand.renfi.util.Constants.DATE_TYPE_INDEX;
@@ -22,6 +23,8 @@ import static org.hellstrand.renfi.util.Constants.DIRECTORY_INDEX;
 import static org.hellstrand.renfi.util.Constants.EXTENSION_INDEX;
 import static org.hellstrand.renfi.util.Constants.FAILURE;
 import static org.hellstrand.renfi.util.Constants.FILE_PROCESSING;
+import static org.hellstrand.renfi.util.Constants.LABEL_COMPARE;
+import static org.hellstrand.renfi.util.Constants.OUTPUT_SOURCE;
 import static org.hellstrand.renfi.util.Constants.SOURCE_PROCESSING;
 import static org.hellstrand.renfi.util.Constants.FLOW_INDEX;
 import static org.hellstrand.renfi.util.Constants.HELP_FLAGS;
@@ -108,10 +111,11 @@ public final class RenfiUtility {
             flow.equals(DATA_PROCESSING) ? LABEL_DATA_PROCESSING :
                 LABEL_UNKNOWN_EXECUTION;
         String branchTask =
-            branch.equals(ORIGIN_PROCESSING) ? LABEL_CREATED :
-                branch.equals(LIST_PROCESSING) ? LABEL_FILE :
-                    branch.equals(SOURCE_PROCESSING) ? LABEL_FILENAMES :
-                        LABEL_UNKNOWN_EXECUTION;
+            branch.equals(COMPARE_PROCESSING) ? LABEL_COMPARE :
+                branch.equals(ORIGIN_PROCESSING) ? LABEL_CREATED :
+                    branch.equals(LIST_PROCESSING) ? LABEL_FILE :
+                        branch.equals(SOURCE_PROCESSING) ? LABEL_FILENAMES :
+                            LABEL_UNKNOWN_EXECUTION;
         String commandTask = command.equals(IMAGE_PROCESSING) ? LABEL_IMAGES : LABEL_VIDEOS;
         String dateTypeFlag = args[DATE_TYPE_INDEX] != null ? args[DATE_TYPE_INDEX] : CREATION_TIME_FLAG;
         System.out.printf(MESSAGE_PROCESSING_TASK, flowType, branchTask, commandTask, extension.substring(1));
@@ -145,10 +149,11 @@ public final class RenfiUtility {
                     System.exit(FAILURE);
                 }
 
-                String target = directory + NAMES_SOURCE;
                 if (flow.equals(FILE_PROCESSING)) {
-                    if (false) {
-                        // TODO: Implement COMPARE
+                    String logging = directory.concat(OUTPUT_SOURCE);
+
+                    if (branch.equals(COMPARE_PROCESSING)) {
+                        FileProcessingUtil.compareResources(files, directory, logging);
                     } else if (false) {
                         // TODO: Implement CROP
                     } else if (false) {
@@ -159,6 +164,8 @@ public final class RenfiUtility {
                         printMessage(MESSAGE_EXECUTION_ABORT);
                     }
                 } else if (flow.equals(DATA_PROCESSING)) {
+                    String target = directory.concat(NAMES_SOURCE);
+
                     if (branch.equals(SOURCE_PROCESSING)) { // Prepare a source file based on directory files...
                         // Verify that the source file exist...
                         File source = new File(target);
