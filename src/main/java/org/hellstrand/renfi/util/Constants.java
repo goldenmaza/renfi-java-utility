@@ -15,13 +15,13 @@ public final class Constants {
     public static final int FAILURE = 1;
     public static final int FLOW_INDEX = 0;
     public static final int BRANCH_INDEX = 1;
-    public static final int RESOURCE_TYPE_INDEX = 2;
-    public static final int DIRECTORY_INDEX = 4;
-    public static final int DATE_TYPE_INDEX = 5;
-    public static final int UPPER_LEFT_X_INDEX = 7;
-    public static final int UPPER_LEFT_Y_INDEX = 8;
-    public static final int EXTENSION_FROM_INDEX = 3;
-    public static final int EXTENSION_TO_INDEX = 4;
+    public static final int DIRECTORY_INDEX = 2;
+    public static final int RESOURCE_TYPE_INDEX = 3;
+    public static final int EXTENSION_FROM_INDEX = 4;
+    public static final int EXTENSION_TO_INDEX = 5;
+    public static final int UPPER_LEFT_X_INDEX = 6;
+    public static final int UPPER_LEFT_Y_INDEX = 7;
+    public static final int DATE_TYPE_INDEX = 8;
 
     // Application flags for handling files...
     public static final String FILE_PROCESSING = "-f";
@@ -80,16 +80,30 @@ public final class Constants {
     // Filenames and supported extensions for manipulation...
     public static final String OUTPUT_SOURCE = "output.txt";
     public static final String NAMES_SOURCE = "names.txt";
+    public static final String EXTENSION_JPG = ".jpg";
+    public static final String EXTENSION_JPEG = ".jpeg";
+    public static final String EXTENSION_PNG = ".png";
+    public static final String EXTENSION_BMP = ".bmp";
     public static final String EXTENSION_AVI = ".avi";
     public static final String EXTENSION_MP4 = ".mp4";
-    public static final String EXTENSION_JPG = ".jpg";
+    public static final String EXTENSION_MOV = ".mov";
+    public static final String EXTENSION_MPG = ".mpg";//java+7 only
+    public static final String EXTENSION_WMV = ".wmv";//java+7 only
+    public static final String EXTENSION_MKV = ".mkv";//java+7 only
     public static final Map<String, List<String>> PROCESSING_SUPPORT = new HashMap<>() {{
         put(IMAGE_PROCESSING, new ArrayList<>() {{
             add(EXTENSION_JPG);
+            add(EXTENSION_JPEG);
+            add(EXTENSION_PNG);
+            add(EXTENSION_BMP);
         }});
         put(VIDEO_PROCESSING, new ArrayList<>() {{
             add(EXTENSION_AVI);
             add(EXTENSION_MP4);
+            add(EXTENSION_MOV);
+            add(EXTENSION_MPG);
+            add(EXTENSION_WMV);
+            add(EXTENSION_MKV);
         }});
     }};
 
@@ -112,12 +126,12 @@ public final class Constants {
     public static final String LABEL_FILE = "From File";
     public static final String LABEL_FILENAMES = "Save Filenames";
     public static final String LABEL_UNKNOWN_EXECUTION = "UNKNOWN";
-    public static final String LABEL_PROCESSED_DIRECTORY = "processed\\";
+    public static final String LABEL_PROCESSED_DIRECTORY = "done\\";
 
     // Message variables used for displaying states, or actions, in the application...
     public static final String MESSAGE_INVALID_USE = "Invalid use of application";
     public static final String MESSAGE_DESIRED_EXECUTION = "Are you happy with the current task? (y/n)";
-    public static final String MESSAGE_DIRECTORY_UNAVAILABLE = "No directory found with the stated path";
+    public static final String MESSAGE_DIRECTORY_UNAVAILABLE = "No directory found with the stated path: %s%n";
     public static final String MESSAGE_RESOURCES_UNAVAILABLE = "No resources found with the desired command and predefined extensions";
     public static final String MESSAGE_SOURCE_UNAVAILABLE = "No source file found under the current path";
     public static final String MESSAGE_SOURCE_CONTAINS = "Source file contains";
@@ -126,6 +140,7 @@ public final class Constants {
     public static final String MESSAGE_LOADING_FILES = "Available files";
     public static final String MESSAGE_SORTING_FILES = "Sorting files";
     public static final String MESSAGE_CONVERSION_HISTORY = "Conversion history";
+    public static final String MESSAGE_CONVERSION_HISTORY_EMPTY = "Conversion history is empty, aborting the remaining process...";
     public static final String MESSAGE_LOADED_PREPARED = "New names being loaded/prepared";
     public static final String MESSAGE_RESOURCE_MISSING_FIELD = "The resource file was missing the datetime original field: ";
     public static final String MESSAGE_CONTINUE_RENAMING = "Do you want to continue with the renaming process? (y/n)";
