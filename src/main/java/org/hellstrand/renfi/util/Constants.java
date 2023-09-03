@@ -13,15 +13,18 @@ public final class Constants {
     // Application states and actions...
     public static final int SUCCESSFUL = 0;
     public static final int FAILURE = 1;
-    public static final int BRANCH_INDEX = 0;
-    public static final int COMMAND_INDEX = 1;
-    public static final int EXTENSION_INDEX = 2;
-    public static final int DIRECTORY_INDEX = 3;
-    public static final int DATE_TYPE_INDEX = 4;
+    public static final int FLOW_INDEX = 0;
+    public static final int BRANCH_INDEX = 1;
+    public static final int COMMAND_INDEX = 2;
+    public static final int EXTENSION_INDEX = 3;
+    public static final int DIRECTORY_INDEX = 4;
+    public static final int DATE_TYPE_INDEX = 5;
 
-    // Application flags for processing of source files...
+    // Application flags for handling files...
+    public static final String FILE_PROCESSING = "-f";
+    public static final String DATA_PROCESSING = "-d";
     public static final String JAVA_PROCESSING = "-j";
-    public static final String FILE_PROCESSING = "-s";
+    public static final String SOURCE_PROCESSING = "-s";
     public static final String ORIGIN_PROCESSING = "-o";
     public static final String LIST_PROCESSING = "-l";
     public static final String IMAGE_PROCESSING = "-i";
@@ -29,9 +32,13 @@ public final class Constants {
     public static final String CREATION_TIME_FLAG = "-ct";
     public static final String LAST_MODIFIED_TIME_FLAG = "-lmt";
     public static final String LAST_ACCESS_TIME_FLAG = "-lat";
+    public static final List<String> FLOW_FLAGS = new ArrayList<>() {{
+        add(FILE_PROCESSING);
+        add(DATA_PROCESSING);
+    }};
     public static final List<String> BRANCH_FLAGS = new ArrayList<>() {{
         add(JAVA_PROCESSING);
-        add(FILE_PROCESSING);
+        add(SOURCE_PROCESSING);
         add(ORIGIN_PROCESSING);
         add(LIST_PROCESSING);
     }};
@@ -45,6 +52,7 @@ public final class Constants {
         add(LAST_ACCESS_TIME_FLAG);
     }};
     public static final List<String> ALLOWED_FLAGS = new ArrayList<>() {{
+        addAll(FLOW_FLAGS);
         addAll(BRANCH_FLAGS);
         addAll(COMMAND_FLAGS);
         addAll(TYPE_FLAGS);
@@ -80,6 +88,8 @@ public final class Constants {
     public static final String DATE_LANGUAGE = "se";
 
     // Labels used by the application...
+    public static final String LABEL_FILE_PROCESSING = "File handling";
+    public static final String LABEL_DATA_PROCESSING = "Data handling";
     public static final String LABEL_VIDEOS = "Videos";
     public static final String LABEL_IMAGES = "Images";
     public static final String LABEL_CREATED = "Created Date";
@@ -95,7 +105,7 @@ public final class Constants {
     public static final String MESSAGE_RESOURCES_UNAVAILABLE = "No resources found with the desired command and predefined extensions";
     public static final String MESSAGE_SOURCE_UNAVAILABLE = "No source file found under the current path";
     public static final String MESSAGE_SOURCE_CONTAINS = "Source file contains";
-    public static final String MESSAGE_PROCESSING_TASK = "The task you have selected is: %s, %s, %s%n";
+    public static final String MESSAGE_PROCESSING_TASK = "The task you have selected is: %s, %s, %s, %s%n";
     public static final String MESSAGE_LOADING_DIRECTORY = "Loading directory";
     public static final String MESSAGE_LOADING_FILES = "Available files";
     public static final String MESSAGE_SORTING_FILES = "Sorting files";

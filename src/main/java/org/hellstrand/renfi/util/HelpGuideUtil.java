@@ -4,7 +4,7 @@ import java.util.List;
 
 import static org.hellstrand.renfi.util.Constants.BRANCH_FLAGS;
 import static org.hellstrand.renfi.util.Constants.COMMAND_FLAGS;
-import static org.hellstrand.renfi.util.Constants.FILE_PROCESSING;
+import static org.hellstrand.renfi.util.Constants.SOURCE_PROCESSING;
 import static org.hellstrand.renfi.util.Constants.HELP_FLAGS;
 import static org.hellstrand.renfi.util.Constants.IMAGE_PROCESSING;
 import static org.hellstrand.renfi.util.Constants.LIST_PROCESSING;
@@ -14,7 +14,7 @@ import static org.hellstrand.renfi.util.Constants.VIDEO_PROCESSING;
 
 /**
  * @author (Mats Richard Hellstrand)
- * @version (17th of October, 2021)
+ * @version (3rd of September, 2023)
  */
 public class HelpGuideUtil {
     public static void displayHelpGuide() {
@@ -41,7 +41,7 @@ public class HelpGuideUtil {
             .append("\n  (VIDEO)\t\tsupported extensions and their indexes: ").append(printValues(videoExtensions))
             .append("\n")
             .append("\n  Flag legend:")
-            .append("\n  (" + FILE_PROCESSING + ")\t\t\tprepare a SOURCE FILE based on directory files")
+            .append("\n  (" + SOURCE_PROCESSING + ")\t\t\tprepare a SOURCE FILE based on directory files")
             .append("\n  (" + ORIGIN_PROCESSING + ")\t\t\tprepare history conversion based on ORIGIN DATA")
             .append("\n  (" + LIST_PROCESSING + ")\t\t\tprepare history conversion based on SOURCE FILE")
             .append("\n  (" + IMAGE_PROCESSING + ")\t\t\tprocess IMAGE files based on extension stated")
