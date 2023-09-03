@@ -14,16 +14,19 @@ import java.util.Scanner;
 
 import static org.hellstrand.renfi.util.Constants.ALLOWED_FLAGS;
 import static org.hellstrand.renfi.util.Constants.BRANCH_INDEX;
-import static org.hellstrand.renfi.util.Constants.COMMAND_INDEX;
+import static org.hellstrand.renfi.util.Constants.RESOURCE_TYPE_INDEX;
 import static org.hellstrand.renfi.util.Constants.COMPARE_PROCESSING;
 import static org.hellstrand.renfi.util.Constants.CREATION_TIME_FLAG;
+import static org.hellstrand.renfi.util.Constants.CROP_PROCESSING;
 import static org.hellstrand.renfi.util.Constants.DATA_PROCESSING;
 import static org.hellstrand.renfi.util.Constants.DATE_TYPE_INDEX;
 import static org.hellstrand.renfi.util.Constants.DIRECTORY_INDEX;
-import static org.hellstrand.renfi.util.Constants.EXTENSION_INDEX;
+import static org.hellstrand.renfi.util.Constants.EXTENSION_FROM_INDEX;
+import static org.hellstrand.renfi.util.Constants.EXTENSION_TO_INDEX;
 import static org.hellstrand.renfi.util.Constants.FAILURE;
 import static org.hellstrand.renfi.util.Constants.FILE_PROCESSING;
 import static org.hellstrand.renfi.util.Constants.LABEL_COMPARE;
+import static org.hellstrand.renfi.util.Constants.LABEL_CROP;
 import static org.hellstrand.renfi.util.Constants.OUTPUT_SOURCE;
 import static org.hellstrand.renfi.util.Constants.SOURCE_PROCESSING;
 import static org.hellstrand.renfi.util.Constants.FLOW_INDEX;
@@ -60,6 +63,8 @@ import static org.hellstrand.renfi.util.Constants.NAMES_SOURCE;
 import static org.hellstrand.renfi.util.Constants.ORIGIN_PROCESSING;
 import static org.hellstrand.renfi.util.Constants.PROCESSING_SUPPORT;
 import static org.hellstrand.renfi.util.Constants.SUCCESSFUL;
+import static org.hellstrand.renfi.util.Constants.UPPER_LEFT_X_INDEX;
+import static org.hellstrand.renfi.util.Constants.UPPER_LEFT_Y_INDEX;
 import static org.hellstrand.renfi.util.Constants.VIDEO_PROCESSING;
 import static org.hellstrand.renfi.util.HelpGuideUtil.displayHelpGuide;
 import static org.hellstrand.renfi.util.HelpGuideUtil.printMessage;
@@ -82,43 +87,56 @@ public final class RenfiUtility {
         // "Prepare" the flow of the application...
         String flow = args[FLOW_INDEX];
         String branch = args[BRANCH_INDEX];
-        String command = args[COMMAND_INDEX];
-        String index = args[EXTENSION_INDEX];
+        String resourceType = args[RESOURCE_TYPE_INDEX];
+        String fromIndex = args[EXTENSION_FROM_INDEX];
+        String toIndex = args[EXTENSION_TO_INDEX];
+        int[] coordinates = new int[] {
+            Integer.parseInt(args[UPPER_LEFT_X_INDEX]),
+            Integer.parseInt(args[UPPER_LEFT_Y_INDEX])
+        };
         if (!ALLOWED_FLAGS.contains(flow)
             || !ALLOWED_FLAGS.contains(branch)
-            || !ALLOWED_FLAGS.contains(command)
-            || !PROCESSING_SUPPORT.containsKey(command)) {
+            || !ALLOWED_FLAGS.contains(resourceType)
+            || !PROCESSING_SUPPORT.containsKey(resourceType)) {
             printMessage(MESSAGE_INVALID_USE);
             System.exit(FAILURE);
         }
 
-        int commandIndex = -1;
-        if (index.length() == 1) {
-            commandIndex = Integer.parseInt(index);
-            if (commandIndex >= PROCESSING_SUPPORT.get(command).size()) {
+        int resourceFromIndex = -1, resourceToIndex = -1;
+        if (fromIndex.length() == 1 && toIndex.length() == 1) {
+            resourceFromIndex = Integer.parseInt(fromIndex);
+            resourceToIndex = Integer.parseInt(toIndex);
+            if (resourceFromIndex >= PROCESSING_SUPPORT.get(resourceType).size()
+                || resourceFromIndex >= PROCESSING_SUPPORT.get(resourceType).size()) {
                 printMessage(MESSAGE_INVALID_USE);
                 System.exit(FAILURE);
             }
-        } else if (PROCESSING_SUPPORT.get(command).contains(index)) {
-            commandIndex = PROCESSING_SUPPORT.get(command).indexOf(index);
+        } else if (PROCESSING_SUPPORT.get(resourceType).contains(fromIndex)
+                   && PROCESSING_SUPPORT.get(resourceType).contains(toIndex)) {
+            resourceFromIndex = PROCESSING_SUPPORT.get(resourceType).indexOf(fromIndex);
+            resourceToIndex = PROCESSING_SUPPORT.get(resourceType).indexOf(toIndex);
         } else {
             printMessage(MESSAGE_INVALID_USE);
             System.exit(FAILURE);
         }
 
-        String extension = PROCESSING_SUPPORT.get(command).get(commandIndex);
+        String fromExtension = PROCESSING_SUPPORT.get(resourceType).get(resourceFromIndex);
+        String toExtension = PROCESSING_SUPPORT.get(resourceType).get(resourceToIndex);
         String flowType = flow.equals(FILE_PROCESSING) ? LABEL_FILE_PROCESSING :
             flow.equals(DATA_PROCESSING) ? LABEL_DATA_PROCESSING :
                 LABEL_UNKNOWN_EXECUTION;
         String branchTask =
             branch.equals(COMPARE_PROCESSING) ? LABEL_COMPARE :
-                branch.equals(ORIGIN_PROCESSING) ? LABEL_CREATED :
-                    branch.equals(LIST_PROCESSING) ? LABEL_FILE :
-                        branch.equals(SOURCE_PROCESSING) ? LABEL_FILENAMES :
-                            LABEL_UNKNOWN_EXECUTION;
-        String commandTask = command.equals(IMAGE_PROCESSING) ? LABEL_IMAGES : LABEL_VIDEOS;
+                branch.equals(CROP_PROCESSING) ? LABEL_CROP :
+                    branch.equals(ORIGIN_PROCESSING) ? LABEL_CREATED :
+                        branch.equals(LIST_PROCESSING) ? LABEL_FILE :
+                            branch.equals(SOURCE_PROCESSING) ? LABEL_FILENAMES :
+                                LABEL_UNKNOWN_EXECUTION;
+        String commandTask = resourceType.equals(IMAGE_PROCESSING) ? LABEL_IMAGES : LABEL_VIDEOS;
         String dateTypeFlag = args[DATE_TYPE_INDEX] != null ? args[DATE_TYPE_INDEX] : CREATION_TIME_FLAG;
-        System.out.printf(MESSAGE_PROCESSING_TASK, flowType, branchTask, commandTask, extension.substring(1));
+        System.out.printf(
+            MESSAGE_PROCESSING_TASK,
+            flowType, branchTask, commandTask, fromExtension.substring(1), toExtension.substring(1));
         System.out.println();
 
         printMessage(MESSAGE_DESIRED_EXECUTION);
@@ -139,7 +157,7 @@ public final class RenfiUtility {
 
                 // Load the files into memory under the target directory...
                 printMessage(MESSAGE_LOADING_FILES);
-                File[] files = path.listFiles((dir, name) -> name.toLowerCase().endsWith(extension));
+                File[] files = path.listFiles((dir, name) -> name.toLowerCase().endsWith(fromExtension));
                 if (Objects.nonNull(files) && files.length > 0) {
                     for (File file : files) {
                         System.out.println(file.getName());
@@ -154,8 +172,8 @@ public final class RenfiUtility {
 
                     if (branch.equals(COMPARE_PROCESSING)) {
                         FileProcessingUtil.compareResources(files, directory, logging);
-                    } else if (false) {
-                        // TODO: Implement CROP
+                    } else if (branch.equals(CROP_PROCESSING)) {
+                        FileProcessingUtil.cropResources(files, directory, logging, coordinates, toExtension);
                     } else if (false) {
                         // TODO: Implement CONVERT
                     } else if (false) {
@@ -184,19 +202,19 @@ public final class RenfiUtility {
                     } else { // Otherwise, prepare and process conversion...
                         Map<String, String> history = new LinkedHashMap<>();
                         if (branch.equals(JAVA_PROCESSING)) { // Prepare conversion history based on Java +7...
-                            NioProcessingUtil.javaProcessing(files, history, extension, dateTypeFlag);
+                            NioProcessingUtil.javaProcessing(files, history, fromExtension, dateTypeFlag);
                         } else { // Prepare conversion history based on Drew Noakes's extractor...
                             if (branch.equals(ORIGIN_PROCESSING)) { // Prepare conversion history based on origin data...
-                                if (command.equals(VIDEO_PROCESSING)) {
-                                    VideoProcessingUtil.prepareHistoryByOrigin(files, history, extension);
-                                } else if (command.equals(IMAGE_PROCESSING)) {
-                                    ImageProcessingUtil.prepareHistoryByOrigin(files, history, extension);
+                                if (resourceType.equals(VIDEO_PROCESSING)) {
+                                    VideoProcessingUtil.prepareHistoryByOrigin(files, history, fromExtension);
+                                } else if (resourceType.equals(IMAGE_PROCESSING)) {
+                                    ImageProcessingUtil.prepareHistoryByOrigin(files, history, fromExtension);
                                 }
                             } else if (branch.equals(LIST_PROCESSING)) { // Prepare conversion history based on file input...
-                                if (command.equals(VIDEO_PROCESSING)) {
-                                    VideoProcessingUtil.prepareHistoryByInput(files, history, target, extension);
-                                } else if (command.equals(IMAGE_PROCESSING)) {
-                                    ImageProcessingUtil.prepareHistoryByInput(files, history, target, extension);
+                                if (resourceType.equals(VIDEO_PROCESSING)) {
+                                    VideoProcessingUtil.prepareHistoryByInput(files, history, target, fromExtension);
+                                } else if (resourceType.equals(IMAGE_PROCESSING)) {
+                                    ImageProcessingUtil.prepareHistoryByInput(files, history, target, fromExtension);
                                 }
                             }
                         }
