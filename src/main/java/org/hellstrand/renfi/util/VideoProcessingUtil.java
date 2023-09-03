@@ -1,5 +1,13 @@
 package org.hellstrand.renfi.util;
 
+import static org.hellstrand.renfi.util.Constants.DATE_TIMESTAMP_FORMAT;
+import static org.hellstrand.renfi.util.Constants.EXTENSION_AVI;
+import static org.hellstrand.renfi.util.Constants.EXTENSION_MP4;
+import static org.hellstrand.renfi.util.Constants.MESSAGE_CORRUPT_SOURCE;
+import static org.hellstrand.renfi.util.Constants.MESSAGE_LOADED_PREPARED;
+import static org.hellstrand.renfi.util.Constants.MESSAGE_RESOURCE_MISSING_FIELD;
+import static org.hellstrand.renfi.util.HelpGuideUtil.printMessage;
+
 import com.drew.imaging.ImageProcessingException;
 import com.drew.imaging.avi.AviMetadataReader;
 import com.drew.imaging.mp4.Mp4MetadataReader;
@@ -7,7 +15,6 @@ import com.drew.metadata.Directory;
 import com.drew.metadata.Metadata;
 import com.drew.metadata.avi.AviDirectory;
 import com.drew.metadata.mp4.Mp4Directory;
-
 import java.io.File;
 import java.io.IOException;
 import java.time.Instant;
@@ -19,17 +26,9 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Objects;
 
-import static org.hellstrand.renfi.util.Constants.EXTENSION_AVI;
-import static org.hellstrand.renfi.util.Constants.EXTENSION_MP4;
-import static org.hellstrand.renfi.util.Constants.MESSAGE_CORRUPT_SOURCE;
-import static org.hellstrand.renfi.util.Constants.MESSAGE_LOADED_PREPARED;
-import static org.hellstrand.renfi.util.Constants.MESSAGE_RESOURCE_MISSING_FIELD;
-import static org.hellstrand.renfi.util.Constants.DATE_TIMESTAMP_FORMAT;
-import static org.hellstrand.renfi.util.HelpGuideUtil.printMessage;
-
 /**
  * @author (Mats Richard Hellstrand)
- * @version (17th of October, 2021)
+ * @version (3rd of September, 2023)
  */
 public final class VideoProcessingUtil extends FileProcessingUtil {
     public static void prepareHistoryByOrigin(File[] files, Map<String, String> history, String extension) {

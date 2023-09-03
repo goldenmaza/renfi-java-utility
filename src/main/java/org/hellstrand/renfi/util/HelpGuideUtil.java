@@ -1,16 +1,16 @@
 package org.hellstrand.renfi.util;
 
-import java.util.List;
-
 import static org.hellstrand.renfi.util.Constants.BRANCH_FLAGS;
 import static org.hellstrand.renfi.util.Constants.COMMAND_FLAGS;
-import static org.hellstrand.renfi.util.Constants.SOURCE_PROCESSING;
 import static org.hellstrand.renfi.util.Constants.HELP_FLAGS;
 import static org.hellstrand.renfi.util.Constants.IMAGE_PROCESSING;
 import static org.hellstrand.renfi.util.Constants.LIST_PROCESSING;
 import static org.hellstrand.renfi.util.Constants.ORIGIN_PROCESSING;
 import static org.hellstrand.renfi.util.Constants.PROCESSING_SUPPORT;
+import static org.hellstrand.renfi.util.Constants.SOURCE_PROCESSING;
 import static org.hellstrand.renfi.util.Constants.VIDEO_PROCESSING;
+
+import java.util.List;
 
 /**
  * @author (Mats Richard Hellstrand)

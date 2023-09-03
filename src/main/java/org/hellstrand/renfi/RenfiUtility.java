@@ -1,45 +1,29 @@
 package org.hellstrand.renfi;
 
-import org.hellstrand.renfi.util.FileProcessingUtil;
-import org.hellstrand.renfi.util.ImageProcessingUtil;
-import org.hellstrand.renfi.util.NioProcessingUtil;
-import org.hellstrand.renfi.util.VideoProcessingUtil;
-
-import java.io.File;
-import java.io.PrintWriter;
-import java.util.LinkedHashMap;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Scanner;
-
 import static org.hellstrand.renfi.util.Constants.ALLOWED_FLAGS;
 import static org.hellstrand.renfi.util.Constants.BRANCH_INDEX;
-import static org.hellstrand.renfi.util.Constants.CONVERT_PROCESSING;
-import static org.hellstrand.renfi.util.Constants.DETECT_PROCESSING;
-import static org.hellstrand.renfi.util.Constants.MESSAGE_CONVERSION_HISTORY_EMPTY;
-import static org.hellstrand.renfi.util.Constants.RESOURCE_TYPE_INDEX;
 import static org.hellstrand.renfi.util.Constants.COMPARE_PROCESSING;
+import static org.hellstrand.renfi.util.Constants.CONVERT_PROCESSING;
 import static org.hellstrand.renfi.util.Constants.CREATION_TIME_FLAG;
 import static org.hellstrand.renfi.util.Constants.CROP_PROCESSING;
 import static org.hellstrand.renfi.util.Constants.DATA_PROCESSING;
 import static org.hellstrand.renfi.util.Constants.DATE_TYPE_INDEX;
+import static org.hellstrand.renfi.util.Constants.DETECT_PROCESSING;
 import static org.hellstrand.renfi.util.Constants.DIRECTORY_INDEX;
 import static org.hellstrand.renfi.util.Constants.EXTENSION_FROM_INDEX;
 import static org.hellstrand.renfi.util.Constants.EXTENSION_TO_INDEX;
 import static org.hellstrand.renfi.util.Constants.FAILURE;
 import static org.hellstrand.renfi.util.Constants.FILE_PROCESSING;
-import static org.hellstrand.renfi.util.Constants.LABEL_COMPARE;
-import static org.hellstrand.renfi.util.Constants.LABEL_CROP;
-import static org.hellstrand.renfi.util.Constants.LABEL_CONVERT;
-import static org.hellstrand.renfi.util.Constants.LABEL_DETECT;
-import static org.hellstrand.renfi.util.Constants.OUTPUT_SOURCE;
-import static org.hellstrand.renfi.util.Constants.SOURCE_PROCESSING;
 import static org.hellstrand.renfi.util.Constants.FLOW_INDEX;
 import static org.hellstrand.renfi.util.Constants.HELP_FLAGS;
 import static org.hellstrand.renfi.util.Constants.IMAGE_PROCESSING;
 import static org.hellstrand.renfi.util.Constants.JAVA_PROCESSING;
+import static org.hellstrand.renfi.util.Constants.LABEL_COMPARE;
+import static org.hellstrand.renfi.util.Constants.LABEL_CONVERT;
 import static org.hellstrand.renfi.util.Constants.LABEL_CREATED;
+import static org.hellstrand.renfi.util.Constants.LABEL_CROP;
 import static org.hellstrand.renfi.util.Constants.LABEL_DATA_PROCESSING;
+import static org.hellstrand.renfi.util.Constants.LABEL_DETECT;
 import static org.hellstrand.renfi.util.Constants.LABEL_FILE;
 import static org.hellstrand.renfi.util.Constants.LABEL_FILENAMES;
 import static org.hellstrand.renfi.util.Constants.LABEL_FILE_PROCESSING;
@@ -49,6 +33,7 @@ import static org.hellstrand.renfi.util.Constants.LABEL_VIDEOS;
 import static org.hellstrand.renfi.util.Constants.LIST_PROCESSING;
 import static org.hellstrand.renfi.util.Constants.MESSAGE_CONTINUE_RENAMING;
 import static org.hellstrand.renfi.util.Constants.MESSAGE_CONVERSION_HISTORY;
+import static org.hellstrand.renfi.util.Constants.MESSAGE_CONVERSION_HISTORY_EMPTY;
 import static org.hellstrand.renfi.util.Constants.MESSAGE_DESIRED_EXECUTION;
 import static org.hellstrand.renfi.util.Constants.MESSAGE_DIRECTORY_UNAVAILABLE;
 import static org.hellstrand.renfi.util.Constants.MESSAGE_EXECUTION_ABORT;
@@ -66,13 +51,27 @@ import static org.hellstrand.renfi.util.Constants.MESSAGE_UNDO_ABORT;
 import static org.hellstrand.renfi.util.Constants.MESSAGE_UNDO_CONTINUE;
 import static org.hellstrand.renfi.util.Constants.NAMES_SOURCE;
 import static org.hellstrand.renfi.util.Constants.ORIGIN_PROCESSING;
+import static org.hellstrand.renfi.util.Constants.OUTPUT_SOURCE;
 import static org.hellstrand.renfi.util.Constants.PROCESSING_SUPPORT;
+import static org.hellstrand.renfi.util.Constants.RESOURCE_TYPE_INDEX;
+import static org.hellstrand.renfi.util.Constants.SOURCE_PROCESSING;
 import static org.hellstrand.renfi.util.Constants.SUCCESSFUL;
 import static org.hellstrand.renfi.util.Constants.UPPER_LEFT_X_INDEX;
 import static org.hellstrand.renfi.util.Constants.UPPER_LEFT_Y_INDEX;
 import static org.hellstrand.renfi.util.Constants.VIDEO_PROCESSING;
 import static org.hellstrand.renfi.util.HelpGuideUtil.displayHelpGuide;
 import static org.hellstrand.renfi.util.HelpGuideUtil.printMessage;
+
+import java.io.File;
+import java.io.PrintWriter;
+import java.util.LinkedHashMap;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Scanner;
+import org.hellstrand.renfi.util.FileProcessingUtil;
+import org.hellstrand.renfi.util.ImageProcessingUtil;
+import org.hellstrand.renfi.util.NioProcessingUtil;
+import org.hellstrand.renfi.util.VideoProcessingUtil;
 
 /**
  * @author (Mats Richard Hellstrand)

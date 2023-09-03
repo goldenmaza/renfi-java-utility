@@ -1,6 +1,18 @@
 package org.hellstrand.renfi.util;
 
-import javax.imageio.ImageIO;
+import static org.hellstrand.renfi.util.Constants.LABEL_PROCESSED_DIRECTORY;
+import static org.hellstrand.renfi.util.Constants.MESSAGE_CREATING_PROCESSED_DIRECTORY;
+import static org.hellstrand.renfi.util.Constants.MESSAGE_FAILED_UNDO_LOADING;
+import static org.hellstrand.renfi.util.Constants.MESSAGE_FAILURE_NEWNAME;
+import static org.hellstrand.renfi.util.Constants.MESSAGE_FAILURE_SOURCES;
+import static org.hellstrand.renfi.util.Constants.MESSAGE_RENAMING_ALERT;
+import static org.hellstrand.renfi.util.Constants.MESSAGE_RENAMING_FAILURE;
+import static org.hellstrand.renfi.util.Constants.MESSAGE_SORTING_FILES;
+import static org.hellstrand.renfi.util.Constants.MESSAGE_UNDO_ALERT;
+import static org.hellstrand.renfi.util.Constants.MESSAGE_UNDO_RELOADING;
+import static org.hellstrand.renfi.util.Constants.MESSAGE_UNDO_RESTORING;
+import static org.hellstrand.renfi.util.HelpGuideUtil.printMessage;
+
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -19,23 +31,11 @@ import java.util.Objects;
 import java.util.Scanner;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
-
-import static org.hellstrand.renfi.util.Constants.LABEL_PROCESSED_DIRECTORY;
-import static org.hellstrand.renfi.util.Constants.MESSAGE_CREATING_PROCESSED_DIRECTORY;
-import static org.hellstrand.renfi.util.Constants.MESSAGE_FAILED_UNDO_LOADING;
-import static org.hellstrand.renfi.util.Constants.MESSAGE_FAILURE_NEWNAME;
-import static org.hellstrand.renfi.util.Constants.MESSAGE_FAILURE_SOURCES;
-import static org.hellstrand.renfi.util.Constants.MESSAGE_RENAMING_ALERT;
-import static org.hellstrand.renfi.util.Constants.MESSAGE_RENAMING_FAILURE;
-import static org.hellstrand.renfi.util.Constants.MESSAGE_SORTING_FILES;
-import static org.hellstrand.renfi.util.Constants.MESSAGE_UNDO_ALERT;
-import static org.hellstrand.renfi.util.Constants.MESSAGE_UNDO_RELOADING;
-import static org.hellstrand.renfi.util.Constants.MESSAGE_UNDO_RESTORING;
-import static org.hellstrand.renfi.util.HelpGuideUtil.printMessage;
+import javax.imageio.ImageIO;
 
 /**
  * @author (Mats Richard Hellstrand)
- * @version (17th of October, 2021)
+ * @version (3rd of September, 2023)
  */
 public abstract class FileProcessingUtil {
     public static void prepareHistoryByInput(File[] files, Map<String, String> history, String target, String extension) {
@@ -50,7 +50,7 @@ public abstract class FileProcessingUtil {
             Scanner scanner = new Scanner(source);
             List<String> names = new ArrayList<>();
             while (scanner.hasNextLine()) {
-                names.add(scanner.nextLine() + extension);
+                names.add(scanner.nextLine().concat(extension));
             }
             scanner.close();
 
