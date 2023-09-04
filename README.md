@@ -23,8 +23,8 @@ The following section details what each file does.
 
 ### RenfiUtility
 This is the main class where the main method calls the other classes for preparing the history and eventually perform
-the renaming/undo of file names. It is also here we the small logic of gathering file names and placing them all in a
-txt file.
+the renaming/undo of file names. It is also here were we can find the small logic of gathering file names and placing
+them all in a txt file.
 
 ### Constants
 A central location of all logging output, available flags, extensions and more.
@@ -33,8 +33,9 @@ A central location of all logging output, available flags, extensions and more.
 The code for printout of the HelpGuide can be found here.
 
 ### FileProcessingUtil
-This utility handles the processing of actually renaming the files. This is an abstract class which the other two
-utility classes extends.
+This utility handles the processing of actually renaming the files. This file also contains the code for manipulating
+and analyzing files like comparing, converting, cropping and detecting black borders. This is an abstract class which
+the other two utility classes extends.
 
 ### ImageProcessingUtil
 This utility prepares the conversion history for images currently supported. Mr. Noakes's library is used here to gather
