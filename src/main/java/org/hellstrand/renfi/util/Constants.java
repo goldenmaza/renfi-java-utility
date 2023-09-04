@@ -7,7 +7,7 @@ import java.util.Map;
 
 /**
  * @author (Mats Richard Hellstrand)
- * @version (3rd of September, 2023)
+ * @version (4th of September, 2023)
  */
 public final class Constants {
     // Application states, actions, attributes...
@@ -15,7 +15,7 @@ public final class Constants {
     public static final int FAILURE = 1;
     public static final int FLOW_INDEX = 0;
     public static final int BRANCH_INDEX = 1;
-    public static final int DIRECTORY_INDEX = 2;
+    public static final int PATH_INDEX = 2;
     public static final int RESOURCE_TYPE_INDEX = 3;
     public static final int EXTENSION_FROM_INDEX = 4;
     public static final int EXTENSION_TO_INDEX = 5;
@@ -126,16 +126,20 @@ public final class Constants {
     public static final String LABEL_FILE = "From File";
     public static final String LABEL_FILENAMES = "Save Filenames";
     public static final String LABEL_UNKNOWN_EXECUTION = "UNKNOWN";
-    public static final String LABEL_PROCESSED_DIRECTORY = "done\\";
+    public static final String LABEL_PROCESSED_DIRECTORY = "processed\\";
+    public static final String LABEL_DUPLICATES_DIRECTORY = "duplicates\\";
+    public static final String LABEL_MATCHING_DIRECTORY = "matching\\";
 
     // Message variables used for displaying states, or actions, in the application...
     public static final String MESSAGE_INVALID_USE = "Invalid use of application";
     public static final String MESSAGE_DESIRED_EXECUTION = "Are you happy with the current task? (y/n)";
     public static final String MESSAGE_DIRECTORY_UNAVAILABLE = "No directory found with the stated path: %s%n";
+    public static final String MESSAGE_DIRECTORY_CREATION_FAILURE = "No directory was created with the stated path: %s%n";
     public static final String MESSAGE_RESOURCES_UNAVAILABLE = "No resources found with the desired command and predefined extensions";
     public static final String MESSAGE_SOURCE_UNAVAILABLE = "No source file found under the current path";
     public static final String MESSAGE_SOURCE_CONTAINS = "Source file contains";
-    public static final String MESSAGE_PROCESSING_TASK = "The task you have selected is: %s, %s, %s, %s, %s%n";
+    public static final String MESSAGE_PROCESSING_TASK = "The task you have selected is: '%s' by '%s' of '%s' under the following path: '%s'%n";
+    public static final String MESSAGE_PROCESSING_ATTRIBUTES = "The following attributes are also selected: '%s' to '%s', '%s' flag, '%s' & '%s' coordinates%n";
     public static final String MESSAGE_LOADING_DIRECTORY = "Loading directory";
     public static final String MESSAGE_LOADING_FILES = "Available files";
     public static final String MESSAGE_SORTING_FILES = "Sorting files";

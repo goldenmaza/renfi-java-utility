@@ -9,7 +9,8 @@ import static org.hellstrand.renfi.util.Constants.CROP_PROCESSING;
 import static org.hellstrand.renfi.util.Constants.DATA_PROCESSING;
 import static org.hellstrand.renfi.util.Constants.DATE_TYPE_INDEX;
 import static org.hellstrand.renfi.util.Constants.DETECT_PROCESSING;
-import static org.hellstrand.renfi.util.Constants.DIRECTORY_INDEX;
+import static org.hellstrand.renfi.util.Constants.MESSAGE_PROCESSING_ATTRIBUTES;
+import static org.hellstrand.renfi.util.Constants.PATH_INDEX;
 import static org.hellstrand.renfi.util.Constants.EXTENSION_FROM_INDEX;
 import static org.hellstrand.renfi.util.Constants.EXTENSION_TO_INDEX;
 import static org.hellstrand.renfi.util.Constants.FAILURE;
@@ -75,22 +76,19 @@ import org.hellstrand.renfi.util.VideoProcessingUtil;
 
 /**
  * @author (Mats Richard Hellstrand)
- * @version (3rd of September, 2023)
+ * @version (4th of September, 2023)
  */
 public final class RenfiUtility {
     public static void main(String[] args) {
-        if (args.length == 0
-            || args.length == 1 && HELP_FLAGS.contains(args[0])) {
+        if (args.length < 9 || HELP_FLAGS.contains(args[0])) {
             displayHelpGuide();
             System.exit(SUCCESSFUL);
-        } else if (args.length < 4) {
-            printMessage(MESSAGE_INVALID_USE);
-            System.exit(FAILURE);
         }
 
         // "Prepare" the flow of the application...
         String flow = args[FLOW_INDEX];
         String branch = args[BRANCH_INDEX];
+        String path = args[PATH_INDEX];
         String resourceType = args[RESOURCE_TYPE_INDEX];
         String fromIndex = args[EXTENSION_FROM_INDEX];
         String toIndex = args[EXTENSION_TO_INDEX];
@@ -124,7 +122,7 @@ public final class RenfiUtility {
             System.exit(FAILURE);
         }
 
-        String flowType = flow.equals(FILE_PROCESSING) ? LABEL_FILE_PROCESSING :
+        String flowTask = flow.equals(FILE_PROCESSING) ? LABEL_FILE_PROCESSING :
             flow.equals(DATA_PROCESSING) ? LABEL_DATA_PROCESSING :
                 LABEL_UNKNOWN_EXECUTION;
         String branchTask =
@@ -140,9 +138,11 @@ public final class RenfiUtility {
         String dateTypeFlag = args[DATE_TYPE_INDEX] != null ? args[DATE_TYPE_INDEX] : CREATION_TIME_FLAG;
         String fromExtension = PROCESSING_SUPPORT.get(resourceType).get(resourceFromIndex);
         String toExtension = PROCESSING_SUPPORT.get(resourceType).get(resourceToIndex);
+        System.out.printf(MESSAGE_PROCESSING_TASK, flowTask, branchTask, resourceTask, path);
         System.out.printf(
-            MESSAGE_PROCESSING_TASK,
-            flowType, branchTask, resourceTask, fromExtension.substring(1), toExtension.substring(1));
+            MESSAGE_PROCESSING_ATTRIBUTES,
+            fromExtension.substring(1), toExtension.substring(1),
+            dateTypeFlag, coordinates[0], coordinates[1]);
         System.out.println();
 
         printMessage(MESSAGE_DESIRED_EXECUTION);
@@ -152,10 +152,9 @@ public final class RenfiUtility {
             try {
                 // Verify that the target directory exist...
                 printMessage(MESSAGE_LOADING_DIRECTORY);
-                String directory = args[DIRECTORY_INDEX];
-                File path = new File(directory);
-                if (!path.exists() && !path.isDirectory()) {
-                    System.out.printf(MESSAGE_DIRECTORY_UNAVAILABLE, directory);
+                File directory = new File(path);
+                if (!directory.exists() && !directory.isDirectory()) {
+                    System.out.printf(MESSAGE_DIRECTORY_UNAVAILABLE, path);
                     System.exit(FAILURE);
                 } else {
                     System.out.println(path);
@@ -163,7 +162,7 @@ public final class RenfiUtility {
 
                 // Load the files into memory under the target directory...
                 printMessage(MESSAGE_LOADING_FILES);
-                File[] files = path.listFiles((dir, name) -> name.toLowerCase().endsWith(fromExtension));
+                File[] files = directory.listFiles((dir, name) -> name.toLowerCase().endsWith(fromExtension));
                 if (Objects.nonNull(files) && files.length > 0) {
                     for (File file : files) {
                         System.out.println(file.getName());
@@ -174,38 +173,38 @@ public final class RenfiUtility {
                 }
 
                 if (flow.equals(FILE_PROCESSING)) { // If we want to modify a file or analyze it...
-                    String logging = directory.concat(OUTPUT_SOURCE);
+                    String outputSource = path.concat(OUTPUT_SOURCE);
 
                     switch (branch) {
                         case COMPARE_PROCESSING:
-                            FileProcessingUtil.compareResources(files, directory, logging);
+                            FileProcessingUtil.compareResources(files, path, outputSource);
                             break;
                         case CROP_PROCESSING:
-                            FileProcessingUtil.cropResources(files, directory, logging, coordinates, toExtension);
+                            FileProcessingUtil.cropResources(files, path, outputSource, coordinates, toExtension);
                             break;
                         case CONVERT_PROCESSING:
-                            FileProcessingUtil.convertResources(files, directory, logging, fromExtension, toExtension);
+                            FileProcessingUtil.convertResources(files, path, outputSource, fromExtension, toExtension);
                             break;
                         case DETECT_PROCESSING:
-                            FileProcessingUtil.detectBlackBorders(files, directory, logging);
+                            FileProcessingUtil.detectBlackBorders(files, path, outputSource);
                             break;
                         default:
                             printMessage(MESSAGE_EXECUTION_ABORT);
                             break;
                     }
                 } else if (flow.equals(DATA_PROCESSING)) {
-                    String target = directory.concat(NAMES_SOURCE);
+                    String namesSource = path.concat(NAMES_SOURCE);
 
                     if (branch.equals(SOURCE_PROCESSING)) { // Prepare a source file based on directory files...
                         // Verify that the source file exist...
-                        File source = new File(target);
-                        if (!source.isFile() && !source.exists()) {
+                        File sourceFile = new File(namesSource);
+                        if (!sourceFile.isFile() && !sourceFile.exists()) {
                             printMessage(MESSAGE_SOURCE_UNAVAILABLE);
                             System.exit(FAILURE);
                         }
 
                         printMessage(MESSAGE_SOURCE_CONTAINS);
-                        PrintWriter printWriter = new PrintWriter(target);
+                        PrintWriter printWriter = new PrintWriter(namesSource);
                         for (File file : files) {
                             System.out.println(file.getName());
                             printWriter.println(file.getName());
@@ -224,9 +223,9 @@ public final class RenfiUtility {
                                 }
                             } else if (branch.equals(LIST_PROCESSING)) { // Prepare conversion history based on file input...
                                 if (resourceType.equals(VIDEO_PROCESSING)) {
-                                    VideoProcessingUtil.prepareHistoryByInput(files, history, target, fromExtension);
+                                    VideoProcessingUtil.prepareHistoryByInput(files, history, namesSource, fromExtension);
                                 } else if (resourceType.equals(IMAGE_PROCESSING)) {
-                                    ImageProcessingUtil.prepareHistoryByInput(files, history, target, fromExtension);
+                                    ImageProcessingUtil.prepareHistoryByInput(files, history, namesSource, fromExtension);
                                 }
                             }
                         }
@@ -245,12 +244,12 @@ public final class RenfiUtility {
                             if (key.equals("y")) { // Should the renaming process be executed?
                                 printMessage(MESSAGE_RENAMING_PROCESS);
                                 if (history.size() > 0) {
-                                    FileProcessingUtil.renamingProcess(history, files, directory);
+                                    FileProcessingUtil.renamingProcess(files, history, path);
 
                                     printMessage(MESSAGE_UNDO_CONTINUE);
                                     key = scanner.nextLine();
                                     if (key.equals("y")) { // Should the undo process be executed?
-                                        FileProcessingUtil.renamingUndoProcess(history, path, directory);
+                                        FileProcessingUtil.renamingUndoProcess(history, directory, path);
                                     } else {
                                         printMessage(MESSAGE_UNDO_ABORT);
                                     }

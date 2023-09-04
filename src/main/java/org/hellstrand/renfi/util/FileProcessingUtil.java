@@ -1,7 +1,10 @@
 package org.hellstrand.renfi.util;
 
 import static org.hellstrand.renfi.util.Constants.LABEL_PROCESSED_DIRECTORY;
+import static org.hellstrand.renfi.util.Constants.LABEL_DUPLICATES_DIRECTORY;
+import static org.hellstrand.renfi.util.Constants.LABEL_MATCHING_DIRECTORY;
 import static org.hellstrand.renfi.util.Constants.MESSAGE_CREATING_PROCESSED_DIRECTORY;
+import static org.hellstrand.renfi.util.Constants.MESSAGE_DIRECTORY_CREATION_FAILURE;
 import static org.hellstrand.renfi.util.Constants.MESSAGE_FAILED_UNDO_LOADING;
 import static org.hellstrand.renfi.util.Constants.MESSAGE_FAILURE_NEWNAME;
 import static org.hellstrand.renfi.util.Constants.MESSAGE_FAILURE_SOURCES;
@@ -35,10 +38,10 @@ import javax.imageio.ImageIO;
 
 /**
  * @author (Mats Richard Hellstrand)
- * @version (3rd of September, 2023)
+ * @version (4th of September, 2023)
  */
 public abstract class FileProcessingUtil {
-    public static void prepareHistoryByInput(File[] files, Map<String, String> history, String target, String extension) {
+    public static void prepareHistoryByInput(File[] files, Map<String, String> history, String namesSource, String fromExtension) {
         try {
             printMessage(MESSAGE_SORTING_FILES);
             Arrays.sort(files, Comparator.comparingLong(File::lastModified));
@@ -46,11 +49,11 @@ public abstract class FileProcessingUtil {
                 System.out.println(file.getName());
             }
 
-            File source = new File(target);
-            Scanner scanner = new Scanner(source);
+            File sourceFile = new File(namesSource);
+            Scanner scanner = new Scanner(sourceFile);
             List<String> names = new ArrayList<>();
             while (scanner.hasNextLine()) {
-                names.add(scanner.nextLine().concat(extension));
+                names.add(scanner.nextLine().concat(fromExtension));
             }
             scanner.close();
 
@@ -64,15 +67,19 @@ public abstract class FileProcessingUtil {
         }
     }
 
-    public static void renamingProcess(Map<String, String> history, File[] files, String directory) {
-        String fullDirectory = createProcessedDirectory(directory);
+    public static void renamingProcess(File[] files, Map<String, String> history, String path) {
+        String directory = path.concat(LABEL_PROCESSED_DIRECTORY);
+        if (!createTargetDirectory(directory)) {
+            System.out.printf(MESSAGE_DIRECTORY_CREATION_FAILURE, directory);
+            return;
+        }
 
         for (File file : files) {
             String previousName = file.getName();
             String newName = history.get(previousName);
 
             if (Objects.nonNull(newName)) {
-                if (file.renameTo(new File(fullDirectory.concat(newName)))) {
+                if (file.renameTo(new File(directory.concat(newName)))) {
                     System.out.printf(MESSAGE_RENAMING_ALERT, previousName, newName);
                 } else {
                     printMessage(MESSAGE_RENAMING_FAILURE);
@@ -84,28 +91,28 @@ public abstract class FileProcessingUtil {
         }
     }
 
-    private static String createProcessedDirectory(String directory) {
-        String fullDirectory = directory + LABEL_PROCESSED_DIRECTORY;
-
-        File processed = new File(fullDirectory);
-        if (!processed.exists()) {
+    public static boolean createTargetDirectory(String directory) {
+        File targetDirectory = new File(directory);
+        if (!targetDirectory.exists()) {
             printMessage(MESSAGE_CREATING_PROCESSED_DIRECTORY);
-            processed.mkdir();
+            if (!targetDirectory.mkdir()) {
+                printMessage(MESSAGE_CREATING_PROCESSED_DIRECTORY);
+                return false;
+            }
         }
-
-        return fullDirectory;
+        return true;
     }
 
-    public static void renamingUndoProcess(Map<String, String> history, File path, String directory) {
+    public static void renamingUndoProcess(Map<String, String> history, File directory, String path) {
         printMessage(MESSAGE_UNDO_RELOADING);
-        File[] undo = path.listFiles((dir, name) -> history.values().stream().anyMatch(n -> n.equals(name)));
-        if (Objects.requireNonNull(undo).length > 0) {
-            for (File file : undo) {
+        File[] undoList = directory.listFiles((dir, name) -> history.values().stream().anyMatch(n -> n.equals(name)));
+        if (Objects.requireNonNull(undoList).length > 0) {
+            for (File file : undoList) {
                 System.out.println(file.getName());
             }
 
             printMessage(MESSAGE_UNDO_RESTORING);
-            for (File file : undo) {
+            for (File file : undoList) {
                 String undoName = file.getName();
                 String previousName = history.entrySet().stream()
                     .filter(entry -> undoName.equals(entry.getValue()))
@@ -113,7 +120,7 @@ public abstract class FileProcessingUtil {
                     .findFirst()
                     .orElse(null);
 
-                if (Objects.nonNull(previousName) && file.renameTo(new File(directory + previousName))) {
+                if (Objects.nonNull(previousName) && file.renameTo(new File(path.concat(previousName)))) {
                     System.out.printf(MESSAGE_UNDO_ALERT, undoName, previousName);
                 } else {
                     printMessage(MESSAGE_RENAMING_FAILURE);
@@ -125,7 +132,7 @@ public abstract class FileProcessingUtil {
         }
     }
 
-    public static void compareResources(File[] files, String directory, String logging) {
+    public static void compareResources(File[] files, String path, String logging) {
         Set<String> processHistory = Collections.synchronizedSet(new HashSet<>());
         Set<String> duplicates = Collections.synchronizedSet(new HashSet<>());
         Set<String> matching = Collections.synchronizedSet(new HashSet<>());
@@ -243,12 +250,17 @@ public abstract class FileProcessingUtil {
             printWriter.println("Duplicates: " + duplicates.size());
             printWriter.println("Matching: " + matching.size());
 
+            String directory;
             if (!duplicates.isEmpty()) {
-                String path = directory + "duplicates/";
-                new File(path).mkdirs();
+                directory = path.concat(LABEL_DUPLICATES_DIRECTORY);
+                if (!createTargetDirectory(directory)) {
+                    System.out.printf(MESSAGE_DIRECTORY_CREATION_FAILURE, directory);
+                    printWriter.close();
+                    return;
+                }
                 for (String duplicate : duplicates) {
                     for (File file : files) {
-                        if (file.getName().equals(duplicate) && file.renameTo(new File(path + duplicate))) {
+                        if (file.getName().equals(duplicate) && file.renameTo(new File(directory.concat(duplicate)))) {
                             System.out.println("Moved file (duplicates): " + duplicate);
                             printWriter.println("Moved file (duplicates): " + duplicate);
                         }
@@ -256,11 +268,15 @@ public abstract class FileProcessingUtil {
                 }
             }
             if (!matching.isEmpty()) {
-                String path = directory + "matching/";
-                new File(path).mkdirs();
+                directory = path.concat(LABEL_MATCHING_DIRECTORY);
+                if (!createTargetDirectory(directory)) {
+                    System.out.printf(MESSAGE_DIRECTORY_CREATION_FAILURE, directory);
+                    printWriter.close();
+                    return;
+                }
                 for (String match : matching) {
                     for (File file : files) {
-                        if (file.getName().equals(match) && file.renameTo(new File(path + match))) {
+                        if (file.getName().equals(match) && file.renameTo(new File(directory.concat(match)))) {
                             System.out.println("Moved file (matching): " + match);
                             printWriter.println("Moved file (matching): " + match);
                         }
@@ -274,13 +290,16 @@ public abstract class FileProcessingUtil {
         }
     }
 
-    public static void cropResources(File[] files, String directory, String logging, int[] coordinates, String toExtension) {
+    public static void cropResources(File[] files, String path, String logging, int[] coordinates, String toExtension) {
         Set<String> processHistory = Collections.synchronizedSet(new HashSet<>());
 
         try {
             PrintWriter printWriter = new PrintWriter(new FileOutputStream(logging), true);
-            String path = directory + "done/";
-            new File(path).mkdirs();
+            String directory = path.concat(LABEL_PROCESSED_DIRECTORY);
+            if (!createTargetDirectory(directory)) {
+                System.out.printf(MESSAGE_DIRECTORY_CREATION_FAILURE, directory);
+                return;
+            }
 
             printMessage("Cropping starts...");
             long croppingProcessStart = System.currentTimeMillis();
@@ -293,7 +312,7 @@ public abstract class FileProcessingUtil {
                 try {
                     BufferedImage bufferedImage = ImageIO.read(originalFile);
                     BufferedImage croppedImage = bufferedImage.getSubimage(x, y, (bufferedImage.getWidth() - (x + x)), (bufferedImage.getHeight() - (y + y)));
-                    File toCroppedFile = new File(path + originalName);
+                    File toCroppedFile = new File(directory.concat(originalName));
                     ImageIO.write(croppedImage, toExtension.substring(1), toCroppedFile);
                 } catch (IOException e) {
                     System.err.println(e.getMessage());
@@ -326,13 +345,16 @@ public abstract class FileProcessingUtil {
         }
     }
 
-    public static void convertResources(File[] files, String directory, String target, String fromExtension, String toExtension) {
+    public static void convertResources(File[] files, String path, String logging, String fromExtension, String toExtension) {
         Set<String> processHistory = Collections.synchronizedSet(new HashSet<>());
 
         try {
-            PrintWriter printWriter = new PrintWriter(new FileOutputStream(target), true);
-            String path = directory + "done/";
-            new File(path).mkdirs();
+            PrintWriter printWriter = new PrintWriter(new FileOutputStream(logging), true);
+            String directory = path.concat(LABEL_PROCESSED_DIRECTORY);
+            if (!createTargetDirectory(directory)) {
+                System.out.printf(MESSAGE_DIRECTORY_CREATION_FAILURE, directory);
+                return;
+            }
 
             printMessage("Converting starts...");
             long convertingProcessStart = System.currentTimeMillis();
@@ -343,7 +365,7 @@ public abstract class FileProcessingUtil {
 
                 try {
                     BufferedImage bufferedImage = ImageIO.read(originalFile);
-                    File toConvertedFile = new File(path + originalName.replace(fromExtension, toExtension));
+                    File toConvertedFile = new File(directory.concat(originalName.replace(fromExtension, toExtension)));
                     ImageIO.write(bufferedImage, toExtension.substring(1), toConvertedFile);
                 } catch (IOException e) {
                     System.err.println(e.getMessage());
@@ -376,7 +398,7 @@ public abstract class FileProcessingUtil {
         }
     }
 
-    public static void detectBlackBorders(File[] files, String directory, String logging) {
+    public static void detectBlackBorders(File[] files, String path, String logging) {
         Set<String> processHistory = Collections.synchronizedSet(new HashSet<>());
         Map<String, List<String>> borderMapping = Collections.synchronizedMap(new HashMap<>());
 
@@ -445,12 +467,16 @@ public abstract class FileProcessingUtil {
 
             printWriter.println("Moving resources begins...");
             for (Map.Entry<String, List<String>> entry : borderMapping.entrySet()) {
-                String path = directory + entry.getKey() + "/";
-                new File(path).mkdirs();
+                String target = entry.getKey();
+                String directory = path.concat(target);
+                if (!createTargetDirectory(directory)) {
+                    System.out.printf(MESSAGE_DIRECTORY_CREATION_FAILURE, directory);
+                    break;
+                }
                 for (String originalName : entry.getValue()) {
                     for (File originalFile : files) {
                         if (originalName.equals(originalFile.getName())) {
-                            if (originalFile.renameTo(new File(path + originalName))) {
+                            if (originalFile.renameTo(new File(directory.concat(originalName)))) {
                                 System.out.println("Moved file: " + originalName);
                                 printWriter.println("Moved file: " + originalName);
                             }
