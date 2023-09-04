@@ -1,4 +1,4 @@
-package org.hellstrand.renfi.util;
+package org.hellstrand.renfi.constant;
 
 import java.util.ArrayList;
 import java.util.HashMap;

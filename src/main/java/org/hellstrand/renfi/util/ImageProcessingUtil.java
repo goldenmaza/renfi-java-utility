@@ -1,11 +1,11 @@
 package org.hellstrand.renfi.util;
 
-import static org.hellstrand.renfi.util.Constants.DATE_COUNTRY;
-import static org.hellstrand.renfi.util.Constants.DATE_LANGUAGE;
-import static org.hellstrand.renfi.util.Constants.DATE_TIMESTAMP_FORMAT;
-import static org.hellstrand.renfi.util.Constants.DATE_TIMEZONE;
-import static org.hellstrand.renfi.util.Constants.MESSAGE_LOADED_PREPARED;
-import static org.hellstrand.renfi.util.Constants.MESSAGE_RESOURCE_MISSING_FIELD;
+import static org.hellstrand.renfi.constant.Constants.DATE_COUNTRY;
+import static org.hellstrand.renfi.constant.Constants.DATE_LANGUAGE;
+import static org.hellstrand.renfi.constant.Constants.DATE_TIMESTAMP_FORMAT;
+import static org.hellstrand.renfi.constant.Constants.DATE_TIMEZONE;
+import static org.hellstrand.renfi.constant.Constants.MESSAGE_LOADED_PREPARED;
+import static org.hellstrand.renfi.constant.Constants.MESSAGE_RESOURCE_MISSING_FIELD;
 import static org.hellstrand.renfi.util.HelpGuideUtil.printMessage;
 
 import com.drew.imaging.ImageMetadataReader;
@@ -25,7 +25,7 @@ import java.util.TimeZone;
 
 /**
  * @author (Mats Richard Hellstrand)
- * @version (3rd of September, 2023)
+ * @version (4th of September, 2023)
  */
 public final class ImageProcessingUtil extends FileProcessingUtil {
     public static void prepareHistoryByOrigin(File[] files, Map<String, String> history, String extension) {

@@ -1,11 +1,11 @@
 package org.hellstrand.renfi.util;
 
-import static org.hellstrand.renfi.util.Constants.DATE_TIMESTAMP_FORMAT;
-import static org.hellstrand.renfi.util.Constants.EXTENSION_AVI;
-import static org.hellstrand.renfi.util.Constants.EXTENSION_MOV;
-import static org.hellstrand.renfi.util.Constants.EXTENSION_MP4;
-import static org.hellstrand.renfi.util.Constants.MESSAGE_LOADED_PREPARED;
-import static org.hellstrand.renfi.util.Constants.MESSAGE_RESOURCE_MISSING_FIELD;
+import static org.hellstrand.renfi.constant.Constants.DATE_TIMESTAMP_FORMAT;
+import static org.hellstrand.renfi.constant.Constants.EXTENSION_AVI;
+import static org.hellstrand.renfi.constant.Constants.EXTENSION_MOV;
+import static org.hellstrand.renfi.constant.Constants.EXTENSION_MP4;
+import static org.hellstrand.renfi.constant.Constants.MESSAGE_LOADED_PREPARED;
+import static org.hellstrand.renfi.constant.Constants.MESSAGE_RESOURCE_MISSING_FIELD;
 import static org.hellstrand.renfi.util.HelpGuideUtil.printMessage;
 
 import com.drew.imaging.ImageProcessingException;
@@ -29,7 +29,7 @@ import java.util.Map;
 
 /**
  * @author (Mats Richard Hellstrand)
- * @version (3rd of September, 2023)
+ * @version (4th of September, 2023)
  */
 public final class VideoProcessingUtil extends FileProcessingUtil {
     public static void prepareHistoryByOrigin(File[] files, Map<String, String> history, String extension) {

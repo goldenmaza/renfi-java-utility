@@ -1,19 +1,19 @@
 package org.hellstrand.renfi.util;
 
-import static org.hellstrand.renfi.util.Constants.LABEL_PROCESSED_DIRECTORY;
-import static org.hellstrand.renfi.util.Constants.LABEL_DUPLICATES_DIRECTORY;
-import static org.hellstrand.renfi.util.Constants.LABEL_MATCHING_DIRECTORY;
-import static org.hellstrand.renfi.util.Constants.MESSAGE_CREATING_PROCESSED_DIRECTORY;
-import static org.hellstrand.renfi.util.Constants.MESSAGE_DIRECTORY_CREATION_FAILURE;
-import static org.hellstrand.renfi.util.Constants.MESSAGE_FAILED_UNDO_LOADING;
-import static org.hellstrand.renfi.util.Constants.MESSAGE_FAILURE_NEWNAME;
-import static org.hellstrand.renfi.util.Constants.MESSAGE_FAILURE_SOURCES;
-import static org.hellstrand.renfi.util.Constants.MESSAGE_RENAMING_ALERT;
-import static org.hellstrand.renfi.util.Constants.MESSAGE_RENAMING_FAILURE;
-import static org.hellstrand.renfi.util.Constants.MESSAGE_SORTING_FILES;
-import static org.hellstrand.renfi.util.Constants.MESSAGE_UNDO_ALERT;
-import static org.hellstrand.renfi.util.Constants.MESSAGE_UNDO_RELOADING;
-import static org.hellstrand.renfi.util.Constants.MESSAGE_UNDO_RESTORING;
+import static org.hellstrand.renfi.constant.Constants.LABEL_PROCESSED_DIRECTORY;
+import static org.hellstrand.renfi.constant.Constants.LABEL_DUPLICATES_DIRECTORY;
+import static org.hellstrand.renfi.constant.Constants.LABEL_MATCHING_DIRECTORY;
+import static org.hellstrand.renfi.constant.Constants.MESSAGE_CREATING_PROCESSED_DIRECTORY;
+import static org.hellstrand.renfi.constant.Constants.MESSAGE_DIRECTORY_CREATION_FAILURE;
+import static org.hellstrand.renfi.constant.Constants.MESSAGE_FAILED_UNDO_LOADING;
+import static org.hellstrand.renfi.constant.Constants.MESSAGE_FAILURE_NEWNAME;
+import static org.hellstrand.renfi.constant.Constants.MESSAGE_FAILURE_SOURCES;
+import static org.hellstrand.renfi.constant.Constants.MESSAGE_RENAMING_ALERT;
+import static org.hellstrand.renfi.constant.Constants.MESSAGE_RENAMING_FAILURE;
+import static org.hellstrand.renfi.constant.Constants.MESSAGE_SORTING_FILES;
+import static org.hellstrand.renfi.constant.Constants.MESSAGE_UNDO_ALERT;
+import static org.hellstrand.renfi.constant.Constants.MESSAGE_UNDO_RELOADING;
+import static org.hellstrand.renfi.constant.Constants.MESSAGE_UNDO_RESTORING;
 import static org.hellstrand.renfi.util.HelpGuideUtil.printMessage;
 
 import java.awt.image.BufferedImage;

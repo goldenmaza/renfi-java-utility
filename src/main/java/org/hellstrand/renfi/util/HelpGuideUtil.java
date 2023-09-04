@@ -1,21 +1,21 @@
 package org.hellstrand.renfi.util;
 
-import static org.hellstrand.renfi.util.Constants.BRANCH_FLAGS;
-import static org.hellstrand.renfi.util.Constants.COMPARE_PROCESSING;
-import static org.hellstrand.renfi.util.Constants.CONVERT_PROCESSING;
-import static org.hellstrand.renfi.util.Constants.CROP_PROCESSING;
-import static org.hellstrand.renfi.util.Constants.DATA_PROCESSING;
-import static org.hellstrand.renfi.util.Constants.DETECT_PROCESSING;
-import static org.hellstrand.renfi.util.Constants.FILE_PROCESSING;
-import static org.hellstrand.renfi.util.Constants.RESOURCE_FLAGS;
-import static org.hellstrand.renfi.util.Constants.FLOW_FLAGS;
-import static org.hellstrand.renfi.util.Constants.HELP_FLAGS;
-import static org.hellstrand.renfi.util.Constants.IMAGE_PROCESSING;
-import static org.hellstrand.renfi.util.Constants.LIST_PROCESSING;
-import static org.hellstrand.renfi.util.Constants.ORIGIN_PROCESSING;
-import static org.hellstrand.renfi.util.Constants.PROCESSING_SUPPORT;
-import static org.hellstrand.renfi.util.Constants.SOURCE_PROCESSING;
-import static org.hellstrand.renfi.util.Constants.VIDEO_PROCESSING;
+import static org.hellstrand.renfi.constant.Constants.BRANCH_FLAGS;
+import static org.hellstrand.renfi.constant.Constants.COMPARE_PROCESSING;
+import static org.hellstrand.renfi.constant.Constants.CONVERT_PROCESSING;
+import static org.hellstrand.renfi.constant.Constants.CROP_PROCESSING;
+import static org.hellstrand.renfi.constant.Constants.DATA_PROCESSING;
+import static org.hellstrand.renfi.constant.Constants.DETECT_PROCESSING;
+import static org.hellstrand.renfi.constant.Constants.FILE_PROCESSING;
+import static org.hellstrand.renfi.constant.Constants.RESOURCE_FLAGS;
+import static org.hellstrand.renfi.constant.Constants.FLOW_FLAGS;
+import static org.hellstrand.renfi.constant.Constants.HELP_FLAGS;
+import static org.hellstrand.renfi.constant.Constants.IMAGE_PROCESSING;
+import static org.hellstrand.renfi.constant.Constants.LIST_PROCESSING;
+import static org.hellstrand.renfi.constant.Constants.ORIGIN_PROCESSING;
+import static org.hellstrand.renfi.constant.Constants.PROCESSING_SUPPORT;
+import static org.hellstrand.renfi.constant.Constants.SOURCE_PROCESSING;
+import static org.hellstrand.renfi.constant.Constants.VIDEO_PROCESSING;
 
 import java.util.List;
 

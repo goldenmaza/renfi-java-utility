@@ -1,10 +1,10 @@
 package org.hellstrand.renfi.util;
 
-import static org.hellstrand.renfi.util.Constants.DATE_TIMESTAMP_FORMAT;
-import static org.hellstrand.renfi.util.Constants.LAST_ACCESS_TIME_FLAG;
-import static org.hellstrand.renfi.util.Constants.LAST_MODIFIED_TIME_FLAG;
-import static org.hellstrand.renfi.util.Constants.MESSAGE_LOADED_PREPARED;
-import static org.hellstrand.renfi.util.Constants.MESSAGE_RESOURCE_MISSING_FIELD;
+import static org.hellstrand.renfi.constant.Constants.DATE_TIMESTAMP_FORMAT;
+import static org.hellstrand.renfi.constant.Constants.LAST_ACCESS_TIME_FLAG;
+import static org.hellstrand.renfi.constant.Constants.LAST_MODIFIED_TIME_FLAG;
+import static org.hellstrand.renfi.constant.Constants.MESSAGE_LOADED_PREPARED;
+import static org.hellstrand.renfi.constant.Constants.MESSAGE_RESOURCE_MISSING_FIELD;
 import static org.hellstrand.renfi.util.HelpGuideUtil.printMessage;
 
 import java.io.File;
@@ -21,7 +21,7 @@ import java.util.Map;
 
 /**
  * @author (Mats Richard Hellstrand)
- * @version (3rd of September, 2023)
+ * @version (4th of September, 2023)
  */
 public class NioProcessingUtil {
     public static void javaProcessing(File[] fileFiles, Map<String, String> history, String extension, String dateTypeFlag) {
