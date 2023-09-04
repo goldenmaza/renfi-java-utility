@@ -28,7 +28,7 @@ public final class Constants {
     public static final String COMPARE_PROCESSING = "-vs";
     public static final String CROP_PROCESSING = "-crop";
     public static final String CONVERT_PROCESSING = "-con";
-    public static final String DETECT_PROCESSING = "-det";
+    public static final String DETECT_PROCESSING = "-bor";
     public static final String DATA_PROCESSING = "-d";
     public static final String JAVA_PROCESSING = "-j";
     public static final String SOURCE_PROCESSING = "-s";
@@ -53,7 +53,7 @@ public final class Constants {
         add(ORIGIN_PROCESSING);
         add(LIST_PROCESSING);
     }};
-    public static final List<String> COMMAND_FLAGS = new ArrayList<>() {{
+    public static final List<String> RESOURCE_FLAGS = new ArrayList<>() {{
         add(IMAGE_PROCESSING);
         add(VIDEO_PROCESSING);
     }};
@@ -65,7 +65,7 @@ public final class Constants {
     public static final List<String> ALLOWED_FLAGS = new ArrayList<>() {{
         addAll(FLOW_FLAGS);
         addAll(BRANCH_FLAGS);
-        addAll(COMMAND_FLAGS);
+        addAll(RESOURCE_FLAGS);
         addAll(TYPE_FLAGS);
     }};
     public static final String FULL_HELP_FLAG = "help";
