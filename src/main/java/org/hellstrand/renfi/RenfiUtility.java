@@ -18,7 +18,6 @@ import static org.hellstrand.renfi.constant.Constants.FILE_PROCESSING;
 import static org.hellstrand.renfi.constant.Constants.FLOW_INDEX;
 import static org.hellstrand.renfi.constant.Constants.HELP_FLAGS;
 import static org.hellstrand.renfi.constant.Constants.IMAGE_PROCESSING;
-import static org.hellstrand.renfi.constant.Constants.JAVA_PROCESSING;
 import static org.hellstrand.renfi.constant.Constants.LABEL_COMPARE;
 import static org.hellstrand.renfi.constant.Constants.LABEL_CONVERT;
 import static org.hellstrand.renfi.constant.Constants.LABEL_CREATED;
@@ -32,32 +31,21 @@ import static org.hellstrand.renfi.constant.Constants.LABEL_IMAGES;
 import static org.hellstrand.renfi.constant.Constants.LABEL_UNKNOWN_EXECUTION;
 import static org.hellstrand.renfi.constant.Constants.LABEL_VIDEOS;
 import static org.hellstrand.renfi.constant.Constants.LIST_PROCESSING;
-import static org.hellstrand.renfi.constant.Constants.MESSAGE_CONTINUE_RENAMING;
-import static org.hellstrand.renfi.constant.Constants.MESSAGE_CONVERSION_HISTORY;
-import static org.hellstrand.renfi.constant.Constants.MESSAGE_CONVERSION_HISTORY_EMPTY;
 import static org.hellstrand.renfi.constant.Constants.MESSAGE_DESIRED_EXECUTION;
 import static org.hellstrand.renfi.constant.Constants.MESSAGE_DIRECTORY_UNAVAILABLE;
 import static org.hellstrand.renfi.constant.Constants.MESSAGE_EXECUTION_ABORT;
-import static org.hellstrand.renfi.constant.Constants.MESSAGE_FAILED_MISMATCH;
 import static org.hellstrand.renfi.constant.Constants.MESSAGE_INVALID_USE;
 import static org.hellstrand.renfi.constant.Constants.MESSAGE_LOADING_DIRECTORY;
 import static org.hellstrand.renfi.constant.Constants.MESSAGE_LOADING_FILES;
 import static org.hellstrand.renfi.constant.Constants.MESSAGE_PROCESSING_TASK;
-import static org.hellstrand.renfi.constant.Constants.MESSAGE_RENAMING_ABORT;
-import static org.hellstrand.renfi.constant.Constants.MESSAGE_RENAMING_PROCESS;
 import static org.hellstrand.renfi.constant.Constants.MESSAGE_RESOURCES_UNAVAILABLE;
-import static org.hellstrand.renfi.constant.Constants.MESSAGE_UNDO_ABORT;
-import static org.hellstrand.renfi.constant.Constants.MESSAGE_UNDO_CONTINUE;
-import static org.hellstrand.renfi.constant.Constants.NAMES_SOURCE;
 import static org.hellstrand.renfi.constant.Constants.ORIGIN_PROCESSING;
-import static org.hellstrand.renfi.constant.Constants.OUTPUT_SOURCE;
 import static org.hellstrand.renfi.constant.Constants.PROCESSING_SUPPORT;
 import static org.hellstrand.renfi.constant.Constants.RESOURCE_TYPE_INDEX;
 import static org.hellstrand.renfi.constant.Constants.SOURCE_PROCESSING;
 import static org.hellstrand.renfi.constant.Constants.SUCCESSFUL;
 import static org.hellstrand.renfi.constant.Constants.UPPER_LEFT_X_INDEX;
 import static org.hellstrand.renfi.constant.Constants.UPPER_LEFT_Y_INDEX;
-import static org.hellstrand.renfi.constant.Constants.VIDEO_PROCESSING;
 import static org.hellstrand.renfi.util.HelpGuideUtil.displayHelpGuide;
 import static org.hellstrand.renfi.util.HelpGuideUtil.printMessage;
 
@@ -66,10 +54,9 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Scanner;
-import org.hellstrand.renfi.util.FileProcessingUtil;
-import org.hellstrand.renfi.util.ImageProcessingUtil;
-import org.hellstrand.renfi.util.NioProcessingUtil;
-import org.hellstrand.renfi.util.VideoProcessingUtil;
+import org.hellstrand.renfi.manager.DataHandlingManager;
+import org.hellstrand.renfi.manager.FileHandlingManager;
+import org.hellstrand.renfi.manager.HistoryHandlingManager;
 
 /**
  * @author (Mats Richard Hellstrand)
@@ -147,118 +134,34 @@ public final class RenfiUtility {
         String key = scanner.nextLine();
         scanner.close();
         if (key.equals("y")) { // Should the overall task continue?
-            try {
-                // Verify that the target directory exist...
-                printMessage(MESSAGE_LOADING_DIRECTORY);
-                File directory = new File(path);
-                if (!directory.exists() && !directory.isDirectory()) {
-                    System.out.printf(MESSAGE_DIRECTORY_UNAVAILABLE, path);
-                    System.exit(FAILURE);
-                } else {
-                    System.out.println(path);
-                }
-
-                // Load the files into memory under the target directory...
-                printMessage(MESSAGE_LOADING_FILES);
-                File[] files = directory.listFiles((dir, name) -> name.toLowerCase().endsWith(fromExtension));
-                if (Objects.nonNull(files) && files.length > 0) {
-                    for (File file : files) {
-                        System.out.println(file.getName());
-                    }
-                } else {
-                    printMessage(MESSAGE_RESOURCES_UNAVAILABLE);
-                    System.exit(FAILURE);
-                }
-
-                if (flow.equals(FILE_PROCESSING)) { // If we want to modify a file or analyze it...
-                    String outputSource = path.concat(OUTPUT_SOURCE);
-
-                    switch (branch) {
-                        case COMPARE_PROCESSING:
-                            FileProcessingUtil.compareResources(files, path, outputSource);
-                            break;
-                        case CROP_PROCESSING:
-                            FileProcessingUtil.cropResources(files, path, outputSource, coordinates, toExtension);
-                            break;
-                        case CONVERT_PROCESSING:
-                            FileProcessingUtil.convertResources(files, path, outputSource, fromExtension, toExtension);
-                            break;
-                        case DETECT_PROCESSING:
-                            FileProcessingUtil.detectBlackBorders(files, path, outputSource);
-                            break;
-                        case SOURCE_PROCESSING:
-                            FileProcessingUtil.createSourceFile(files, outputSource);
-                            break;
-                        default:
-                            printMessage(MESSAGE_EXECUTION_ABORT);
-                            break;
-                    }
-                } else if (flow.equals(DATA_PROCESSING)) {
-                    Map<String, String> history = new LinkedHashMap<>();
-                    String namesSource = path.concat(NAMES_SOURCE);
-
-                    switch (branch) {
-                        case JAVA_PROCESSING: // Prepare conversion history based on Java +7...
-                            NioProcessingUtil.prepareHistoryByNioProcessing(files, history, fromExtension, dateTypeFlag);
-                            break;
-                        case ORIGIN_PROCESSING: // Prepare conversion history based on origin data with Drew Noakes's extractor...
-                            if (resourceType.equals(VIDEO_PROCESSING)) {
-                                VideoProcessingUtil.prepareHistoryByOrigin(files, history, fromExtension);
-                            } else if (resourceType.equals(IMAGE_PROCESSING)) {
-                                ImageProcessingUtil.prepareHistoryByOrigin(files, history, fromExtension);
-                            }
-                            break;
-                        case LIST_PROCESSING: // Prepare conversion history based on file input...
-                            if (resourceType.equals(VIDEO_PROCESSING)) {
-                                VideoProcessingUtil.prepareHistoryByInput(files, history, namesSource, fromExtension);
-                            } else if (resourceType.equals(IMAGE_PROCESSING)) {
-                                ImageProcessingUtil.prepareHistoryByInput(files, history, namesSource, fromExtension);
-                            }
-                            break;
-                        default:
-                            printMessage(MESSAGE_INVALID_USE);
-                            System.exit(FAILURE);
-                    }
-
-                    // Display available conversion history...
-                    printMessage(MESSAGE_CONVERSION_HISTORY);
-                    if (!history.isEmpty()) {
-                        for (Map.Entry<String, String> entry : history.entrySet()) {
-                            System.out.println("Entry: " + entry.getKey() + ": " + entry.getValue());
-                        }
-
-                        // Begin the renaming process...
-                        printMessage(MESSAGE_CONTINUE_RENAMING);
-                        scanner = new Scanner(System.in);
-                        key = scanner.nextLine();
-                        if (key.equals("y")) { // Should the renaming process be executed?
-                            printMessage(MESSAGE_RENAMING_PROCESS);
-                            if (history.size() > 0) {
-                                FileProcessingUtil.renamingProcess(files, history, path);
-
-                                printMessage(MESSAGE_UNDO_CONTINUE);
-                                key = scanner.nextLine();
-                                if (key.equals("y")) { // Should the undo process be executed?
-                                    FileProcessingUtil.renamingUndoProcess(history, directory, path);
-                                } else {
-                                    printMessage(MESSAGE_UNDO_ABORT);
-                                }
-                            } else {
-                                printMessage(MESSAGE_FAILED_MISMATCH);
-                            }
-                        } else {
-                            printMessage(MESSAGE_RENAMING_ABORT);
-                        }
-                        scanner.close();
-                    } else {
-                        printMessage(MESSAGE_CONVERSION_HISTORY_EMPTY);
-                    }
-                } else {
-                    printMessage(MESSAGE_EXECUTION_ABORT);
-                }
-            } catch (Exception e) {
-                System.err.println(e.getMessage());
+            // Verify that the target directory exist...
+            printMessage(MESSAGE_LOADING_DIRECTORY);
+            File directory = new File(path);
+            if (!directory.exists() && !directory.isDirectory()) {
+                System.out.printf(MESSAGE_DIRECTORY_UNAVAILABLE, path);
                 System.exit(FAILURE);
+            } else {
+                System.out.println(path);
+            }
+
+            // Load the files into memory under the target directory...
+            printMessage(MESSAGE_LOADING_FILES);
+            File[] files = directory.listFiles((dir, name) -> name.toLowerCase().endsWith(fromExtension));
+            if (Objects.nonNull(files) && files.length > 0) {
+                for (File file : files) {
+                    System.out.println(file.getName());
+                }
+            } else {
+                printMessage(MESSAGE_RESOURCES_UNAVAILABLE);
+                System.exit(FAILURE);
+            }
+
+            if (flow.equals(FILE_PROCESSING)) { // If we want to modify a file or analyze it...
+                FileHandlingManager.processBranch(branch, files, path, coordinates, fromExtension, toExtension);
+            } else if (flow.equals(DATA_PROCESSING)) { // If we want to prepare conversion history and execute renaming...
+                Map<String, String> history = new LinkedHashMap<>();
+                DataHandlingManager.processBranch(branch, resourceType, path, files, history, fromExtension, dateTypeFlag);
+                HistoryHandlingManager.processHistory(files, history, path, directory);
             }
         } else {
             printMessage(MESSAGE_EXECUTION_ABORT);

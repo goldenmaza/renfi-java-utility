@@ -1,0 +1,51 @@
+package org.hellstrand.renfi.manager;
+
+import static org.hellstrand.renfi.constant.Constants.FAILURE;
+import static org.hellstrand.renfi.constant.Constants.IMAGE_PROCESSING;
+import static org.hellstrand.renfi.constant.Constants.JAVA_PROCESSING;
+import static org.hellstrand.renfi.constant.Constants.LIST_PROCESSING;
+import static org.hellstrand.renfi.constant.Constants.MESSAGE_INVALID_USE;
+import static org.hellstrand.renfi.constant.Constants.NAMES_SOURCE;
+import static org.hellstrand.renfi.constant.Constants.ORIGIN_PROCESSING;
+import static org.hellstrand.renfi.constant.Constants.VIDEO_PROCESSING;
+import static org.hellstrand.renfi.util.HelpGuideUtil.printMessage;
+
+import java.io.File;
+import java.util.Map;
+import org.hellstrand.renfi.util.ImageProcessingUtil;
+import org.hellstrand.renfi.util.NioProcessingUtil;
+import org.hellstrand.renfi.util.VideoProcessingUtil;
+
+/**
+ * @author (Mats Richard Hellstrand)
+ * @version (5th of September, 2023)
+ */
+public class DataHandlingManager {
+    public static void processBranch(
+        String branch, String resourceType, String path, File[] files, Map<String, String> history, String fromExtension, String dateTypeFlag) {
+        String namesSource = path.concat(NAMES_SOURCE);
+
+        switch (branch) {
+            case JAVA_PROCESSING: // Prepare conversion history based on Java +7...
+                NioProcessingUtil.prepareHistoryByNioProcessing(files, history, fromExtension, dateTypeFlag);
+                break;
+            case ORIGIN_PROCESSING: // Prepare conversion history based on origin data with Drew Noakes's extractor...
+                if (resourceType.equals(VIDEO_PROCESSING)) {
+                    VideoProcessingUtil.prepareHistoryByOrigin(files, history, fromExtension);
+                } else if (resourceType.equals(IMAGE_PROCESSING)) {
+                    ImageProcessingUtil.prepareHistoryByOrigin(files, history, fromExtension);
+                }
+                break;
+            case LIST_PROCESSING: // Prepare conversion history based on file input...
+                if (resourceType.equals(VIDEO_PROCESSING)) {
+                    VideoProcessingUtil.prepareHistoryByInput(files, history, namesSource, fromExtension);
+                } else if (resourceType.equals(IMAGE_PROCESSING)) {
+                    ImageProcessingUtil.prepareHistoryByInput(files, history, namesSource, fromExtension);
+                }
+                break;
+            default:
+                printMessage(MESSAGE_INVALID_USE);
+                System.exit(FAILURE);
+        }
+    }
+}
