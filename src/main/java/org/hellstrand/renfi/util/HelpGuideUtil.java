@@ -3,10 +3,14 @@ package org.hellstrand.renfi.util;
 import static org.hellstrand.renfi.constant.Constants.BRANCH_FLAGS;
 import static org.hellstrand.renfi.constant.Constants.COMPARE_PROCESSING;
 import static org.hellstrand.renfi.constant.Constants.CONVERT_PROCESSING;
+import static org.hellstrand.renfi.constant.Constants.CREATION_TIME_FLAG;
 import static org.hellstrand.renfi.constant.Constants.CROP_PROCESSING;
 import static org.hellstrand.renfi.constant.Constants.DATA_PROCESSING;
 import static org.hellstrand.renfi.constant.Constants.DETECT_PROCESSING;
 import static org.hellstrand.renfi.constant.Constants.FILE_PROCESSING;
+import static org.hellstrand.renfi.constant.Constants.JAVA_PROCESSING;
+import static org.hellstrand.renfi.constant.Constants.LAST_ACCESS_TIME_FLAG;
+import static org.hellstrand.renfi.constant.Constants.LAST_MODIFIED_TIME_FLAG;
 import static org.hellstrand.renfi.constant.Constants.RESOURCE_FLAGS;
 import static org.hellstrand.renfi.constant.Constants.FLOW_FLAGS;
 import static org.hellstrand.renfi.constant.Constants.HELP_FLAGS;
@@ -15,13 +19,14 @@ import static org.hellstrand.renfi.constant.Constants.LIST_PROCESSING;
 import static org.hellstrand.renfi.constant.Constants.ORIGIN_PROCESSING;
 import static org.hellstrand.renfi.constant.Constants.PROCESSING_SUPPORT;
 import static org.hellstrand.renfi.constant.Constants.SOURCE_PROCESSING;
+import static org.hellstrand.renfi.constant.Constants.TYPE_FLAGS;
 import static org.hellstrand.renfi.constant.Constants.VIDEO_PROCESSING;
 
 import java.util.List;
 
 /**
  * @author (Mats Richard Hellstrand)
- * @version (4th of September, 2023)
+ * @version (5th of September, 2023)
  */
 public class HelpGuideUtil {
     public static void displayHelpGuide() {
@@ -46,11 +51,12 @@ public class HelpGuideUtil {
             .append("\n  (TO_EXTENSION)\t\tThe desired file extension based on index (INTEGER). (view 'Extension legend' below)")
             .append("\n  (X_AXIS)\t\t\t\tThe starting pixel on the X axis (INTEGER).")
             .append("\n  (Y_AXIS)\t\t\t\tThe starting pixel on the Y axis (INTEGER).")
-            .append("\n  (DATE_TYPE)\t\t\tThe desired date type from file.")
+            .append("\n  (DATE_TYPE)\t\t\tThe desired date type flag from file: ").append(TYPE_FLAGS)
             .append("\n")
             .append("\n  Extension legend:")
             .append("\n  (IMAGE)\t\t\t\tThe supported extensions and their indexes: ").append(printValues(imageExtensions))
-            .append("\n  (VIDEO)\t\t\t\tThe supported extensions and their indexes: ").append(printValues(videoExtensions))
+            .append("\n  (VIDEO)\t\t\t\tThe supported extensions and their indexes *: ").append(printValues(videoExtensions))
+            .append("\n  \t\t\t\t\t\t* Not ALL video formats are supported by Drew Noakes's extractor, some might need Java +7 to fetch date...")
             .append("\n")
             .append("\n  Flag legend:")
             .append("\n  (" + IMAGE_PROCESSING + ")\t\t\t\t\tTo process IMAGE files based on extension stated.")
@@ -61,11 +67,16 @@ public class HelpGuideUtil {
             .append("\n  (" + CROP_PROCESSING + ")\t\t\t\tTo crop images, based on X & Y coordinates, this will remove the borders on both sides of the image.")
             .append("\n  (" + CONVERT_PROCESSING + ")\t\t\t\tTo convert images from one extension to another.")
             .append("\n  (" + DETECT_PROCESSING + ")\t\t\t\tTo detect black borders and to sort them into folders based on detected height. Note: Currently, only top-down is supported!")
+            .append("\n  (" + SOURCE_PROCESSING + ")\t\t\t\t\tTo prepare a SOURCE FILE based on directory files.")
             .append("\n")
             .append("\n  (" + DATA_PROCESSING + ")\t\t\t\t\tThe Data processing flow lets us create a source file or determine date and time. You can choose one of the following branches:")
-            .append("\n  (" + SOURCE_PROCESSING + ")\t\t\t\t\tTo prepare a SOURCE FILE based on directory files.")
-            .append("\n  (" + ORIGIN_PROCESSING + ")\t\t\t\t\tTo prepare history conversion based on ORIGIN DATA.")
+            .append("\n  (" + JAVA_PROCESSING + ")\t\t\t\t\tTo use Java +7 to determine the date of creation.")
+            .append("\n  (" + ORIGIN_PROCESSING + ")\t\t\t\t\tTo prepare history conversion based on ORIGIN DATA by using Drew Noakes's extractor.")
             .append("\n  (" + LIST_PROCESSING + ")\t\t\t\t\tTo prepare history conversion based on SOURCE FILE.")
+            .append("\n")
+            .append("\n  (" + CREATION_TIME_FLAG + ")\t\t\t\t\tTo use the Creation Time field for setting the date and time.")
+            .append("\n  (" + LAST_MODIFIED_TIME_FLAG + ")\t\t\t\tTo use the Last Modified Time field for setting the date and time.")
+            .append("\n  (" + LAST_ACCESS_TIME_FLAG + ")\t\t\t\tTo use the Last Access Time field for setting the date and time.")
             .append("\n")
             .append("\n  ")
             .append(helpFlags).append("\t\tTo display this help guide.");

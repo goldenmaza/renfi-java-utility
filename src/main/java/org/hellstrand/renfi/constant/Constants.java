@@ -7,7 +7,7 @@ import java.util.Map;
 
 /**
  * @author (Mats Richard Hellstrand)
- * @version (4th of September, 2023)
+ * @version (5th of September, 2023)
  */
 public final class Constants {
     // Application states, actions, attributes...
@@ -29,9 +29,9 @@ public final class Constants {
     public static final String CROP_PROCESSING = "-crop";
     public static final String CONVERT_PROCESSING = "-con";
     public static final String DETECT_PROCESSING = "-bor";
+    public static final String SOURCE_PROCESSING = "-s";
     public static final String DATA_PROCESSING = "-d";
     public static final String JAVA_PROCESSING = "-j";
-    public static final String SOURCE_PROCESSING = "-s";
     public static final String ORIGIN_PROCESSING = "-o";
     public static final String LIST_PROCESSING = "-l";
     public static final String IMAGE_PROCESSING = "-i";
