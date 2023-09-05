@@ -46,8 +46,6 @@ import static org.hellstrand.renfi.constant.Constants.MESSAGE_PROCESSING_TASK;
 import static org.hellstrand.renfi.constant.Constants.MESSAGE_RENAMING_ABORT;
 import static org.hellstrand.renfi.constant.Constants.MESSAGE_RENAMING_PROCESS;
 import static org.hellstrand.renfi.constant.Constants.MESSAGE_RESOURCES_UNAVAILABLE;
-import static org.hellstrand.renfi.constant.Constants.MESSAGE_SOURCE_CONTAINS;
-import static org.hellstrand.renfi.constant.Constants.MESSAGE_SOURCE_UNAVAILABLE;
 import static org.hellstrand.renfi.constant.Constants.MESSAGE_UNDO_ABORT;
 import static org.hellstrand.renfi.constant.Constants.MESSAGE_UNDO_CONTINUE;
 import static org.hellstrand.renfi.constant.Constants.NAMES_SOURCE;
@@ -64,7 +62,6 @@ import static org.hellstrand.renfi.util.HelpGuideUtil.displayHelpGuide;
 import static org.hellstrand.renfi.util.HelpGuideUtil.printMessage;
 
 import java.io.File;
-import java.io.PrintWriter;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Objects;
@@ -76,7 +73,7 @@ import org.hellstrand.renfi.util.VideoProcessingUtil;
 
 /**
  * @author (Mats Richard Hellstrand)
- * @version (4th of September, 2023)
+ * @version (5th of September, 2023)
  */
 public final class RenfiUtility {
     public static void main(String[] args) {
@@ -148,6 +145,7 @@ public final class RenfiUtility {
         printMessage(MESSAGE_DESIRED_EXECUTION);
         Scanner scanner = new Scanner(System.in);
         String key = scanner.nextLine();
+        scanner.close();
         if (key.equals("y")) { // Should the overall task continue?
             try {
                 // Verify that the target directory exist...
@@ -188,81 +186,72 @@ public final class RenfiUtility {
                         case DETECT_PROCESSING:
                             FileProcessingUtil.detectBlackBorders(files, path, outputSource);
                             break;
+                        case SOURCE_PROCESSING:
+                            FileProcessingUtil.createSourceFile(files, outputSource);
+                            break;
                         default:
                             printMessage(MESSAGE_EXECUTION_ABORT);
                             break;
                     }
                 } else if (flow.equals(DATA_PROCESSING)) {
+                    Map<String, String> history = new LinkedHashMap<>();
                     String namesSource = path.concat(NAMES_SOURCE);
 
-                    if (branch.equals(SOURCE_PROCESSING)) { // Prepare a source file based on directory files...
-                        // Verify that the source file exist...
-                        File sourceFile = new File(namesSource);
-                        if (!sourceFile.isFile() && !sourceFile.exists()) {
-                            printMessage(MESSAGE_SOURCE_UNAVAILABLE);
+                    switch (branch) {
+                        case JAVA_PROCESSING: // Prepare conversion history based on Java +7...
+                            NioProcessingUtil.prepareHistoryByNioProcessing(files, history, fromExtension, dateTypeFlag);
+                            break;
+                        case ORIGIN_PROCESSING: // Prepare conversion history based on origin data with Drew Noakes's extractor...
+                            if (resourceType.equals(VIDEO_PROCESSING)) {
+                                VideoProcessingUtil.prepareHistoryByOrigin(files, history, fromExtension);
+                            } else if (resourceType.equals(IMAGE_PROCESSING)) {
+                                ImageProcessingUtil.prepareHistoryByOrigin(files, history, fromExtension);
+                            }
+                            break;
+                        case LIST_PROCESSING: // Prepare conversion history based on file input...
+                            if (resourceType.equals(VIDEO_PROCESSING)) {
+                                VideoProcessingUtil.prepareHistoryByInput(files, history, namesSource, fromExtension);
+                            } else if (resourceType.equals(IMAGE_PROCESSING)) {
+                                ImageProcessingUtil.prepareHistoryByInput(files, history, namesSource, fromExtension);
+                            }
+                            break;
+                        default:
+                            printMessage(MESSAGE_INVALID_USE);
                             System.exit(FAILURE);
+                    }
+
+                    // Display available conversion history...
+                    printMessage(MESSAGE_CONVERSION_HISTORY);
+                    if (!history.isEmpty()) {
+                        for (Map.Entry<String, String> entry : history.entrySet()) {
+                            System.out.println("Entry: " + entry.getKey() + ": " + entry.getValue());
                         }
 
-                        printMessage(MESSAGE_SOURCE_CONTAINS);
-                        PrintWriter printWriter = new PrintWriter(namesSource);
-                        for (File file : files) {
-                            System.out.println(file.getName());
-                            printWriter.println(file.getName());
-                        }
-                        printWriter.close();
-                    } else { // Otherwise, prepare and process conversion...
-                        Map<String, String> history = new LinkedHashMap<>();
-                        if (branch.equals(JAVA_PROCESSING)) { // Prepare conversion history based on Java +7...
-                            NioProcessingUtil.javaProcessing(files, history, fromExtension, dateTypeFlag);
-                        } else { // Prepare conversion history based on Drew Noakes's extractor...
-                            if (branch.equals(ORIGIN_PROCESSING)) { // Prepare conversion history based on origin data...
-                                if (resourceType.equals(VIDEO_PROCESSING)) {
-                                    VideoProcessingUtil.prepareHistoryByOrigin(files, history, fromExtension);
-                                } else if (resourceType.equals(IMAGE_PROCESSING)) {
-                                    ImageProcessingUtil.prepareHistoryByOrigin(files, history, fromExtension);
-                                }
-                            } else if (branch.equals(LIST_PROCESSING)) { // Prepare conversion history based on file input...
-                                if (resourceType.equals(VIDEO_PROCESSING)) {
-                                    VideoProcessingUtil.prepareHistoryByInput(files, history, namesSource, fromExtension);
-                                } else if (resourceType.equals(IMAGE_PROCESSING)) {
-                                    ImageProcessingUtil.prepareHistoryByInput(files, history, namesSource, fromExtension);
-                                }
-                            }
-                        }
+                        // Begin the renaming process...
+                        printMessage(MESSAGE_CONTINUE_RENAMING);
+                        scanner = new Scanner(System.in);
+                        key = scanner.nextLine();
+                        if (key.equals("y")) { // Should the renaming process be executed?
+                            printMessage(MESSAGE_RENAMING_PROCESS);
+                            if (history.size() > 0) {
+                                FileProcessingUtil.renamingProcess(files, history, path);
 
-                        // Display available conversion history...
-                        printMessage(MESSAGE_CONVERSION_HISTORY);
-                        if (!history.isEmpty()) {
-                            for (Map.Entry<String, String> entry : history.entrySet()) {
-                                System.out.println("Entry: " + entry.getKey() + ": " + entry.getValue());
-                            }
-
-                            // Begin the renaming process...
-                            printMessage(MESSAGE_CONTINUE_RENAMING);
-                            scanner = new Scanner(System.in);
-                            key = scanner.nextLine();
-                            if (key.equals("y")) { // Should the renaming process be executed?
-                                printMessage(MESSAGE_RENAMING_PROCESS);
-                                if (history.size() > 0) {
-                                    FileProcessingUtil.renamingProcess(files, history, path);
-
-                                    printMessage(MESSAGE_UNDO_CONTINUE);
-                                    key = scanner.nextLine();
-                                    if (key.equals("y")) { // Should the undo process be executed?
-                                        FileProcessingUtil.renamingUndoProcess(history, directory, path);
-                                    } else {
-                                        printMessage(MESSAGE_UNDO_ABORT);
-                                    }
+                                printMessage(MESSAGE_UNDO_CONTINUE);
+                                key = scanner.nextLine();
+                                if (key.equals("y")) { // Should the undo process be executed?
+                                    FileProcessingUtil.renamingUndoProcess(history, directory, path);
                                 } else {
-                                    printMessage(MESSAGE_FAILED_MISMATCH);
+                                    printMessage(MESSAGE_UNDO_ABORT);
                                 }
                             } else {
-                                printMessage(MESSAGE_RENAMING_ABORT);
+                                printMessage(MESSAGE_FAILED_MISMATCH);
                             }
                         } else {
-                            printMessage(MESSAGE_CONVERSION_HISTORY_EMPTY);
+                            printMessage(MESSAGE_RENAMING_ABORT);
                         }
                         scanner.close();
+                    } else {
+                        printMessage(MESSAGE_CONVERSION_HISTORY_EMPTY);
                     }
                 } else {
                     printMessage(MESSAGE_EXECUTION_ABORT);
@@ -274,7 +263,6 @@ public final class RenfiUtility {
         } else {
             printMessage(MESSAGE_EXECUTION_ABORT);
         }
-        scanner.close();
 
         System.exit(SUCCESSFUL);
     }

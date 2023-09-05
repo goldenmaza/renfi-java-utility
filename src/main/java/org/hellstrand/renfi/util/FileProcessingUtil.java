@@ -1,5 +1,6 @@
 package org.hellstrand.renfi.util;
 
+import static org.hellstrand.renfi.constant.Constants.FAILURE;
 import static org.hellstrand.renfi.constant.Constants.LABEL_PROCESSED_DIRECTORY;
 import static org.hellstrand.renfi.constant.Constants.LABEL_DUPLICATES_DIRECTORY;
 import static org.hellstrand.renfi.constant.Constants.LABEL_MATCHING_DIRECTORY;
@@ -11,6 +12,8 @@ import static org.hellstrand.renfi.constant.Constants.MESSAGE_FAILURE_SOURCES;
 import static org.hellstrand.renfi.constant.Constants.MESSAGE_RENAMING_ALERT;
 import static org.hellstrand.renfi.constant.Constants.MESSAGE_RENAMING_FAILURE;
 import static org.hellstrand.renfi.constant.Constants.MESSAGE_SORTING_FILES;
+import static org.hellstrand.renfi.constant.Constants.MESSAGE_SOURCE_CONTAINS;
+import static org.hellstrand.renfi.constant.Constants.MESSAGE_SOURCE_UNAVAILABLE;
 import static org.hellstrand.renfi.constant.Constants.MESSAGE_UNDO_ALERT;
 import static org.hellstrand.renfi.constant.Constants.MESSAGE_UNDO_RELOADING;
 import static org.hellstrand.renfi.constant.Constants.MESSAGE_UNDO_RESTORING;
@@ -38,7 +41,7 @@ import javax.imageio.ImageIO;
 
 /**
  * @author (Mats Richard Hellstrand)
- * @version (4th of September, 2023)
+ * @version (5th of September, 2023)
  */
 public abstract class FileProcessingUtil {
     public static void prepareHistoryByInput(File[] files, Map<String, String> history, String namesSource, String fromExtension) {
@@ -101,6 +104,26 @@ public abstract class FileProcessingUtil {
             }
         }
         return true;
+    }
+
+    public static void createSourceFile(File[] files, String outputSource) {
+        File sourceFile = new File(outputSource);
+        if (!sourceFile.isFile() && !sourceFile.exists()) {
+            printMessage(MESSAGE_SOURCE_UNAVAILABLE);
+            System.exit(FAILURE);
+        }
+
+        printMessage(MESSAGE_SOURCE_CONTAINS);
+        try {
+            PrintWriter printWriter = new PrintWriter(outputSource);
+            for (File file : files) {
+                System.out.println(file.getName());
+                printWriter.println(file.getName());
+            }
+            printWriter.close();
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
     }
 
     public static void renamingUndoProcess(Map<String, String> history, File directory, String path) {

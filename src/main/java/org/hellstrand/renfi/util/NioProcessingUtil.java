@@ -21,22 +21,23 @@ import java.util.Map;
 
 /**
  * @author (Mats Richard Hellstrand)
- * @version (4th of September, 2023)
+ * @version (5th of September, 2023)
  */
 public class NioProcessingUtil {
-    public static void javaProcessing(File[] fileFiles, Map<String, String> history, String extension, String dateTypeFlag) {
+    public static void prepareHistoryByNioProcessing(File[] files, Map<String, String> history, String fromExtension, String dateTypeFlag) {
         printMessage(MESSAGE_LOADED_PREPARED);
         DateTimeFormatter pattern = DateTimeFormatter.ofPattern(DATE_TIMESTAMP_FORMAT);
         Map<String, String> mapOfFailures = new LinkedHashMap<>();
 
-        Path[] pathFiles = new Path[fileFiles.length];
-        for (int i = 0; i < fileFiles.length; i++) {
-            pathFiles[i] = fileFiles[i].toPath();
+        Path[] pathFiles = new Path[files.length];
+        for (int i = 0; i < files.length; i++) {
+            pathFiles[i] = files[i].toPath();
         }
 
         try {
-            for (Path file : pathFiles) {
-                BasicFileAttributes basicFileAttributes = Files.readAttributes(file, BasicFileAttributes.class);
+            for (Path pathFile : pathFiles) {
+                BasicFileAttributes basicFileAttributes = Files.readAttributes(pathFile, BasicFileAttributes.class);
+                String oldName = pathFile.getFileName().toString();
 
                 Instant instant;
                 if (basicFileAttributes != null) {
@@ -50,13 +51,10 @@ public class NioProcessingUtil {
 
                     if (instant != null) {
                         LocalDateTime localDateTime = LocalDateTime.ofInstant(instant, ZoneId.systemDefault());
-                        String oldName = file.getFileName().toString();
-                        String newName = localDateTime.format(pattern) + extension;
+                        String newName = localDateTime.format(pattern).concat(fromExtension);
                         history.put(oldName, newName);
                     } else {
-                        mapOfFailures.put(
-                            file.getFileName().toString(),
-                            MESSAGE_RESOURCE_MISSING_FIELD.concat(file.getFileName().toString()));
+                        mapOfFailures.put(oldName, MESSAGE_RESOURCE_MISSING_FIELD.concat(oldName));
                     }
                 }
             }
