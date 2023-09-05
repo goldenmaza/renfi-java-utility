@@ -4,7 +4,6 @@ import static org.hellstrand.renfi.constant.Constants.ALLOWED_FLAGS;
 import static org.hellstrand.renfi.constant.Constants.BRANCH_INDEX;
 import static org.hellstrand.renfi.constant.Constants.COMPARE_PROCESSING;
 import static org.hellstrand.renfi.constant.Constants.CONVERT_PROCESSING;
-import static org.hellstrand.renfi.constant.Constants.CREATION_TIME_FLAG;
 import static org.hellstrand.renfi.constant.Constants.CROP_PROCESSING;
 import static org.hellstrand.renfi.constant.Constants.DATA_PROCESSING;
 import static org.hellstrand.renfi.constant.Constants.DATE_TYPE_INDEX;
@@ -46,11 +45,13 @@ import static org.hellstrand.renfi.constant.Constants.SOURCE_PROCESSING;
 import static org.hellstrand.renfi.constant.Constants.SUCCESSFUL;
 import static org.hellstrand.renfi.constant.Constants.UPPER_LEFT_X_INDEX;
 import static org.hellstrand.renfi.constant.Constants.UPPER_LEFT_Y_INDEX;
+import static org.hellstrand.renfi.util.FileProcessingUtil.validateDirectory;
 import static org.hellstrand.renfi.util.HelpGuideUtil.displayHelpGuide;
 import static org.hellstrand.renfi.util.HelpGuideUtil.printMessage;
 
 import java.io.File;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Scanner;
@@ -60,7 +61,7 @@ import org.hellstrand.renfi.manager.HistoryHandlingManager;
 
 /**
  * @author (Mats Richard Hellstrand)
- * @version (5th of September, 2023)
+ * @version (6th of September, 2023)
  */
 public final class RenfiUtility {
     public static void main(String[] args) {
@@ -76,10 +77,9 @@ public final class RenfiUtility {
         String resourceType = args[RESOURCE_TYPE_INDEX];
         String fromIndex = args[EXTENSION_FROM_INDEX];
         String toIndex = args[EXTENSION_TO_INDEX];
-        int[] coordinates = new int[] {
-            Integer.parseInt(args[UPPER_LEFT_X_INDEX]),
-            Integer.parseInt(args[UPPER_LEFT_Y_INDEX])
-        };
+        String leftXAxis = args[UPPER_LEFT_X_INDEX];
+        String leftYAxis = args[UPPER_LEFT_Y_INDEX];
+        String dateType = args[DATE_TYPE_INDEX];
         if (!ALLOWED_FLAGS.contains(flow)
             || !ALLOWED_FLAGS.contains(branch)
             || !ALLOWED_FLAGS.contains(resourceType)
@@ -88,20 +88,14 @@ public final class RenfiUtility {
             System.exit(FAILURE);
         }
 
-        int resourceFromIndex = -1, resourceToIndex = -1;
-        if (fromIndex.length() == 1 && toIndex.length() == 1) {
-            resourceFromIndex = Integer.parseInt(fromIndex);
-            resourceToIndex = Integer.parseInt(toIndex);
-            if (resourceFromIndex >= PROCESSING_SUPPORT.get(resourceType).size()
-                || resourceFromIndex >= PROCESSING_SUPPORT.get(resourceType).size()) {
-                printMessage(MESSAGE_INVALID_USE);
-                System.exit(FAILURE);
-            }
-        } else if (PROCESSING_SUPPORT.get(resourceType).contains(fromIndex)
-                   && PROCESSING_SUPPORT.get(resourceType).contains(toIndex)) {
-            resourceFromIndex = PROCESSING_SUPPORT.get(resourceType).indexOf(fromIndex);
-            resourceToIndex = PROCESSING_SUPPORT.get(resourceType).indexOf(toIndex);
-        } else {
+        if (!validateDirectory(path)) {
+            System.out.printf(MESSAGE_DIRECTORY_UNAVAILABLE, path);
+            System.exit(FAILURE);
+        }
+
+        List<String> selectedExtensions = PROCESSING_SUPPORT.get(resourceType);
+        int extensionFromIndex = Integer.parseInt(fromIndex), extensionToIndex = Integer.parseInt(toIndex);
+        if (extensionFromIndex < 0 && extensionToIndex >= selectedExtensions.size()) {
             printMessage(MESSAGE_INVALID_USE);
             System.exit(FAILURE);
         }
@@ -119,15 +113,12 @@ public final class RenfiUtility {
                                     branch.equals(SOURCE_PROCESSING) ? LABEL_FILENAMES :
                                         LABEL_UNKNOWN_EXECUTION;
         String resourceTask = resourceType.equals(IMAGE_PROCESSING) ? LABEL_IMAGES : LABEL_VIDEOS;
-        String dateTypeFlag = args[DATE_TYPE_INDEX] != null ? args[DATE_TYPE_INDEX] : CREATION_TIME_FLAG;
-        String fromExtension = PROCESSING_SUPPORT.get(resourceType).get(resourceFromIndex);
-        String toExtension = PROCESSING_SUPPORT.get(resourceType).get(resourceToIndex);
+        String fromExtension = selectedExtensions.get(extensionFromIndex);
+        String toExtension = selectedExtensions.get(extensionToIndex);
         System.out.printf(MESSAGE_PROCESSING_TASK, flowTask, branchTask, resourceTask, path);
         System.out.printf(
             MESSAGE_PROCESSING_ATTRIBUTES,
-            fromExtension.substring(1), toExtension.substring(1),
-            dateTypeFlag, coordinates[0], coordinates[1]);
-        System.out.println();
+            fromExtension.substring(1), toExtension.substring(1), dateType, leftXAxis, leftYAxis);
 
         printMessage(MESSAGE_DESIRED_EXECUTION);
         Scanner scanner = new Scanner(System.in);
@@ -157,10 +148,10 @@ public final class RenfiUtility {
             }
 
             if (flow.equals(FILE_PROCESSING)) { // If we want to modify a file or analyze it...
-                FileHandlingManager.processBranch(branch, files, path, coordinates, fromExtension, toExtension);
+                FileHandlingManager.processBranch(branch, files, path, leftXAxis, leftYAxis, fromExtension, toExtension);
             } else if (flow.equals(DATA_PROCESSING)) { // If we want to prepare conversion history and execute renaming...
                 Map<String, String> history = new LinkedHashMap<>();
-                DataHandlingManager.processBranch(branch, resourceType, path, files, history, fromExtension, dateTypeFlag);
+                DataHandlingManager.processBranch(branch, resourceType, path, files, history, fromExtension, dateType);
                 HistoryHandlingManager.processHistory(files, history, path, directory);
             }
         } else {

@@ -41,9 +41,45 @@ import javax.imageio.ImageIO;
 
 /**
  * @author (Mats Richard Hellstrand)
- * @version (5th of September, 2023)
+ * @version (6th of September, 2023)
  */
 public abstract class FileProcessingUtil {
+    public static boolean validateDirectory(String directory) {
+        return new File(directory).exists();
+    }
+
+    public static boolean createTargetDirectory(String directory) {
+        File targetDirectory = new File(directory);
+        if (!targetDirectory.exists()) {
+            printMessage(MESSAGE_CREATING_PROCESSED_DIRECTORY);
+            if (!targetDirectory.mkdir()) {
+                printMessage(MESSAGE_CREATING_PROCESSED_DIRECTORY);
+                return false;
+            }
+        }
+        return true;
+    }
+
+    public static void createSourceFile(File[] files, String outputSource) {
+        File sourceFile = new File(outputSource);
+        if (!sourceFile.isFile() && !sourceFile.exists()) {
+            printMessage(MESSAGE_SOURCE_UNAVAILABLE);
+            System.exit(FAILURE);
+        }
+
+        printMessage(MESSAGE_SOURCE_CONTAINS);
+        try {
+            PrintWriter printWriter = new PrintWriter(outputSource);
+            for (File file : files) {
+                System.out.println(file.getName());
+                printWriter.println(file.getName());
+            }
+            printWriter.close();
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+    }
+
     public static void prepareHistoryByInput(File[] files, Map<String, String> history, String namesSource, String fromExtension) {
         try {
             printMessage(MESSAGE_SORTING_FILES);
@@ -91,38 +127,6 @@ public abstract class FileProcessingUtil {
             } else {
                 System.out.printf(MESSAGE_FAILURE_SOURCES, previousName, MESSAGE_FAILURE_NEWNAME);
             }
-        }
-    }
-
-    public static boolean createTargetDirectory(String directory) {
-        File targetDirectory = new File(directory);
-        if (!targetDirectory.exists()) {
-            printMessage(MESSAGE_CREATING_PROCESSED_DIRECTORY);
-            if (!targetDirectory.mkdir()) {
-                printMessage(MESSAGE_CREATING_PROCESSED_DIRECTORY);
-                return false;
-            }
-        }
-        return true;
-    }
-
-    public static void createSourceFile(File[] files, String outputSource) {
-        File sourceFile = new File(outputSource);
-        if (!sourceFile.isFile() && !sourceFile.exists()) {
-            printMessage(MESSAGE_SOURCE_UNAVAILABLE);
-            System.exit(FAILURE);
-        }
-
-        printMessage(MESSAGE_SOURCE_CONTAINS);
-        try {
-            PrintWriter printWriter = new PrintWriter(outputSource);
-            for (File file : files) {
-                System.out.println(file.getName());
-                printWriter.println(file.getName());
-            }
-            printWriter.close();
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
         }
     }
 
@@ -313,7 +317,7 @@ public abstract class FileProcessingUtil {
         }
     }
 
-    public static void cropResources(File[] files, String path, String logging, int[] coordinates, String toExtension) {
+    public static void cropResources(File[] files, String path, String logging, String leftXAxis, String leftYAxis, String toExtension) {
         Set<String> processHistory = Collections.synchronizedSet(new HashSet<>());
 
         try {
@@ -327,14 +331,15 @@ public abstract class FileProcessingUtil {
             printMessage("Cropping starts...");
             long croppingProcessStart = System.currentTimeMillis();
 
-            int x = coordinates[0], y = coordinates[1];
+            int leftX = Integer.parseInt(leftXAxis), leftY = Integer.parseInt(leftYAxis);
             Arrays.stream(files).parallel().forEach(originalFile -> {
                 long threadProcessStart = System.currentTimeMillis();
                 String originalName = originalFile.getName();
 
                 try {
                     BufferedImage bufferedImage = ImageIO.read(originalFile);
-                    BufferedImage croppedImage = bufferedImage.getSubimage(x, y, (bufferedImage.getWidth() - (x + x)), (bufferedImage.getHeight() - (y + y)));
+                    BufferedImage croppedImage = bufferedImage.getSubimage(
+                        leftX, leftY, (bufferedImage.getWidth() - (leftX + leftX)), (bufferedImage.getHeight() - (leftY + leftY)));
                     File toCroppedFile = new File(directory.concat(originalName));
                     ImageIO.write(croppedImage, toExtension.substring(1), toCroppedFile);
                 } catch (IOException e) {

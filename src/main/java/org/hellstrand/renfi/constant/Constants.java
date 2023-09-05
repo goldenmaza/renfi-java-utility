@@ -7,7 +7,7 @@ import java.util.Map;
 
 /**
  * @author (Mats Richard Hellstrand)
- * @version (5th of September, 2023)
+ * @version (6th of September, 2023)
  */
 public final class Constants {
     // Application states, actions, attributes...
@@ -138,8 +138,8 @@ public final class Constants {
     public static final String MESSAGE_RESOURCES_UNAVAILABLE = "No resources found with the desired command and predefined extensions";
     public static final String MESSAGE_SOURCE_UNAVAILABLE = "No source file found under the current path";
     public static final String MESSAGE_SOURCE_CONTAINS = "Source file contains";
-    public static final String MESSAGE_PROCESSING_TASK = "The task you have selected is: '%s' by '%s' of '%s' under the following path: '%s'%n";
-    public static final String MESSAGE_PROCESSING_ATTRIBUTES = "The following attributes are also selected: '%s' to '%s', '%s' flag, '%s' & '%s' coordinates%n";
+    public static final String MESSAGE_PROCESSING_TASK = "The task you have selected is: '%s' by '%s' of '%s' under the following path: '%s'.%n";
+    public static final String MESSAGE_PROCESSING_ATTRIBUTES = "The following attributes are also selected: '%s' to '%s', '%s' flag, X='%s' & Y='%s' axis values.%n";
     public static final String MESSAGE_LOADING_DIRECTORY = "Loading directory";
     public static final String MESSAGE_LOADING_FILES = "Available files";
     public static final String MESSAGE_SORTING_FILES = "Sorting files";
