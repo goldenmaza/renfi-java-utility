@@ -12,6 +12,7 @@ import static org.hellstrand.renfi.constant.Constants.MESSAGE_FAILURE_SOURCES;
 import static org.hellstrand.renfi.constant.Constants.MESSAGE_RENAMING_ALERT;
 import static org.hellstrand.renfi.constant.Constants.MESSAGE_RENAMING_FAILURE;
 import static org.hellstrand.renfi.constant.Constants.MESSAGE_SORTING_FILES;
+import static org.hellstrand.renfi.constant.Constants.MESSAGE_SOURCE_AVAILABLE;
 import static org.hellstrand.renfi.constant.Constants.MESSAGE_SOURCE_CONTAINS;
 import static org.hellstrand.renfi.constant.Constants.MESSAGE_SOURCE_UNAVAILABLE;
 import static org.hellstrand.renfi.constant.Constants.MESSAGE_UNDO_ALERT;
@@ -44,39 +45,45 @@ import javax.imageio.ImageIO;
  * @version (6th of September, 2023)
  */
 public abstract class FileProcessingUtil {
-    public static boolean validateDirectory(String directory) {
-        return new File(directory).exists();
+    public static boolean validateTarget(String target) {
+        return new File(target).exists();
     }
 
     public static boolean createTargetDirectory(String directory) {
         File targetDirectory = new File(directory);
-        if (!targetDirectory.exists()) {
+        if (!targetDirectory.mkdir()) {
             printMessage(MESSAGE_CREATING_PROCESSED_DIRECTORY);
-            if (!targetDirectory.mkdir()) {
-                printMessage(MESSAGE_CREATING_PROCESSED_DIRECTORY);
-                return false;
-            }
+            return false;
         }
         return true;
     }
 
-    public static void createSourceFile(File[] files, String outputSource) {
+    public static File createSourceFile(String outputSource) {
         File sourceFile = new File(outputSource);
-        if (!sourceFile.isFile() && !sourceFile.exists()) {
+        try {
+            if (!sourceFile.createNewFile()) {
+                printMessage(MESSAGE_SOURCE_AVAILABLE);
+                System.exit(FAILURE);
+            }
+        } catch (IOException e) {
             printMessage(MESSAGE_SOURCE_UNAVAILABLE);
             System.exit(FAILURE);
         }
+        return sourceFile;
+    }
 
+    public static void writeSourceFile(File[] files, File sourceFile) {
         printMessage(MESSAGE_SOURCE_CONTAINS);
         try {
-            PrintWriter printWriter = new PrintWriter(outputSource);
+            PrintWriter printWriter = new PrintWriter(sourceFile);
             for (File file : files) {
                 System.out.println(file.getName());
                 printWriter.println(file.getName());
             }
             printWriter.close();
         } catch (FileNotFoundException e) {
-            e.printStackTrace();
+            printMessage(MESSAGE_SOURCE_UNAVAILABLE);
+            System.exit(FAILURE);
         }
     }
 
@@ -102,7 +109,8 @@ public abstract class FileProcessingUtil {
                 history.put(oldName, newName);
             }
         } catch (FileNotFoundException e) {
-            System.err.println(e.getMessage());
+            printMessage(MESSAGE_SOURCE_UNAVAILABLE);
+            System.exit(FAILURE);
         }
     }
 

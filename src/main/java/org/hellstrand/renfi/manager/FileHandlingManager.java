@@ -35,7 +35,8 @@ public class FileHandlingManager {
                 FileProcessingUtil.detectBlackBorders(files, path, outputSource);
                 break;
             case SOURCE_PROCESSING:
-                FileProcessingUtil.createSourceFile(files, outputSource);
+                File sourceFile = FileProcessingUtil.createSourceFile(outputSource);
+                FileProcessingUtil.writeSourceFile(files, sourceFile);
                 break;
             default:
                 printMessage(MESSAGE_EXECUTION_ABORT);

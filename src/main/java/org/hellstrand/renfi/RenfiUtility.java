@@ -45,7 +45,7 @@ import static org.hellstrand.renfi.constant.Constants.SOURCE_PROCESSING;
 import static org.hellstrand.renfi.constant.Constants.SUCCESSFUL;
 import static org.hellstrand.renfi.constant.Constants.UPPER_LEFT_X_INDEX;
 import static org.hellstrand.renfi.constant.Constants.UPPER_LEFT_Y_INDEX;
-import static org.hellstrand.renfi.util.FileProcessingUtil.validateDirectory;
+import static org.hellstrand.renfi.util.FileProcessingUtil.validateTarget;
 import static org.hellstrand.renfi.util.HelpGuideUtil.displayHelpGuide;
 import static org.hellstrand.renfi.util.HelpGuideUtil.printMessage;
 
@@ -88,7 +88,7 @@ public final class RenfiUtility {
             System.exit(FAILURE);
         }
 
-        if (!validateDirectory(path)) {
+        if (!validateTarget(path)) {
             System.out.printf(MESSAGE_DIRECTORY_UNAVAILABLE, path);
             System.exit(FAILURE);
         }
