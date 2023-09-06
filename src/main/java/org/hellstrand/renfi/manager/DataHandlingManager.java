@@ -5,7 +5,7 @@ import static org.hellstrand.renfi.constant.Constants.IMAGE_PROCESSING;
 import static org.hellstrand.renfi.constant.Constants.JAVA_PROCESSING;
 import static org.hellstrand.renfi.constant.Constants.LIST_PROCESSING;
 import static org.hellstrand.renfi.constant.Constants.MESSAGE_INVALID_USE;
-import static org.hellstrand.renfi.constant.Constants.NAMES_SOURCE;
+import static org.hellstrand.renfi.constant.Constants.INPUT_SOURCE;
 import static org.hellstrand.renfi.constant.Constants.ORIGIN_PROCESSING;
 import static org.hellstrand.renfi.constant.Constants.VIDEO_PROCESSING;
 import static org.hellstrand.renfi.util.HelpGuideUtil.printMessage;
@@ -18,12 +18,12 @@ import org.hellstrand.renfi.util.VideoProcessingUtil;
 
 /**
  * @author (Mats Richard Hellstrand)
- * @version (5th of September, 2023)
+ * @version (6th of September, 2023)
  */
 public class DataHandlingManager {
     public static void processBranch(
         String branch, String resourceType, String path, File[] files, Map<String, String> history, String fromExtension, String dateTypeFlag) {
-        String namesSource = path.concat(NAMES_SOURCE);
+        String inputSourceName = path.concat(INPUT_SOURCE);
 
         switch (branch) {
             case JAVA_PROCESSING: // Prepare conversion history based on Java +7...
@@ -38,9 +38,9 @@ public class DataHandlingManager {
                 break;
             case LIST_PROCESSING: // Prepare conversion history based on file input...
                 if (resourceType.equals(VIDEO_PROCESSING)) {
-                    VideoProcessingUtil.prepareHistoryByInput(files, history, namesSource, fromExtension);
+                    VideoProcessingUtil.prepareHistoryByInput(files, history, inputSourceName, fromExtension);
                 } else if (resourceType.equals(IMAGE_PROCESSING)) {
-                    ImageProcessingUtil.prepareHistoryByInput(files, history, namesSource, fromExtension);
+                    ImageProcessingUtil.prepareHistoryByInput(files, history, inputSourceName, fromExtension);
                 }
                 break;
             default:

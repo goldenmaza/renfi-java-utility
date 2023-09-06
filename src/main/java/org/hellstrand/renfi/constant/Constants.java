@@ -79,7 +79,7 @@ public final class Constants {
 
     // Filenames and supported extensions for manipulation...
     public static final String OUTPUT_SOURCE = "output.txt";
-    public static final String NAMES_SOURCE = "names.txt";
+    public static final String INPUT_SOURCE = "input.txt";
     public static final String EXTENSION_JPG = ".jpg";
     public static final String EXTENSION_JPEG = ".jpeg";
     public static final String EXTENSION_PNG = ".png";

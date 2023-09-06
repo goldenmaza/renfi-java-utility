@@ -6,6 +6,7 @@ import static org.hellstrand.renfi.constant.Constants.LABEL_DUPLICATES_DIRECTORY
 import static org.hellstrand.renfi.constant.Constants.LABEL_MATCHING_DIRECTORY;
 import static org.hellstrand.renfi.constant.Constants.MESSAGE_CREATING_PROCESSED_DIRECTORY;
 import static org.hellstrand.renfi.constant.Constants.MESSAGE_DIRECTORY_CREATION_FAILURE;
+import static org.hellstrand.renfi.constant.Constants.MESSAGE_FAILED_MISMATCH;
 import static org.hellstrand.renfi.constant.Constants.MESSAGE_FAILED_UNDO_LOADING;
 import static org.hellstrand.renfi.constant.Constants.MESSAGE_FAILURE_NEWNAME;
 import static org.hellstrand.renfi.constant.Constants.MESSAGE_FAILURE_SOURCES;
@@ -87,7 +88,8 @@ public abstract class FileProcessingUtil {
         }
     }
 
-    public static void prepareHistoryByInput(File[] files, Map<String, String> history, String namesSource, String fromExtension) {
+    public static void prepareHistoryByInput(
+        File[] files, Map<String, String> history, String inputSourceName, String fromExtension) {
         try {
             printMessage(MESSAGE_SORTING_FILES);
             Arrays.sort(files, Comparator.comparingLong(File::lastModified));
@@ -95,8 +97,8 @@ public abstract class FileProcessingUtil {
                 System.out.println(file.getName());
             }
 
-            File sourceFile = new File(namesSource);
-            Scanner scanner = new Scanner(sourceFile);
+            File inputSourceFile = new File(inputSourceName);
+            Scanner scanner = new Scanner(inputSourceFile);
             List<String> names = new ArrayList<>();
             while (scanner.hasNextLine()) {
                 names.add(scanner.nextLine().concat(fromExtension));
