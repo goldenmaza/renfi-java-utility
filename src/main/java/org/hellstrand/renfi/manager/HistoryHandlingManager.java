@@ -1,5 +1,6 @@
 package org.hellstrand.renfi.manager;
 
+import static org.hellstrand.renfi.constant.Constants.LABEL_PROCESSED_DIRECTORY;
 import static org.hellstrand.renfi.constant.Constants.MESSAGE_CONTINUE_RENAMING;
 import static org.hellstrand.renfi.constant.Constants.MESSAGE_CONVERSION_HISTORY;
 import static org.hellstrand.renfi.constant.Constants.MESSAGE_CONVERSION_HISTORY_EMPTY;
@@ -17,7 +18,7 @@ import org.hellstrand.renfi.util.FileProcessingUtil;
 
 /**
  * @author (Mats Richard Hellstrand)
- * @version (5th of September, 2023)
+ * @version (9th of September, 2025)
  */
 public class HistoryHandlingManager {
     public static void processHistory(File[] files, Map<String, String> history, String path, File directory) {
@@ -35,7 +36,7 @@ public class HistoryHandlingManager {
             if (key.equals("y")) { // Should the renaming process be executed?
                 printMessage(MESSAGE_RENAMING_PROCESS);
                 if (history.size() > 0) {
-                    FileProcessingUtil.renamingProcess(files, history, path);
+                    FileProcessingUtil.renamingProcess(files, history, path, LABEL_PROCESSED_DIRECTORY);
 
                     printMessage(MESSAGE_UNDO_CONTINUE);
                     key = scanner.nextLine();

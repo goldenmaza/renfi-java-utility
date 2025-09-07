@@ -6,7 +6,6 @@ import static org.hellstrand.renfi.constant.Constants.LABEL_DUPLICATES_DIRECTORY
 import static org.hellstrand.renfi.constant.Constants.LABEL_MATCHING_DIRECTORY;
 import static org.hellstrand.renfi.constant.Constants.MESSAGE_CREATING_PROCESSED_DIRECTORY;
 import static org.hellstrand.renfi.constant.Constants.MESSAGE_DIRECTORY_CREATION_FAILURE;
-import static org.hellstrand.renfi.constant.Constants.MESSAGE_FAILED_MISMATCH;
 import static org.hellstrand.renfi.constant.Constants.MESSAGE_FAILED_UNDO_LOADING;
 import static org.hellstrand.renfi.constant.Constants.MESSAGE_FAILURE_NEWNAME;
 import static org.hellstrand.renfi.constant.Constants.MESSAGE_FAILURE_SOURCES;
@@ -43,7 +42,7 @@ import javax.imageio.ImageIO;
 
 /**
  * @author (Mats Richard Hellstrand)
- * @version (6th of September, 2023)
+ * @version (9th of September, 2025)
  */
 public abstract class FileProcessingUtil {
     public static boolean validateTarget(String target) {
@@ -52,11 +51,11 @@ public abstract class FileProcessingUtil {
 
     public static boolean createTargetDirectory(String directory) {
         File targetDirectory = new File(directory);
-        if (!targetDirectory.mkdir()) {
+        if (targetDirectory.mkdir()) {
             printMessage(MESSAGE_CREATING_PROCESSED_DIRECTORY);
-            return false;
+            return true;
         }
-        return true;
+        return false;
     }
 
     public static File createSourceFile(String outputSource) {
@@ -116,8 +115,8 @@ public abstract class FileProcessingUtil {
         }
     }
 
-    public static void renamingProcess(File[] files, Map<String, String> history, String path) {
-        String directory = path.concat(LABEL_PROCESSED_DIRECTORY);
+    public static void renamingProcess(File[] files, Map<String, String> history, String path, String pathExtension) {
+        String directory = path.concat(pathExtension);
         if (!createTargetDirectory(directory)) {
             System.out.printf(MESSAGE_DIRECTORY_CREATION_FAILURE, directory);
             return;
@@ -127,13 +126,8 @@ public abstract class FileProcessingUtil {
             String previousName = file.getName();
             String newName = history.get(previousName);
 
-            if (Objects.nonNull(newName)) {
-                if (file.renameTo(new File(directory.concat(newName)))) {
-                    System.out.printf(MESSAGE_RENAMING_ALERT, previousName, newName);
-                } else {
-                    printMessage(MESSAGE_RENAMING_FAILURE);
-                    System.out.printf(MESSAGE_FAILURE_SOURCES, previousName, newName);
-                }
+            if (Objects.nonNull(newName) && file.renameTo(new File(directory.concat(newName)))) {
+                System.out.printf(MESSAGE_RENAMING_ALERT, previousName, newName);
             } else {
                 System.out.printf(MESSAGE_FAILURE_SOURCES, previousName, MESSAGE_FAILURE_NEWNAME);
             }
