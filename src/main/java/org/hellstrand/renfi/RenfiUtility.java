@@ -2,12 +2,8 @@ package org.hellstrand.renfi;
 
 import static org.hellstrand.renfi.constant.Constants.ALLOWED_FLAGS;
 import static org.hellstrand.renfi.constant.Constants.BRANCH_INDEX;
-import static org.hellstrand.renfi.constant.Constants.COMPARE_PROCESSING;
-import static org.hellstrand.renfi.constant.Constants.CONVERT_PROCESSING;
-import static org.hellstrand.renfi.constant.Constants.CROP_PROCESSING;
 import static org.hellstrand.renfi.constant.Constants.DATA_PROCESSING;
 import static org.hellstrand.renfi.constant.Constants.DATE_TYPE_INDEX;
-import static org.hellstrand.renfi.constant.Constants.DETECT_PROCESSING;
 import static org.hellstrand.renfi.constant.Constants.MESSAGE_PROCESSING_ATTRIBUTES;
 import static org.hellstrand.renfi.constant.Constants.PATH_INDEX;
 import static org.hellstrand.renfi.constant.Constants.EXTENSION_FROM_INDEX;
@@ -16,20 +12,6 @@ import static org.hellstrand.renfi.constant.Constants.FAILURE;
 import static org.hellstrand.renfi.constant.Constants.FILE_PROCESSING;
 import static org.hellstrand.renfi.constant.Constants.FLOW_INDEX;
 import static org.hellstrand.renfi.constant.Constants.HELP_FLAGS;
-import static org.hellstrand.renfi.constant.Constants.IMAGE_PROCESSING;
-import static org.hellstrand.renfi.constant.Constants.LABEL_COMPARE;
-import static org.hellstrand.renfi.constant.Constants.LABEL_CONVERT;
-import static org.hellstrand.renfi.constant.Constants.LABEL_CREATED;
-import static org.hellstrand.renfi.constant.Constants.LABEL_CROP;
-import static org.hellstrand.renfi.constant.Constants.LABEL_DATA_PROCESSING;
-import static org.hellstrand.renfi.constant.Constants.LABEL_DETECT;
-import static org.hellstrand.renfi.constant.Constants.LABEL_FILE;
-import static org.hellstrand.renfi.constant.Constants.LABEL_FILENAMES;
-import static org.hellstrand.renfi.constant.Constants.LABEL_FILE_PROCESSING;
-import static org.hellstrand.renfi.constant.Constants.LABEL_IMAGES;
-import static org.hellstrand.renfi.constant.Constants.LABEL_UNKNOWN_EXECUTION;
-import static org.hellstrand.renfi.constant.Constants.LABEL_VIDEOS;
-import static org.hellstrand.renfi.constant.Constants.LIST_PROCESSING;
 import static org.hellstrand.renfi.constant.Constants.MESSAGE_DESIRED_EXECUTION;
 import static org.hellstrand.renfi.constant.Constants.MESSAGE_DIRECTORY_UNAVAILABLE;
 import static org.hellstrand.renfi.constant.Constants.MESSAGE_EXECUTION_ABORT;
@@ -38,10 +20,8 @@ import static org.hellstrand.renfi.constant.Constants.MESSAGE_LOADING_DIRECTORY;
 import static org.hellstrand.renfi.constant.Constants.MESSAGE_LOADING_FILES;
 import static org.hellstrand.renfi.constant.Constants.MESSAGE_PROCESSING_TASK;
 import static org.hellstrand.renfi.constant.Constants.MESSAGE_RESOURCES_UNAVAILABLE;
-import static org.hellstrand.renfi.constant.Constants.ORIGIN_PROCESSING;
 import static org.hellstrand.renfi.constant.Constants.PROCESSING_SUPPORT;
 import static org.hellstrand.renfi.constant.Constants.RESOURCE_TYPE_INDEX;
-import static org.hellstrand.renfi.constant.Constants.SOURCE_PROCESSING;
 import static org.hellstrand.renfi.constant.Constants.SUCCESSFUL;
 import static org.hellstrand.renfi.constant.Constants.UPPER_LEFT_X_INDEX;
 import static org.hellstrand.renfi.constant.Constants.UPPER_LEFT_Y_INDEX;
@@ -55,13 +35,14 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Scanner;
+import org.hellstrand.renfi.constant.ConstantExtractionUtil;
 import org.hellstrand.renfi.manager.DataHandlingManager;
 import org.hellstrand.renfi.manager.FileHandlingManager;
 import org.hellstrand.renfi.manager.HistoryHandlingManager;
 
 /**
  * @author (Mats Richard Hellstrand)
- * @version (6th of September, 2023)
+ * @version (10th of September, 2025)
  */
 public final class RenfiUtility {
     public static void main(String[] args) {
@@ -100,19 +81,9 @@ public final class RenfiUtility {
             System.exit(FAILURE);
         }
 
-        String flowTask = flow.equals(FILE_PROCESSING) ? LABEL_FILE_PROCESSING :
-            flow.equals(DATA_PROCESSING) ? LABEL_DATA_PROCESSING :
-                LABEL_UNKNOWN_EXECUTION;
-        String branchTask =
-            branch.equals(COMPARE_PROCESSING) ? LABEL_COMPARE :
-                branch.equals(CROP_PROCESSING) ? LABEL_CROP :
-                    branch.equals(CONVERT_PROCESSING) ? LABEL_CONVERT :
-                        branch.equals(DETECT_PROCESSING) ? LABEL_DETECT :
-                            branch.equals(ORIGIN_PROCESSING) ? LABEL_CREATED :
-                                branch.equals(LIST_PROCESSING) ? LABEL_FILE :
-                                    branch.equals(SOURCE_PROCESSING) ? LABEL_FILENAMES :
-                                        LABEL_UNKNOWN_EXECUTION;
-        String resourceTask = resourceType.equals(IMAGE_PROCESSING) ? LABEL_IMAGES : LABEL_VIDEOS;
+        String flowTask = ConstantExtractionUtil.extractFlowTask(flow);
+        String branchTask = ConstantExtractionUtil.extractBranchTask(branch);
+        String resourceTask = ConstantExtractionUtil.extractResourceTask(resourceType);
         String fromExtension = selectedExtensions.get(extensionFromIndex);
         String toExtension = selectedExtensions.get(extensionToIndex);
         System.out.printf(MESSAGE_PROCESSING_TASK, flowTask, branchTask, resourceTask, path);

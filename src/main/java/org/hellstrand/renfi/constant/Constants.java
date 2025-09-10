@@ -7,7 +7,7 @@ import java.util.Map;
 
 /**
  * @author (Mats Richard Hellstrand)
- * @version (6th of September, 2023)
+ * @version (10th of September, 2025)
  */
 public final class Constants {
     // Application states, actions, attributes...
@@ -119,12 +119,13 @@ public final class Constants {
     public static final String LABEL_CROP = "Crop resources";
     public static final String LABEL_CONVERT = "Convert resources";
     public static final String LABEL_DETECT = "Detect black borders";
+    public static final String LABEL_SOURCE = "Save Filenames";
     public static final String LABEL_DATA_PROCESSING = "Data handling";
+    public static final String LABEL_JAVA = "Using Java +7";
+    public static final String LABEL_CREATED = "Using Drew Noakes's extractor";
+    public static final String LABEL_FILE = "Using a File as resource";
     public static final String LABEL_VIDEOS = "Videos";
     public static final String LABEL_IMAGES = "Images";
-    public static final String LABEL_CREATED = "Created Date";
-    public static final String LABEL_FILE = "From File";
-    public static final String LABEL_FILENAMES = "Save Filenames";
     public static final String LABEL_UNKNOWN_EXECUTION = "UNKNOWN";
     public static final String LABEL_PROCESSED_DIRECTORY = "processed\\";
     public static final String LABEL_DUPLICATES_DIRECTORY = "duplicates\\";
