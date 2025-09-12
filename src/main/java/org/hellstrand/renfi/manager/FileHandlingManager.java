@@ -14,7 +14,7 @@ import org.hellstrand.renfi.util.FileProcessingUtil;
 
 /**
  * @author (Mats Richard Hellstrand)
- * @version (6th of September, 2023)
+ * @version (12th of September, 2025)
  */
 public class FileHandlingManager {
     public static void processBranch(
@@ -22,25 +22,12 @@ public class FileHandlingManager {
         String outputSource = path.concat(OUTPUT_SOURCE);
 
         switch (branch) {
-            case COMPARE_PROCESSING:
-                FileProcessingUtil.compareResources(files, path, outputSource);
-                break;
-            case CROP_PROCESSING:
-                FileProcessingUtil.cropResources(files, path, outputSource, leftXAxis, leftYAxis, toExtension);
-                break;
-            case CONVERT_PROCESSING:
-                FileProcessingUtil.convertResources(files, path, outputSource, fromExtension, toExtension);
-                break;
-            case DETECT_PROCESSING:
-                FileProcessingUtil.detectBlackBorders(files, path, outputSource);
-                break;
-            case SOURCE_PROCESSING:
-                File sourceFile = FileProcessingUtil.createSourceFile(outputSource);
-                FileProcessingUtil.writeSourceFile(files, sourceFile);
-                break;
-            default:
-                printMessage(MESSAGE_EXECUTION_ABORT);
-                break;
+            case COMPARE_PROCESSING -> FileProcessingUtil.compareResources(files, path, outputSource);
+            case CROP_PROCESSING -> FileProcessingUtil.cropResources(files, path, outputSource, leftXAxis, leftYAxis, toExtension);
+            case CONVERT_PROCESSING -> FileProcessingUtil.convertResources(files, path, outputSource, fromExtension, toExtension);
+            case DETECT_PROCESSING -> FileProcessingUtil.detectBlackBorders(files, path, outputSource);
+            case SOURCE_PROCESSING -> FileProcessingUtil.writeSourceFile(files, FileProcessingUtil.createSourceFile(outputSource));
+            default -> printMessage(MESSAGE_EXECUTION_ABORT);
         }
     }
 }
