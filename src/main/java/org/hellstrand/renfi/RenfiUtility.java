@@ -1,9 +1,11 @@
 package org.hellstrand.renfi;
 
 import static org.hellstrand.renfi.constant.Constants.ALLOWED_FLAGS;
+import static org.hellstrand.renfi.constant.Constants.BOUNDARY_INDEX;
 import static org.hellstrand.renfi.constant.Constants.BRANCH_INDEX;
 import static org.hellstrand.renfi.constant.Constants.DATA_PROCESSING;
 import static org.hellstrand.renfi.constant.Constants.DATE_TYPE_INDEX;
+import static org.hellstrand.renfi.constant.Constants.MESSAGE_INVALID_BOUNDARY;
 import static org.hellstrand.renfi.constant.Constants.MESSAGE_PROCESSING_ATTRIBUTES;
 import static org.hellstrand.renfi.constant.Constants.PATH_INDEX;
 import static org.hellstrand.renfi.constant.Constants.EXTENSION_FROM_INDEX;
@@ -42,7 +44,7 @@ import org.hellstrand.renfi.manager.HistoryHandlingManager;
 
 /**
  * @author (Mats Richard Hellstrand)
- * @version (10th of September, 2025)
+ * @version (15th of September, 2025)
  */
 public final class RenfiUtility {
     public static void main(String[] args) {
@@ -61,6 +63,7 @@ public final class RenfiUtility {
         String leftXAxis = args[UPPER_LEFT_X_INDEX];
         String leftYAxis = args[UPPER_LEFT_Y_INDEX];
         String dateType = args[DATE_TYPE_INDEX];
+        String boundary = args[BOUNDARY_INDEX];
         if (!ALLOWED_FLAGS.contains(flow)
             || !ALLOWED_FLAGS.contains(branch)
             || !ALLOWED_FLAGS.contains(resourceType)
@@ -81,12 +84,17 @@ public final class RenfiUtility {
             System.exit(FAILURE);
         }
 
+        if (Integer.parseInt(boundary) < 1 || Integer.parseInt(boundary) > 100) {
+            printMessage(MESSAGE_INVALID_BOUNDARY);
+            System.exit(FAILURE);
+        }
+
         String flowTask = ConstantExtractionUtil.extractFlowTask(flow);
         String branchTask = ConstantExtractionUtil.extractBranchTask(branch);
         String resourceTask = ConstantExtractionUtil.extractResourceTask(resourceType);
         String fromExtension = selectedExtensions.get(extensionFromIndex);
         String toExtension = selectedExtensions.get(extensionToIndex);
-        System.out.printf(MESSAGE_PROCESSING_TASK, flowTask, branchTask, resourceTask, path);
+        System.out.printf(MESSAGE_PROCESSING_TASK, flowTask, branchTask, resourceTask, boundary, path);
         System.out.printf(
             MESSAGE_PROCESSING_ATTRIBUTES,
             fromExtension.substring(1), toExtension.substring(1), dateType, leftXAxis, leftYAxis);
@@ -119,7 +127,7 @@ public final class RenfiUtility {
             }
 
             if (flow.equals(FILE_PROCESSING)) { // If we want to modify a file or analyze it...
-                FileHandlingManager.processBranch(branch, files, path, leftXAxis, leftYAxis, fromExtension, toExtension);
+                FileHandlingManager.processBranch(branch, files, path, boundary, leftXAxis, leftYAxis, fromExtension, toExtension);
             } else if (flow.equals(DATA_PROCESSING)) { // If we want to prepare conversion history and execute renaming...
                 Map<String, String> history = new LinkedHashMap<>();
                 DataHandlingManager.processBranch(branch, resourceType, path, files, history, fromExtension, dateType);

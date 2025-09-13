@@ -26,7 +26,7 @@ import java.util.List;
 
 /**
  * @author (Mats Richard Hellstrand)
- * @version (12th of September, 2025)
+ * @version (15th of September, 2025)
  */
 public final class HelpGuideUtil {
     private HelpGuideUtil() {}
@@ -54,6 +54,7 @@ public final class HelpGuideUtil {
             \t(X_AXIS)\t\t\tThe starting pixel on the X axis (INTEGER).
             \t(Y_AXIS)\t\t\tThe starting pixel on the Y axis (INTEGER).
             \t(DATE_TYPE)\t\t\tThe desired date type flag from file:\040""" + TYPE_FLAGS + """
+            \n\t(BOUNDARY)\t\t\tThe desired boundary value ranging from 1 to 100, e.g. between 1 (inclusive) and 100 percent (inclusive).
 
 
             \n\tExtension legend:

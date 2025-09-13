@@ -14,15 +14,15 @@ import org.hellstrand.renfi.util.FileProcessingUtil;
 
 /**
  * @author (Mats Richard Hellstrand)
- * @version (12th of September, 2025)
+ * @version (14th of September, 2025)
  */
 public class FileHandlingManager {
     public static void processBranch(
-        String branch, File[] files, String path, String leftXAxis, String leftYAxis, String fromExtension, String toExtension) {
+        String branch, File[] files, String path, String boundary, String leftXAxis, String leftYAxis, String fromExtension, String toExtension) {
         String outputSource = path.concat(OUTPUT_SOURCE);
 
         switch (branch) {
-            case COMPARE_PROCESSING -> FileProcessingUtil.compareResources(files, path, outputSource);
+            case COMPARE_PROCESSING -> FileProcessingUtil.compareResources(files, path, boundary, outputSource);
             case CROP_PROCESSING -> FileProcessingUtil.cropResources(files, path, outputSource, leftXAxis, leftYAxis, toExtension);
             case CONVERT_PROCESSING -> FileProcessingUtil.convertResources(files, path, outputSource, fromExtension, toExtension);
             case DETECT_PROCESSING -> FileProcessingUtil.detectBlackBorders(files, path, outputSource);

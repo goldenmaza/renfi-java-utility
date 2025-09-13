@@ -7,7 +7,7 @@ import java.util.Map;
 
 /**
  * @author (Mats Richard Hellstrand)
- * @version (10th of September, 2025)
+ * @version (15th of September, 2025)
  */
 public final class Constants {
     // Application states, actions, attributes...
@@ -22,6 +22,7 @@ public final class Constants {
     public static final int UPPER_LEFT_X_INDEX = 6;
     public static final int UPPER_LEFT_Y_INDEX = 7;
     public static final int DATE_TYPE_INDEX = 8;
+    public static final int BOUNDARY_INDEX = 9;
 
     // Application flags for handling files...
     public static final String FILE_PROCESSING = "-f";
@@ -133,6 +134,7 @@ public final class Constants {
 
     // Message variables used for displaying states, or actions, in the application...
     public static final String MESSAGE_INVALID_USE = "Invalid use of application";
+    public static final String MESSAGE_INVALID_BOUNDARY = "Invalid boundary was given";
     public static final String MESSAGE_DESIRED_EXECUTION = "Are you happy with the current task? (y/n)";
     public static final String MESSAGE_DIRECTORY_UNAVAILABLE = "No directory found with the stated path: %s%n";
     public static final String MESSAGE_DIRECTORY_CREATION_FAILURE = "No directory was created with the stated path: %s%n";
@@ -140,7 +142,7 @@ public final class Constants {
     public static final String MESSAGE_SOURCE_UNAVAILABLE = "No source file found under the current path";
     public static final String MESSAGE_SOURCE_AVAILABLE = "A source file was found under the current path";
     public static final String MESSAGE_SOURCE_CONTAINS = "Source file contains";
-    public static final String MESSAGE_PROCESSING_TASK = "The task you have selected is: '%s' by '%s' of '%s' under the following path: '%s'.%n";
+    public static final String MESSAGE_PROCESSING_TASK = "The task you have selected is: '%s' by '%s' of '%s' up to '%s%%' under the following path: '%s'.%n";
     public static final String MESSAGE_PROCESSING_ATTRIBUTES = "The following attributes are also selected: '%s' to '%s', '%s' flag, X='%s' & Y='%s' axis values.%n";
     public static final String MESSAGE_LOADING_DIRECTORY = "Loading directory";
     public static final String MESSAGE_LOADING_FILES = "Available files";

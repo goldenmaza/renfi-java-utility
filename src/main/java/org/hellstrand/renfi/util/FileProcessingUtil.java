@@ -42,7 +42,7 @@ import javax.imageio.ImageIO;
 
 /**
  * @author (Mats Richard Hellstrand)
- * @version (9th of September, 2025)
+ * @version (14th of September, 2025)
  */
 public abstract class FileProcessingUtil {
     public static boolean validateTarget(String target) {
@@ -163,10 +163,11 @@ public abstract class FileProcessingUtil {
         }
     }
 
-    public static void compareResources(File[] files, String path, String logging) {
+    public static void compareResources(File[] files, String path, String boundary, String logging) {
         Set<String> processHistory = Collections.synchronizedSet(new HashSet<>());
         Set<String> duplicates = Collections.synchronizedSet(new HashSet<>());
         Set<String> matching = Collections.synchronizedSet(new HashSet<>());
+        double boundaryLimit = Double.parseDouble(boundary) / 100;
 
         try {
             PrintWriter printWriter = new PrintWriter(new FileOutputStream(logging), true);
@@ -177,80 +178,70 @@ public abstract class FileProcessingUtil {
             Arrays.stream(files).parallel().forEach(originalFile -> {
                 long threadProcessStart = System.currentTimeMillis();
                 String originalName = originalFile.getName();
-                int index = 0;
 
-                for (File comparedFile : files) {
+                Arrays.stream(files).sequential()
+                        .filter(f -> !f.getName().equals(originalName))
+                        .forEach(comparedFile -> {
                     String comparedName = comparedFile.getName();
-                    index++;
 
-                    if (!duplicates.contains(originalName) || !matching.contains(originalName)) {
-                        BufferedImage originalImage = null, comparedImage = null;
-                        try {
-                            originalImage = ImageIO.read(originalFile);
-                            comparedImage = ImageIO.read(comparedFile);
-                        } catch (IOException e) {
-                            System.err.println("Error: Can't read images");
-                        }
+                    try {
+                        BufferedImage originalImage = ImageIO.read(originalFile);
+                        int originalWidth = originalImage.getWidth();
+                        int originalHeight = originalImage.getHeight();
+                        BufferedImage comparedImage = ImageIO.read(comparedFile);
+                        int comparedWidth = comparedImage.getWidth();
+                        int comparedHeight = comparedImage.getHeight();
+                        int layeredPixels = 0, rgbMultiplier = 3, maxColourIntensity = 255;
+                        double percentageDifference = 0, colourDifference = 0;
 
-                        int width1 = originalImage.getWidth();
-                        int width2 = comparedImage.getWidth();
-                        int height1 = originalImage.getHeight();
-                        int height2 = comparedImage.getHeight();
+                        if (originalWidth == comparedWidth && originalHeight == comparedHeight) {
+                            for (int y = 0, rowMultiplier = 1; y < originalHeight && percentageDifference <= boundaryLimit; y++, rowMultiplier++) {
+                                for (int x = 0; x < originalWidth; x++) {
+                                    int rgbOriginal = originalImage.getRGB(x, y);
+                                    int redOriginal = (rgbOriginal >> 16) & 0xff;
+                                    int greenOriginal = (rgbOriginal >> 8) & 0xff;
+                                    int blueOriginal = (rgbOriginal) & 0xff;
+                                    int rgbCompared = comparedImage.getRGB(x, y);
+                                    int redCompared = (rgbCompared >> 16) & 0xff;
+                                    int greenCompared = (rgbCompared >> 8) & 0xff;
+                                    int blueCompared = (rgbCompared) & 0xff;
 
-                        if (width1 == width2 && height1 == height2) {
-                            long difference = 0;
-
-                            for (int y = 0; y < height1; y++) {
-                                for (int x = 0; x < width1; x++) {
-                                    int rgbA = originalImage.getRGB(x, y);
-                                    int redA = (rgbA >> 16) & 0xff;
-                                    int greenA = (rgbA >> 8) & 0xff;
-                                    int blueA = (rgbA) & 0xff;
-                                    int rgbB = comparedImage.getRGB(x, y);
-                                    int redB = (rgbB >> 16) & 0xff;
-                                    int greenB = (rgbB >> 8) & 0xff;
-                                    int blueB = (rgbB) & 0xff;
-
-                                    difference += Math.abs(redA - redB);
-                                    difference += Math.abs(greenA - greenB);
-                                    difference += Math.abs(blueA - blueB);
+                                    colourDifference += Math.abs(redOriginal - redCompared);
+                                    colourDifference += Math.abs(greenOriginal - greenCompared);
+                                    colourDifference += Math.abs(blueOriginal - blueCompared);
                                 }
+                                layeredPixels = originalWidth * rgbMultiplier * rowMultiplier;
+                                percentageDifference = colourDifference / layeredPixels / maxColourIntensity;
                             }
 
-                            double total_pixels = width1 * height1 * 3;
-                            double avg_different_pixels = difference / total_pixels;
-                            double percentage = (avg_different_pixels / 255) * 100;
-
-                            if (!duplicates.contains(originalName) || !matching.contains(originalName)) {
-                                if (!originalName.equals(comparedName)) {
-                                    if (Double.compare(percentage, 0.0) == 0) {
-                                        printMessage("Comparison results (DUPLICATES)...");
-                                        System.out.println("OriginalFile: " + originalName);
-                                        System.out.println("ComparedFile: " + comparedName);
-                                        System.out.println("Difference Percentage: " + percentage);
-                                        printWriter.println("Comparison results (DUPLICATES)...");
-                                        printWriter.println("OriginalFile: " + originalName);
-                                        printWriter.println("ComparedFile: " + comparedName);
-                                        printWriter.println("Difference Percentage: " + percentage);
-                                        duplicates.add(originalName);
-                                        duplicates.add(comparedName);
-                                    } else if (Double.compare(percentage, 10.0) < 0) {
-                                        printMessage("Comparison results (MATCHING)...");
-                                        System.out.println("OriginalFile: " + originalName);
-                                        System.out.println("ComparedFile: " + comparedName);
-                                        System.out.println("Difference Percentage: " + percentage);
-                                        printWriter.println("Comparison results (MATCHING)...");
-                                        printWriter.println("OriginalFile: " + originalName);
-                                        printWriter.println("ComparedFile: " + comparedName);
-                                        printWriter.println("Difference Percentage: " + percentage);
-                                        matching.add(originalName);
-                                        matching.add(comparedName);
-                                    }
-                                }
+                            if (Double.compare(percentageDifference, 0.0) == 0) {
+                                printMessage("Comparison results (DUPLICATES)...");
+                                System.out.println("OriginalFile: " + originalName);
+                                System.out.println("ComparedFile: " + comparedName);
+                                System.out.println("Difference Percentage: " + percentageDifference);
+                                printWriter.println("Comparison results (DUPLICATES)...");
+                                printWriter.println("OriginalFile: " + originalName);
+                                printWriter.println("ComparedFile: " + comparedName);
+                                printWriter.println("Difference Percentage: " + percentageDifference);
+                                duplicates.add(originalName);
+                                duplicates.add(comparedName);
+                            } else if (Double.compare(percentageDifference, boundaryLimit) < 0) {
+                                printMessage("Comparison results (MATCHING)...");
+                                System.out.println("OriginalFile: " + originalName);
+                                System.out.println("ComparedFile: " + comparedName);
+                                System.out.println("Difference Percentage: " + percentageDifference);
+                                printWriter.println("Comparison results (MATCHING)...");
+                                printWriter.println("OriginalFile: " + originalName);
+                                printWriter.println("ComparedFile: " + comparedName);
+                                printWriter.println("Difference Percentage: " + percentageDifference);
+                                matching.add(originalName);
+                                matching.add(comparedName);
                             }
                         }
+                    } catch (IOException e) {
+                        System.err.println("Error: Can't read images");
                     }
-                }
+                });
                 processHistory.add(originalName);
                 long threadProcessEnd = System.currentTimeMillis();
 
@@ -263,8 +254,7 @@ public abstract class FileProcessingUtil {
                 System.out.println("Thread runtime: " + TimeUnit.MILLISECONDS.toSeconds(threadProcessEnd - threadProcessStart));
                 System.out.println("Threads available: " + Thread.activeCount());
                 System.out.println("=== === === === ===");
-                System.out.println("Parent: " + originalName);
-                System.out.println("Child: " + index + "/" + files.length);
+                System.out.println("OriginalName: " + originalName);
                 System.out.println("History: " + processHistory.size());
                 System.out.println("Duplicates: " + duplicates.size());
                 System.out.println("Matching: " + matching.size());
