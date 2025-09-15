@@ -39,39 +39,21 @@ public final class VideoProcessingUtil extends FileProcessingUtil {
             Map<String, String> mapOfFailures = new LinkedHashMap<>();
 
             for (File file : files) {
-                Metadata metadata;
-                switch (extension) {
-                    case EXTENSION_AVI:
-                        metadata = AviMetadataReader.readMetadata(file);
-                        break;
-                    case EXTENSION_MP4:
-                        metadata = Mp4MetadataReader.readMetadata(file);
-                        break;
-                    case EXTENSION_MOV:
-                        metadata = QuickTimeMetadataReader.readMetadata(file);
-                        break;
-                    default:
-                        metadata = null;
-                        break;
-                }
+                Metadata metadata = switch (extension) {
+                    case EXTENSION_AVI -> AviMetadataReader.readMetadata(file);
+                    case EXTENSION_MP4 -> Mp4MetadataReader.readMetadata(file);
+                    case EXTENSION_MOV -> QuickTimeMetadataReader.readMetadata(file);
+                    default -> null;
+                };
 
                 if (metadata != null) {
                     for (Directory directory : metadata.getDirectories()) {
-                        Date date;
-                        switch (extension) {
-                            case EXTENSION_AVI:
-                                date = directory.getDate(AviDirectory.TAG_DATETIME_ORIGINAL);
-                                break;
-                            case EXTENSION_MP4:
-                                date = directory.getDate(Mp4Directory.TAG_CREATION_TIME);
-                                break;
-                            case EXTENSION_MOV:
-                                date = directory.getDate(QuickTimeDirectory.TAG_CREATION_TIME);
-                                break;
-                            default:
-                                date = null;
-                                break;
-                        }
+                        Date date = switch (extension) {
+                            case EXTENSION_AVI -> directory.getDate(AviDirectory.TAG_DATETIME_ORIGINAL);
+                            case EXTENSION_MP4 -> directory.getDate(Mp4Directory.TAG_CREATION_TIME);
+                            case EXTENSION_MOV -> directory.getDate(QuickTimeDirectory.TAG_CREATION_TIME);
+                            default -> null;
+                        };
 
                         if (date != null) {
                             Instant instant = Instant.ofEpochMilli(date.getTime());
