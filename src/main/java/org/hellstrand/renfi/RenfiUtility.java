@@ -5,19 +5,22 @@ import static org.hellstrand.renfi.constant.Constants.BOUNDARY_INDEX;
 import static org.hellstrand.renfi.constant.Constants.BRANCH_INDEX;
 import static org.hellstrand.renfi.constant.Constants.DATA_PROCESSING;
 import static org.hellstrand.renfi.constant.Constants.DATE_TYPE_INDEX;
-import static org.hellstrand.renfi.constant.Constants.MESSAGE_INVALID_BOUNDARY;
+import static org.hellstrand.renfi.constant.Constants.MESSAGE_INVALID_BOUNDARY_INDEX;
+import static org.hellstrand.renfi.constant.Constants.MESSAGE_DISPLAY_HELP_GUIDE;
+import static org.hellstrand.renfi.constant.Constants.MESSAGE_INVALID_BRANCH_INDEX;
+import static org.hellstrand.renfi.constant.Constants.MESSAGE_INVALID_EXTENSION_RANGES;
+import static org.hellstrand.renfi.constant.Constants.MESSAGE_INVALID_RESOURCE_TYPE_INDEX;
 import static org.hellstrand.renfi.constant.Constants.MESSAGE_PROCESSING_ATTRIBUTES;
 import static org.hellstrand.renfi.constant.Constants.PATH_INDEX;
 import static org.hellstrand.renfi.constant.Constants.EXTENSION_FROM_INDEX;
 import static org.hellstrand.renfi.constant.Constants.EXTENSION_TO_INDEX;
-import static org.hellstrand.renfi.constant.Constants.FAILURE;
 import static org.hellstrand.renfi.constant.Constants.FILE_PROCESSING;
 import static org.hellstrand.renfi.constant.Constants.FLOW_INDEX;
 import static org.hellstrand.renfi.constant.Constants.HELP_FLAGS;
 import static org.hellstrand.renfi.constant.Constants.MESSAGE_DESIRED_EXECUTION;
 import static org.hellstrand.renfi.constant.Constants.MESSAGE_DIRECTORY_UNAVAILABLE;
 import static org.hellstrand.renfi.constant.Constants.MESSAGE_EXECUTION_ABORT;
-import static org.hellstrand.renfi.constant.Constants.MESSAGE_INVALID_USE;
+import static org.hellstrand.renfi.constant.Constants.MESSAGE_INVALID_FLOW_INDEX;
 import static org.hellstrand.renfi.constant.Constants.MESSAGE_LOADING_DIRECTORY;
 import static org.hellstrand.renfi.constant.Constants.MESSAGE_LOADING_FILES;
 import static org.hellstrand.renfi.constant.Constants.MESSAGE_PROCESSING_TASK;
@@ -38,6 +41,10 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Scanner;
 import org.hellstrand.renfi.constant.ConstantExtractionUtil;
+import org.hellstrand.renfi.exception.DirectoryUnavailableException;
+import org.hellstrand.renfi.exception.DisplayHelpGuideException;
+import org.hellstrand.renfi.exception.InvalidUseException;
+import org.hellstrand.renfi.exception.ResourcesUnavailableException;
 import org.hellstrand.renfi.manager.DataHandlingManager;
 import org.hellstrand.renfi.manager.FileHandlingManager;
 import org.hellstrand.renfi.manager.HistoryHandlingManager;
@@ -50,7 +57,7 @@ public final class RenfiUtility {
     public static void main(String[] args) {
         if (args.length < 9 || HELP_FLAGS.contains(args[0])) {
             displayHelpGuide();
-            System.exit(SUCCESSFUL);
+            throw new DisplayHelpGuideException(MESSAGE_DISPLAY_HELP_GUIDE);
         }
 
         // "Prepare" the flow of the application...
@@ -64,29 +71,37 @@ public final class RenfiUtility {
         String leftYAxis = args[UPPER_LEFT_Y_INDEX];
         String dateType = args[DATE_TYPE_INDEX];
         String boundary = args[BOUNDARY_INDEX];
-        if (!ALLOWED_FLAGS.contains(flow)
-            || !ALLOWED_FLAGS.contains(branch)
-            || !ALLOWED_FLAGS.contains(resourceType)
-            || !PROCESSING_SUPPORT.containsKey(resourceType)) {
-            printMessage(MESSAGE_INVALID_USE);
-            System.exit(FAILURE);
+
+        if (!ALLOWED_FLAGS.contains(flow)) {
+            printMessage(MESSAGE_INVALID_FLOW_INDEX);
+            throw new InvalidUseException(MESSAGE_INVALID_FLOW_INDEX);
+        }
+
+        if (!ALLOWED_FLAGS.contains(branch)) {
+            printMessage(MESSAGE_INVALID_BRANCH_INDEX);
+            throw new InvalidUseException(MESSAGE_INVALID_BRANCH_INDEX);
+        }
+
+        if (!ALLOWED_FLAGS.contains(resourceType) || !PROCESSING_SUPPORT.containsKey(resourceType)) {
+            printMessage(MESSAGE_INVALID_RESOURCE_TYPE_INDEX);
+            throw new InvalidUseException(MESSAGE_INVALID_RESOURCE_TYPE_INDEX);
         }
 
         if (!validateTarget(path)) {
             System.out.printf(MESSAGE_DIRECTORY_UNAVAILABLE, path);
-            System.exit(FAILURE);
+            throw new DirectoryUnavailableException(MESSAGE_DIRECTORY_UNAVAILABLE);
         }
 
         List<String> selectedExtensions = PROCESSING_SUPPORT.get(resourceType);
         int extensionFromIndex = Integer.parseInt(fromIndex), extensionToIndex = Integer.parseInt(toIndex);
         if (extensionFromIndex < 0 && extensionToIndex >= selectedExtensions.size()) {
-            printMessage(MESSAGE_INVALID_USE);
-            System.exit(FAILURE);
+            printMessage(MESSAGE_INVALID_EXTENSION_RANGES);
+            throw new InvalidUseException(MESSAGE_INVALID_EXTENSION_RANGES);
         }
 
         if (Integer.parseInt(boundary) < 1 || Integer.parseInt(boundary) > 100) {
-            printMessage(MESSAGE_INVALID_BOUNDARY);
-            System.exit(FAILURE);
+            printMessage(MESSAGE_INVALID_BOUNDARY_INDEX);
+            throw new InvalidUseException(MESSAGE_INVALID_BOUNDARY_INDEX);
         }
 
         String flowTask = ConstantExtractionUtil.extractFlowTask(flow);
@@ -109,7 +124,7 @@ public final class RenfiUtility {
             File directory = new File(path);
             if (!directory.exists() && !directory.isDirectory()) {
                 System.out.printf(MESSAGE_DIRECTORY_UNAVAILABLE, path);
-                System.exit(FAILURE);
+                throw new DirectoryUnavailableException(MESSAGE_DIRECTORY_UNAVAILABLE);
             } else {
                 System.out.println(path);
             }
@@ -123,7 +138,7 @@ public final class RenfiUtility {
                 }
             } else {
                 printMessage(MESSAGE_RESOURCES_UNAVAILABLE);
-                System.exit(FAILURE);
+                throw new ResourcesUnavailableException(MESSAGE_RESOURCES_UNAVAILABLE);
             }
 
             if (flow.equals(FILE_PROCESSING)) { // If we want to modify a file or analyze it...

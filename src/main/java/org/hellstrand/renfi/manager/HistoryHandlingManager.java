@@ -3,8 +3,8 @@ package org.hellstrand.renfi.manager;
 import static org.hellstrand.renfi.constant.Constants.LABEL_PROCESSED_DIRECTORY;
 import static org.hellstrand.renfi.constant.Constants.MESSAGE_CONTINUE_RENAMING;
 import static org.hellstrand.renfi.constant.Constants.MESSAGE_CONVERSION_HISTORY;
-import static org.hellstrand.renfi.constant.Constants.MESSAGE_CONVERSION_HISTORY_EMPTY;
-import static org.hellstrand.renfi.constant.Constants.MESSAGE_FAILED_MISMATCH;
+import static org.hellstrand.renfi.constant.Constants.MESSAGE_EMPTY_CONVERSION_HISTORY;
+import static org.hellstrand.renfi.constant.Constants.MESSAGE_MISMATCHING_CONVERSION_HISTORY;
 import static org.hellstrand.renfi.constant.Constants.MESSAGE_RENAMING_ABORT;
 import static org.hellstrand.renfi.constant.Constants.MESSAGE_RENAMING_PROCESS;
 import static org.hellstrand.renfi.constant.Constants.MESSAGE_UNDO_ABORT;
@@ -14,11 +14,13 @@ import static org.hellstrand.renfi.util.HelpGuideUtil.printMessage;
 import java.io.File;
 import java.util.Map;
 import java.util.Scanner;
+import org.hellstrand.renfi.exception.MismatchingConversionHistoryException;
+import org.hellstrand.renfi.exception.EmptyConversionHistoryException;
 import org.hellstrand.renfi.util.FileProcessingUtil;
 
 /**
  * @author (Mats Richard Hellstrand)
- * @version (9th of September, 2025)
+ * @version (15th of September, 2025)
  */
 public class HistoryHandlingManager {
     public static void processHistory(File[] files, Map<String, String> history, String path, File directory) {
@@ -35,7 +37,7 @@ public class HistoryHandlingManager {
             String key = scanner.nextLine();
             if (key.equals("y")) { // Should the renaming process be executed?
                 printMessage(MESSAGE_RENAMING_PROCESS);
-                if (history.size() > 0) {
+                if (files.length == history.size()) {
                     FileProcessingUtil.renamingProcess(files, history, path, LABEL_PROCESSED_DIRECTORY);
 
                     printMessage(MESSAGE_UNDO_CONTINUE);
@@ -46,14 +48,16 @@ public class HistoryHandlingManager {
                         printMessage(MESSAGE_UNDO_ABORT);
                     }
                 } else {
-                    printMessage(MESSAGE_FAILED_MISMATCH);
+                    printMessage(MESSAGE_MISMATCHING_CONVERSION_HISTORY);
+                    throw new MismatchingConversionHistoryException(MESSAGE_MISMATCHING_CONVERSION_HISTORY);
                 }
             } else {
                 printMessage(MESSAGE_RENAMING_ABORT);
             }
             scanner.close();
         } else {
-            printMessage(MESSAGE_CONVERSION_HISTORY_EMPTY);
+            printMessage(MESSAGE_EMPTY_CONVERSION_HISTORY);
+            throw new EmptyConversionHistoryException(MESSAGE_EMPTY_CONVERSION_HISTORY);
         }
     }
 }

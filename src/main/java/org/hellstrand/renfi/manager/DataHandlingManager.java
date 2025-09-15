@@ -3,21 +3,22 @@ package org.hellstrand.renfi.manager;
 import static org.hellstrand.renfi.constant.Constants.IMAGE_PROCESSING;
 import static org.hellstrand.renfi.constant.Constants.JAVA_PROCESSING;
 import static org.hellstrand.renfi.constant.Constants.LIST_PROCESSING;
-import static org.hellstrand.renfi.constant.Constants.MESSAGE_EXECUTION_ABORT;
 import static org.hellstrand.renfi.constant.Constants.INPUT_SOURCE;
+import static org.hellstrand.renfi.constant.Constants.MESSAGE_INVALID_BRANCH_FAILURE;
 import static org.hellstrand.renfi.constant.Constants.ORIGIN_PROCESSING;
 import static org.hellstrand.renfi.constant.Constants.VIDEO_PROCESSING;
 import static org.hellstrand.renfi.util.HelpGuideUtil.printMessage;
 
 import java.io.File;
 import java.util.Map;
+import org.hellstrand.renfi.exception.InvalidBranchException;
 import org.hellstrand.renfi.util.ImageProcessingUtil;
 import org.hellstrand.renfi.util.NioProcessingUtil;
 import org.hellstrand.renfi.util.VideoProcessingUtil;
 
 /**
  * @author (Mats Richard Hellstrand)
- * @version (12th of September, 2025)
+ * @version (15th of September, 2025)
  */
 public class DataHandlingManager {
     public static void processBranch(
@@ -42,7 +43,10 @@ public class DataHandlingManager {
                     ImageProcessingUtil.prepareHistoryByInput(files, history, inputSourceName, fromExtension);
                 }
             }
-            default -> printMessage(MESSAGE_EXECUTION_ABORT);
+            default -> {
+                printMessage(MESSAGE_INVALID_BRANCH_FAILURE);
+                throw new InvalidBranchException(MESSAGE_INVALID_BRANCH_FAILURE);
+            }
         }
     }
 }

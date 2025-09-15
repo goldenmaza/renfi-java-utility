@@ -5,6 +5,7 @@ import static org.hellstrand.renfi.constant.Constants.DATE_LANGUAGE;
 import static org.hellstrand.renfi.constant.Constants.DATE_TIMESTAMP_FORMAT;
 import static org.hellstrand.renfi.constant.Constants.DATE_TIMEZONE;
 import static org.hellstrand.renfi.constant.Constants.MESSAGE_LOADED_PREPARED;
+import static org.hellstrand.renfi.constant.Constants.MESSAGE_METADATA_FAILURE;
 import static org.hellstrand.renfi.constant.Constants.MESSAGE_RESOURCE_MISSING_FIELD;
 import static org.hellstrand.renfi.util.HelpGuideUtil.printMessage;
 
@@ -22,10 +23,11 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 import java.util.TimeZone;
+import org.hellstrand.renfi.exception.SourceUnavailableException;
 
 /**
  * @author (Mats Richard Hellstrand)
- * @version (4th of September, 2023)
+ * @version (15th of September, 2025)
  */
 public final class ImageProcessingUtil extends FileProcessingUtil {
     public static void prepareHistoryByOrigin(File[] files, Map<String, String> history, String extension) {
@@ -54,7 +56,8 @@ public final class ImageProcessingUtil extends FileProcessingUtil {
                 System.out.println(entry.getValue());
             }
         } catch (ImageProcessingException | IOException e) {
-            System.err.println(e.getMessage());
+            printMessage(MESSAGE_METADATA_FAILURE);
+            throw new SourceUnavailableException(MESSAGE_METADATA_FAILURE, e);
         }
     }
 }

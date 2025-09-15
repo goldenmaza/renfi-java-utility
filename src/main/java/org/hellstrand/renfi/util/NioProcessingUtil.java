@@ -4,6 +4,7 @@ import static org.hellstrand.renfi.constant.Constants.DATE_TIMESTAMP_FORMAT;
 import static org.hellstrand.renfi.constant.Constants.LAST_ACCESS_TIME_FLAG;
 import static org.hellstrand.renfi.constant.Constants.LAST_MODIFIED_TIME_FLAG;
 import static org.hellstrand.renfi.constant.Constants.MESSAGE_LOADED_PREPARED;
+import static org.hellstrand.renfi.constant.Constants.MESSAGE_NIO_FAILURE;
 import static org.hellstrand.renfi.constant.Constants.MESSAGE_RESOURCE_MISSING_FIELD;
 import static org.hellstrand.renfi.util.HelpGuideUtil.printMessage;
 
@@ -18,10 +19,11 @@ import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import org.hellstrand.renfi.exception.SourceUnavailableException;
 
 /**
  * @author (Mats Richard Hellstrand)
- * @version (5th of September, 2023)
+ * @version (15th of September, 2025)
  */
 public class NioProcessingUtil {
     public static void prepareHistoryByNioProcessing(File[] files, Map<String, String> history, String fromExtension, String dateTypeFlag) {
@@ -59,7 +61,8 @@ public class NioProcessingUtil {
                 }
             }
         } catch (IOException e) {
-            e.printStackTrace();
+            printMessage(MESSAGE_NIO_FAILURE);
+            throw new SourceUnavailableException(MESSAGE_NIO_FAILURE, e);
         }
 
         for (Map.Entry<String, String> entry : mapOfFailures.entrySet()) {

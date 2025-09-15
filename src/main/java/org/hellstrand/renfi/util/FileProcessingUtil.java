@@ -1,14 +1,14 @@
 package org.hellstrand.renfi.util;
 
-import static org.hellstrand.renfi.constant.Constants.FAILURE;
 import static org.hellstrand.renfi.constant.Constants.LABEL_PROCESSED_DIRECTORY;
 import static org.hellstrand.renfi.constant.Constants.LABEL_DUPLICATES_DIRECTORY;
 import static org.hellstrand.renfi.constant.Constants.LABEL_MATCHING_DIRECTORY;
 import static org.hellstrand.renfi.constant.Constants.MESSAGE_CREATING_PROCESSED_DIRECTORY;
 import static org.hellstrand.renfi.constant.Constants.MESSAGE_DIRECTORY_CREATION_FAILURE;
 import static org.hellstrand.renfi.constant.Constants.MESSAGE_FAILED_UNDO_LOADING;
-import static org.hellstrand.renfi.constant.Constants.MESSAGE_FAILURE_NEWNAME;
-import static org.hellstrand.renfi.constant.Constants.MESSAGE_FAILURE_SOURCES;
+import static org.hellstrand.renfi.constant.Constants.MESSAGE_IMAGEIO_FAILURE;
+import static org.hellstrand.renfi.constant.Constants.MESSAGE_KEY_PAIR_FAILURE;
+import static org.hellstrand.renfi.constant.Constants.MESSAGE_LOGGING_UNAVAILABLE;
 import static org.hellstrand.renfi.constant.Constants.MESSAGE_RENAMING_ALERT;
 import static org.hellstrand.renfi.constant.Constants.MESSAGE_RENAMING_FAILURE;
 import static org.hellstrand.renfi.constant.Constants.MESSAGE_SORTING_FILES;
@@ -39,10 +39,13 @@ import java.util.Scanner;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 import javax.imageio.ImageIO;
+import org.hellstrand.renfi.exception.DirectoryUnavailableException;
+import org.hellstrand.renfi.exception.MismatchingConversionHistoryException;
+import org.hellstrand.renfi.exception.SourceUnavailableException;
 
 /**
  * @author (Mats Richard Hellstrand)
- * @version (14th of September, 2025)
+ * @version (15th of September, 2025)
  */
 public abstract class FileProcessingUtil {
     public static boolean validateTarget(String target) {
@@ -54,20 +57,21 @@ public abstract class FileProcessingUtil {
         if (targetDirectory.mkdir()) {
             printMessage(MESSAGE_CREATING_PROCESSED_DIRECTORY);
             return true;
+        } else {
+            System.out.printf(MESSAGE_DIRECTORY_CREATION_FAILURE, directory);
+            throw new DirectoryUnavailableException(MESSAGE_DIRECTORY_CREATION_FAILURE);
         }
-        return false;
     }
 
     public static File createSourceFile(String outputSource) {
         File sourceFile = new File(outputSource);
         try {
-            if (!sourceFile.createNewFile()) {
+            if (sourceFile.createNewFile()) {
                 printMessage(MESSAGE_SOURCE_AVAILABLE);
-                System.exit(FAILURE);
             }
         } catch (IOException e) {
             printMessage(MESSAGE_SOURCE_UNAVAILABLE);
-            System.exit(FAILURE);
+            throw new SourceUnavailableException(MESSAGE_SOURCE_UNAVAILABLE);
         }
         return sourceFile;
     }
@@ -83,7 +87,7 @@ public abstract class FileProcessingUtil {
             printWriter.close();
         } catch (FileNotFoundException e) {
             printMessage(MESSAGE_SOURCE_UNAVAILABLE);
-            System.exit(FAILURE);
+            throw new SourceUnavailableException(MESSAGE_SOURCE_UNAVAILABLE);
         }
     }
 
@@ -111,25 +115,22 @@ public abstract class FileProcessingUtil {
             }
         } catch (FileNotFoundException e) {
             printMessage(MESSAGE_SOURCE_UNAVAILABLE);
-            System.exit(FAILURE);
+            throw new SourceUnavailableException(MESSAGE_SOURCE_UNAVAILABLE);
         }
     }
 
     public static void renamingProcess(File[] files, Map<String, String> history, String path, String pathExtension) {
         String directory = path.concat(pathExtension);
-        if (!createTargetDirectory(directory)) {
-            System.out.printf(MESSAGE_DIRECTORY_CREATION_FAILURE, directory);
-            return;
-        }
+        if (createTargetDirectory(directory)) {
+            for (File file : files) {
+                String previousName = file.getName();
+                String newName = history.get(previousName);
 
-        for (File file : files) {
-            String previousName = file.getName();
-            String newName = history.get(previousName);
-
-            if (Objects.nonNull(newName) && file.renameTo(new File(directory.concat(newName)))) {
-                System.out.printf(MESSAGE_RENAMING_ALERT, previousName, newName);
-            } else {
-                System.out.printf(MESSAGE_FAILURE_SOURCES, previousName, MESSAGE_FAILURE_NEWNAME);
+                if (Objects.nonNull(newName) && file.renameTo(new File(directory.concat(newName)))) {
+                    System.out.printf(MESSAGE_RENAMING_ALERT, previousName, newName);
+                } else {
+                    System.out.printf(MESSAGE_KEY_PAIR_FAILURE, previousName);
+                }
             }
         }
     }
@@ -137,7 +138,7 @@ public abstract class FileProcessingUtil {
     public static void renamingUndoProcess(Map<String, String> history, File directory, String path) {
         printMessage(MESSAGE_UNDO_RELOADING);
         File[] undoList = directory.listFiles((dir, name) -> history.values().stream().anyMatch(n -> n.equals(name)));
-        if (Objects.requireNonNull(undoList).length > 0) {
+        if (Objects.requireNonNull(undoList).length == history.size()) {
             for (File file : undoList) {
                 System.out.println(file.getName());
             }
@@ -155,11 +156,12 @@ public abstract class FileProcessingUtil {
                     System.out.printf(MESSAGE_UNDO_ALERT, undoName, previousName);
                 } else {
                     printMessage(MESSAGE_RENAMING_FAILURE);
-                    System.out.printf(MESSAGE_FAILURE_SOURCES, undoName, previousName);
+                    System.out.printf(MESSAGE_KEY_PAIR_FAILURE, undoName);
                 }
             }
         } else {
             printMessage(MESSAGE_FAILED_UNDO_LOADING);
+            throw new MismatchingConversionHistoryException(MESSAGE_FAILED_UNDO_LOADING);
         }
     }
 
@@ -239,7 +241,8 @@ public abstract class FileProcessingUtil {
                             }
                         }
                     } catch (IOException e) {
-                        System.err.println("Error: Can't read images");
+                        printMessage(MESSAGE_IMAGEIO_FAILURE);
+                        throw new SourceUnavailableException(MESSAGE_IMAGEIO_FAILURE, e);
                     }
                 });
                 processHistory.add(originalName);
@@ -274,32 +277,26 @@ public abstract class FileProcessingUtil {
             String directory;
             if (!duplicates.isEmpty()) {
                 directory = path.concat(LABEL_DUPLICATES_DIRECTORY);
-                if (!createTargetDirectory(directory)) {
-                    System.out.printf(MESSAGE_DIRECTORY_CREATION_FAILURE, directory);
-                    printWriter.close();
-                    return;
-                }
-                for (String duplicate : duplicates) {
-                    for (File file : files) {
-                        if (file.getName().equals(duplicate) && file.renameTo(new File(directory.concat(duplicate)))) {
-                            System.out.println("Moved file (duplicates): " + duplicate);
-                            printWriter.println("Moved file (duplicates): " + duplicate);
+                if (createTargetDirectory(directory)) {
+                    for (String duplicate : duplicates) {
+                        for (File file : files) {
+                            if (file.getName().equals(duplicate) && file.renameTo(new File(directory.concat(duplicate)))) {
+                                System.out.println("Moved file (duplicates): " + duplicate);
+                                printWriter.println("Moved file (duplicates): " + duplicate);
+                            }
                         }
                     }
                 }
             }
             if (!matching.isEmpty()) {
                 directory = path.concat(LABEL_MATCHING_DIRECTORY);
-                if (!createTargetDirectory(directory)) {
-                    System.out.printf(MESSAGE_DIRECTORY_CREATION_FAILURE, directory);
-                    printWriter.close();
-                    return;
-                }
-                for (String match : matching) {
-                    for (File file : files) {
-                        if (file.getName().equals(match) && file.renameTo(new File(directory.concat(match)))) {
-                            System.out.println("Moved file (matching): " + match);
-                            printWriter.println("Moved file (matching): " + match);
+                if (createTargetDirectory(directory)) {
+                    for (String match : matching) {
+                        for (File file : files) {
+                            if (file.getName().equals(match) && file.renameTo(new File(directory.concat(match)))) {
+                                System.out.println("Moved file (matching): " + match);
+                                printWriter.println("Moved file (matching): " + match);
+                            }
                         }
                     }
                 }
@@ -307,7 +304,8 @@ public abstract class FileProcessingUtil {
 
             printWriter.close();
         } catch (FileNotFoundException e) {
-            e.printStackTrace();
+            printMessage(MESSAGE_LOGGING_UNAVAILABLE);
+            throw new SourceUnavailableException(MESSAGE_LOGGING_UNAVAILABLE, e);
         }
     }
 
@@ -317,53 +315,53 @@ public abstract class FileProcessingUtil {
         try {
             PrintWriter printWriter = new PrintWriter(new FileOutputStream(logging), true);
             String directory = path.concat(LABEL_PROCESSED_DIRECTORY);
-            if (!createTargetDirectory(directory)) {
-                System.out.printf(MESSAGE_DIRECTORY_CREATION_FAILURE, directory);
-                return;
+
+            if (createTargetDirectory(directory)) {
+                printMessage("Cropping starts...");
+                long croppingProcessStart = System.currentTimeMillis();
+
+                int leftX = Integer.parseInt(leftXAxis), leftY = Integer.parseInt(leftYAxis);
+                Arrays.stream(files).parallel().forEach(originalFile -> {
+                    long threadProcessStart = System.currentTimeMillis();
+                    String originalName = originalFile.getName();
+
+                    try {
+                        BufferedImage bufferedImage = ImageIO.read(originalFile);
+                        BufferedImage croppedImage = bufferedImage.getSubimage(
+                                leftX, leftY, (bufferedImage.getWidth() - (leftX + leftX)), (bufferedImage.getHeight() - (leftY + leftY)));
+                        File toCroppedFile = new File(directory.concat(originalName));
+                        ImageIO.write(croppedImage, toExtension.substring(1), toCroppedFile);
+                    } catch (IOException e) {
+                        printMessage(MESSAGE_IMAGEIO_FAILURE);
+                        throw new SourceUnavailableException(MESSAGE_IMAGEIO_FAILURE, e);
+                    }
+                    processHistory.add(originalName);
+                    long threadProcessEnd = System.currentTimeMillis();
+
+                    float processingStatus = ((Float.intBitsToFloat(processHistory.size()) / Float.intBitsToFloat(files.length)) * 100.0f);
+                    printMessage("Processing Thread results...");
+                    System.out.println("=== === === === ===");
+                    System.out.println("Processing status (%): " + String.format("%.02f", processingStatus));
+                    System.out.println("=== === === === ===");
+                    System.out.println("Thread name: " + Thread.currentThread().getName());
+                    System.out.println("Thread runtime: " + TimeUnit.MILLISECONDS.toSeconds(threadProcessEnd - threadProcessStart));
+                    System.out.println("Threads available: " + Thread.activeCount());
+                    System.out.println("=== === === === ===");
+                    System.out.println("Current: " + originalName);
+                    System.out.println("Processed: " + processHistory.size());
+                });
+
+                long croppingProcessEnd = System.currentTimeMillis();
+                long croppingProcessHours = TimeUnit.MILLISECONDS.toHours(croppingProcessEnd - croppingProcessStart);
+                printMessage("Processing Batch results...");
+                System.out.println("Elapsed time: " + croppingProcessHours);
+                printWriter.println("Processing Batch results...");
+                printWriter.println("Elapsed time: " + croppingProcessHours);
+                printWriter.close();
             }
-
-            printMessage("Cropping starts...");
-            long croppingProcessStart = System.currentTimeMillis();
-
-            int leftX = Integer.parseInt(leftXAxis), leftY = Integer.parseInt(leftYAxis);
-            Arrays.stream(files).parallel().forEach(originalFile -> {
-                long threadProcessStart = System.currentTimeMillis();
-                String originalName = originalFile.getName();
-
-                try {
-                    BufferedImage bufferedImage = ImageIO.read(originalFile);
-                    BufferedImage croppedImage = bufferedImage.getSubimage(
-                        leftX, leftY, (bufferedImage.getWidth() - (leftX + leftX)), (bufferedImage.getHeight() - (leftY + leftY)));
-                    File toCroppedFile = new File(directory.concat(originalName));
-                    ImageIO.write(croppedImage, toExtension.substring(1), toCroppedFile);
-                } catch (IOException e) {
-                    System.err.println(e.getMessage());
-                }
-                processHistory.add(originalName);
-                long threadProcessEnd = System.currentTimeMillis();
-
-                float processingStatus = ((Float.intBitsToFloat(processHistory.size()) / Float.intBitsToFloat(files.length)) * 100.0f);
-                printMessage("Processing Thread results...");
-                System.out.println("=== === === === ===");
-                System.out.println("Processing status (%): " + String.format("%.02f", processingStatus));
-                System.out.println("=== === === === ===");
-                System.out.println("Thread name: " + Thread.currentThread().getName());
-                System.out.println("Thread runtime: " + TimeUnit.MILLISECONDS.toSeconds(threadProcessEnd - threadProcessStart));
-                System.out.println("Threads available: " + Thread.activeCount());
-                System.out.println("=== === === === ===");
-                System.out.println("Current: " + originalName);
-                System.out.println("Processed: " + processHistory.size());
-            });
-
-            long croppingProcessEnd = System.currentTimeMillis();
-            long croppingProcessHours = TimeUnit.MILLISECONDS.toHours(croppingProcessEnd - croppingProcessStart);
-            printMessage("Processing Batch results...");
-            System.out.println("Elapsed time: " + croppingProcessHours);
-            printWriter.println("Processing Batch results...");
-            printWriter.println("Elapsed time: " + croppingProcessHours);
-            printWriter.close();
         } catch (FileNotFoundException e) {
-            e.printStackTrace();
+            printMessage(MESSAGE_LOGGING_UNAVAILABLE);
+            throw new SourceUnavailableException(MESSAGE_LOGGING_UNAVAILABLE, e);
         }
     }
 
@@ -373,50 +371,49 @@ public abstract class FileProcessingUtil {
         try {
             PrintWriter printWriter = new PrintWriter(new FileOutputStream(logging), true);
             String directory = path.concat(LABEL_PROCESSED_DIRECTORY);
-            if (!createTargetDirectory(directory)) {
-                System.out.printf(MESSAGE_DIRECTORY_CREATION_FAILURE, directory);
-                return;
+            if (createTargetDirectory(directory)) {
+                printMessage("Converting starts...");
+                long convertingProcessStart = System.currentTimeMillis();
+
+                Arrays.stream(files).parallel().forEach(originalFile -> {
+                    long threadProcessStart = System.currentTimeMillis();
+                    String originalName = originalFile.getName();
+
+                    try {
+                        BufferedImage bufferedImage = ImageIO.read(originalFile);
+                        File toConvertedFile = new File(directory.concat(originalName.replace(fromExtension, toExtension)));
+                        ImageIO.write(bufferedImage, toExtension.substring(1), toConvertedFile);
+                    } catch (IOException e) {
+                        printMessage(MESSAGE_IMAGEIO_FAILURE);
+                        throw new SourceUnavailableException(MESSAGE_IMAGEIO_FAILURE, e);
+                    }
+                    processHistory.add(originalName);
+                    long threadProcessEnd = System.currentTimeMillis();
+
+                    float processingStatus = ((Float.intBitsToFloat(processHistory.size()) / Float.intBitsToFloat(files.length)) * 100.0f);
+                    printMessage("Processing Thread results...");
+                    System.out.println("=== === === === ===");
+                    System.out.println("Processing status (%): " + String.format("%.02f", processingStatus));
+                    System.out.println("=== === === === ===");
+                    System.out.println("Thread name: " + Thread.currentThread().getName());
+                    System.out.println("Thread runtime: " + TimeUnit.MILLISECONDS.toSeconds(threadProcessEnd - threadProcessStart));
+                    System.out.println("Threads available: " + Thread.activeCount());
+                    System.out.println("=== === === === ===");
+                    System.out.println("Current: " + originalName);
+                    System.out.println("Processed: " + processHistory.size());
+                });
+
+                long convertingProcessEnd = System.currentTimeMillis();
+                long convertingProcessHours = TimeUnit.MILLISECONDS.toHours(convertingProcessEnd - convertingProcessStart);
+                printMessage("Processing Batch results...");
+                System.out.println("Elapsed time: " + convertingProcessHours);
+                printWriter.println("Processing Batch results...");
+                printWriter.println("Elapsed time: " + convertingProcessHours);
+                printWriter.close();
             }
-
-            printMessage("Converting starts...");
-            long convertingProcessStart = System.currentTimeMillis();
-
-            Arrays.stream(files).parallel().forEach(originalFile -> {
-                long threadProcessStart = System.currentTimeMillis();
-                String originalName = originalFile.getName();
-
-                try {
-                    BufferedImage bufferedImage = ImageIO.read(originalFile);
-                    File toConvertedFile = new File(directory.concat(originalName.replace(fromExtension, toExtension)));
-                    ImageIO.write(bufferedImage, toExtension.substring(1), toConvertedFile);
-                } catch (IOException e) {
-                    System.err.println(e.getMessage());
-                }
-                processHistory.add(originalName);
-                long threadProcessEnd = System.currentTimeMillis();
-
-                float processingStatus = ((Float.intBitsToFloat(processHistory.size()) / Float.intBitsToFloat(files.length)) * 100.0f);
-                printMessage("Processing Thread results...");
-                System.out.println("=== === === === ===");
-                System.out.println("Processing status (%): " + String.format("%.02f", processingStatus));
-                System.out.println("=== === === === ===");
-                System.out.println("Thread name: " + Thread.currentThread().getName());
-                System.out.println("Thread runtime: " + TimeUnit.MILLISECONDS.toSeconds(threadProcessEnd - threadProcessStart));
-                System.out.println("Threads available: " + Thread.activeCount());
-                System.out.println("=== === === === ===");
-                System.out.println("Current: " + originalName);
-                System.out.println("Processed: " + processHistory.size());
-            });
-
-            long convertingProcessEnd = System.currentTimeMillis();
-            long convertingProcessHours = TimeUnit.MILLISECONDS.toHours(convertingProcessEnd - convertingProcessStart);
-            printMessage("Processing Batch results...");
-            System.out.println("Elapsed time: " + convertingProcessHours);
-            printWriter.println("Processing Batch results...");
-            printWriter.println("Elapsed time: " + convertingProcessHours);
-            printWriter.close();
         } catch (FileNotFoundException e) {
-            e.printStackTrace();
+            printMessage(MESSAGE_LOGGING_UNAVAILABLE);
+            throw new SourceUnavailableException(MESSAGE_LOGGING_UNAVAILABLE, e);
         }
     }
 
@@ -464,7 +461,8 @@ public abstract class FileProcessingUtil {
                         }
                     }
                 } catch (IOException e) {
-                    System.err.println("Error: Can't read image");
+                    printMessage(MESSAGE_IMAGEIO_FAILURE);
+                    throw new SourceUnavailableException(MESSAGE_IMAGEIO_FAILURE, e);
                 }
                 processHistory.add(originalName);
                 long threadProcessEnd = System.currentTimeMillis();
@@ -491,16 +489,14 @@ public abstract class FileProcessingUtil {
             for (Map.Entry<String, List<String>> entry : borderMapping.entrySet()) {
                 String target = entry.getKey();
                 String directory = path.concat(target);
-                if (!createTargetDirectory(directory)) {
-                    System.out.printf(MESSAGE_DIRECTORY_CREATION_FAILURE, directory);
-                    break;
-                }
-                for (String originalName : entry.getValue()) {
-                    for (File originalFile : files) {
-                        if (originalName.equals(originalFile.getName())) {
-                            if (originalFile.renameTo(new File(directory.concat(originalName)))) {
-                                System.out.println("Moved file: " + originalName);
-                                printWriter.println("Moved file: " + originalName);
+                if (createTargetDirectory(directory)) {
+                    for (String originalName : entry.getValue()) {
+                        for (File originalFile : files) {
+                            if (originalName.equals(originalFile.getName())) {
+                                if (originalFile.renameTo(new File(directory.concat(originalName)))) {
+                                    System.out.println("Moved file: " + originalName);
+                                    printWriter.println("Moved file: " + originalName);
+                                }
                             }
                         }
                     }
@@ -509,7 +505,8 @@ public abstract class FileProcessingUtil {
 
             printWriter.close();
         } catch (FileNotFoundException e) {
-            e.printStackTrace();
+            printMessage(MESSAGE_LOGGING_UNAVAILABLE);
+            throw new SourceUnavailableException(MESSAGE_LOGGING_UNAVAILABLE, e);
         }
     }
 }

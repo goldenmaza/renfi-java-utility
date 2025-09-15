@@ -12,7 +12,6 @@ import java.util.Map;
 public final class Constants {
     // Application states, actions, attributes...
     public static final int SUCCESSFUL = 0;
-    public static final int FAILURE = 1;
     public static final int FLOW_INDEX = 0;
     public static final int BRANCH_INDEX = 1;
     public static final int PATH_INDEX = 2;
@@ -133,14 +132,19 @@ public final class Constants {
     public static final String LABEL_MATCHING_DIRECTORY = "matching\\";
 
     // Message variables used for displaying states, or actions, in the application...
-    public static final String MESSAGE_INVALID_USE = "Invalid use of application";
-    public static final String MESSAGE_INVALID_BOUNDARY = "Invalid boundary was given";
+    public static final String MESSAGE_INVALID_FLOW_INDEX = "Invalid use of application where the FLOW flag is either misspelled or missing";
+    public static final String MESSAGE_INVALID_BRANCH_INDEX = "Invalid use of application where the BRANCH flag is either misspelled or missing";
+    public static final String MESSAGE_INVALID_RESOURCE_TYPE_INDEX = "Invalid use of application where the RESOURCE TYPE flag is either misspelled or missing";
+    public static final String MESSAGE_INVALID_EXTENSION_RANGES = "Invalid use of application where the EXTENSIONS are either missing or out of bounds";
+    public static final String MESSAGE_INVALID_BOUNDARY_INDEX = "Invalid use of application where the BOUNDARY is either missing or out of bounds";
+    public static final String MESSAGE_DISPLAY_HELP_GUIDE = "Displaying the Help Guide as you might have used the application incorrectly";
     public static final String MESSAGE_DESIRED_EXECUTION = "Are you happy with the current task? (y/n)";
     public static final String MESSAGE_DIRECTORY_UNAVAILABLE = "No directory found with the stated path: %s%n";
     public static final String MESSAGE_DIRECTORY_CREATION_FAILURE = "No directory was created with the stated path: %s%n";
     public static final String MESSAGE_RESOURCES_UNAVAILABLE = "No resources found with the desired command and predefined extensions";
     public static final String MESSAGE_SOURCE_UNAVAILABLE = "No source file found under the current path";
-    public static final String MESSAGE_SOURCE_AVAILABLE = "A source file was found under the current path";
+    public static final String MESSAGE_LOGGING_UNAVAILABLE = "No logging file was created under the current path";
+    public static final String MESSAGE_SOURCE_AVAILABLE = "A new source file can now be found under the current path";
     public static final String MESSAGE_SOURCE_CONTAINS = "Source file contains";
     public static final String MESSAGE_PROCESSING_TASK = "The task you have selected is: '%s' by '%s' of '%s' up to '%s%%' under the following path: '%s'.%n";
     public static final String MESSAGE_PROCESSING_ATTRIBUTES = "The following attributes are also selected: '%s' to '%s', '%s' flag, X='%s' & Y='%s' axis values.%n";
@@ -148,7 +152,7 @@ public final class Constants {
     public static final String MESSAGE_LOADING_FILES = "Available files";
     public static final String MESSAGE_SORTING_FILES = "Sorting files";
     public static final String MESSAGE_CONVERSION_HISTORY = "Conversion history";
-    public static final String MESSAGE_CONVERSION_HISTORY_EMPTY = "Conversion history is empty, aborting the remaining process...";
+    public static final String MESSAGE_EMPTY_CONVERSION_HISTORY = "Conversion history is empty, aborting the remaining process...";
     public static final String MESSAGE_LOADED_PREPARED = "New names being loaded/prepared";
     public static final String MESSAGE_RESOURCE_MISSING_FIELD = "The resource file was missing the datetime original field: ";
     public static final String MESSAGE_CONTINUE_RENAMING = "Do you want to continue with the renaming process? (y/n)";
@@ -156,17 +160,20 @@ public final class Constants {
     public static final String MESSAGE_CREATING_PROCESSED_DIRECTORY = "Creating the 'processed' directory";
     public static final String MESSAGE_RENAMING_ALERT = "%s was renamed to %s%n";
     public static final String MESSAGE_RENAMING_FAILURE = "The renaming process failed with a specific file";
-    public static final String MESSAGE_FAILURE_SOURCES = "Specific file: %s, Failed because: %s%n";
-    public static final String MESSAGE_FAILURE_NEWNAME = "newName.equals(NULL)";
+    public static final String MESSAGE_KEY_PAIR_FAILURE = "The specific file: %s, failed because the key pair could not be found under the conversion history";
     public static final String MESSAGE_UNDO_CONTINUE = "Do you want to undo the renaming process? (y/n)";
     public static final String MESSAGE_UNDO_RELOADING = "Reloading undo files";
     public static final String MESSAGE_UNDO_RESTORING = "The process of renaming back has begun";
     public static final String MESSAGE_UNDO_ALERT = "%s was renamed back to %s%n";
     public static final String MESSAGE_FAILED_UNDO_LOADING = "The amount of reloaded undo files and original files do not match";
     public static final String MESSAGE_UNDO_ABORT = "You chose not to undo the last renaming process, ignoring the undo process";
-    public static final String MESSAGE_FAILED_MISMATCH = "The amount of generated names and amount of files do not match";
+    public static final String MESSAGE_MISMATCHING_CONVERSION_HISTORY = "The amount of generated names and amount of files do not match";
     public static final String MESSAGE_RENAMING_ABORT = "You chose not to rename files, aborting the renaming process";
     public static final String MESSAGE_EXECUTION_ABORT = "You chose not to continue with the execution, aborting the process";
+    public static final String MESSAGE_INVALID_BRANCH_FAILURE = "Somehow we reached this point where the branch was invalid and not supported by this application";
+    public static final String MESSAGE_NIO_FAILURE = "The NIO API was unable to process files";
+    public static final String MESSAGE_IMAGEIO_FAILURE = "The ImageIO API was unable to process files";
+    public static final String MESSAGE_METADATA_FAILURE = "The Metadata API was unable to process files";
 
     private Constants() {}
 }

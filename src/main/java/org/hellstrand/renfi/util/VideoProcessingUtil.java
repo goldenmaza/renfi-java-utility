@@ -5,6 +5,7 @@ import static org.hellstrand.renfi.constant.Constants.EXTENSION_AVI;
 import static org.hellstrand.renfi.constant.Constants.EXTENSION_MOV;
 import static org.hellstrand.renfi.constant.Constants.EXTENSION_MP4;
 import static org.hellstrand.renfi.constant.Constants.MESSAGE_LOADED_PREPARED;
+import static org.hellstrand.renfi.constant.Constants.MESSAGE_METADATA_FAILURE;
 import static org.hellstrand.renfi.constant.Constants.MESSAGE_RESOURCE_MISSING_FIELD;
 import static org.hellstrand.renfi.util.HelpGuideUtil.printMessage;
 
@@ -26,10 +27,11 @@ import java.time.format.DateTimeFormatter;
 import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import org.hellstrand.renfi.exception.SourceUnavailableException;
 
 /**
  * @author (Mats Richard Hellstrand)
- * @version (4th of September, 2023)
+ * @version (15th of September, 2025)
  */
 public final class VideoProcessingUtil extends FileProcessingUtil {
     public static void prepareHistoryByOrigin(File[] files, Map<String, String> history, String extension) {
@@ -73,7 +75,8 @@ public final class VideoProcessingUtil extends FileProcessingUtil {
                 System.out.println(entry.getValue());
             }
         } catch (ImageProcessingException | IOException e) {
-            System.err.println(e.getMessage());
+            printMessage(MESSAGE_METADATA_FAILURE);
+            throw new SourceUnavailableException(MESSAGE_METADATA_FAILURE, e);
         }
     }
 }
