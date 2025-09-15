@@ -73,34 +73,34 @@ public final class RenfiUtility {
         String boundary = args[BOUNDARY_INDEX];
 
         if (!ALLOWED_FLAGS.contains(flow)) {
-            printMessage(MESSAGE_INVALID_FLOW_INDEX);
+            printMessage(MESSAGE_INVALID_FLOW_INDEX, flow);
             throw new InvalidUseException(MESSAGE_INVALID_FLOW_INDEX);
         }
 
         if (!ALLOWED_FLAGS.contains(branch)) {
-            printMessage(MESSAGE_INVALID_BRANCH_INDEX);
+            printMessage(MESSAGE_INVALID_BRANCH_INDEX, branch);
             throw new InvalidUseException(MESSAGE_INVALID_BRANCH_INDEX);
         }
 
         if (!ALLOWED_FLAGS.contains(resourceType) || !PROCESSING_SUPPORT.containsKey(resourceType)) {
-            printMessage(MESSAGE_INVALID_RESOURCE_TYPE_INDEX);
+            printMessage(MESSAGE_INVALID_RESOURCE_TYPE_INDEX, resourceType);
             throw new InvalidUseException(MESSAGE_INVALID_RESOURCE_TYPE_INDEX);
         }
 
         if (!validateTarget(path)) {
-            System.out.printf(MESSAGE_DIRECTORY_UNAVAILABLE, path);
+            printMessage(MESSAGE_DIRECTORY_UNAVAILABLE, path);
             throw new DirectoryUnavailableException(MESSAGE_DIRECTORY_UNAVAILABLE);
         }
 
         List<String> selectedExtensions = PROCESSING_SUPPORT.get(resourceType);
         int extensionFromIndex = Integer.parseInt(fromIndex), extensionToIndex = Integer.parseInt(toIndex);
         if (extensionFromIndex < 0 && extensionToIndex >= selectedExtensions.size()) {
-            printMessage(MESSAGE_INVALID_EXTENSION_RANGES);
+            printMessage(MESSAGE_INVALID_EXTENSION_RANGES, fromIndex, toIndex);
             throw new InvalidUseException(MESSAGE_INVALID_EXTENSION_RANGES);
         }
 
         if (Integer.parseInt(boundary) < 1 || Integer.parseInt(boundary) > 100) {
-            printMessage(MESSAGE_INVALID_BOUNDARY_INDEX);
+            printMessage(MESSAGE_INVALID_BOUNDARY_INDEX, boundary);
             throw new InvalidUseException(MESSAGE_INVALID_BOUNDARY_INDEX);
         }
 
@@ -109,8 +109,8 @@ public final class RenfiUtility {
         String resourceTask = ConstantExtractionUtil.extractResourceTask(resourceType);
         String fromExtension = selectedExtensions.get(extensionFromIndex);
         String toExtension = selectedExtensions.get(extensionToIndex);
-        System.out.printf(MESSAGE_PROCESSING_TASK, flowTask, branchTask, resourceTask, boundary, path);
-        System.out.printf(
+        printMessage(MESSAGE_PROCESSING_TASK, flowTask, branchTask, resourceTask, boundary, path);
+        printMessage(
             MESSAGE_PROCESSING_ATTRIBUTES,
             fromExtension.substring(1), toExtension.substring(1), dateType, leftXAxis, leftYAxis);
 
@@ -120,13 +120,11 @@ public final class RenfiUtility {
         scanner.close();
         if (key.equals("y")) { // Should the overall task continue?
             // Verify that the target directory exist...
-            printMessage(MESSAGE_LOADING_DIRECTORY);
+            printMessage(MESSAGE_LOADING_DIRECTORY, path);
             File directory = new File(path);
             if (!directory.exists() && !directory.isDirectory()) {
-                System.out.printf(MESSAGE_DIRECTORY_UNAVAILABLE, path);
+                printMessage(MESSAGE_DIRECTORY_UNAVAILABLE, path);
                 throw new DirectoryUnavailableException(MESSAGE_DIRECTORY_UNAVAILABLE);
-            } else {
-                System.out.println(path);
             }
 
             // Load the files into memory under the target directory...
@@ -134,7 +132,7 @@ public final class RenfiUtility {
             File[] files = directory.listFiles((dir, name) -> name.toLowerCase().endsWith(fromExtension));
             if (Objects.nonNull(files) && files.length > 0) {
                 for (File file : files) {
-                    System.out.println(file.getName());
+                    printMessage(file.getName());
                 }
             } else {
                 printMessage(MESSAGE_RESOURCES_UNAVAILABLE);

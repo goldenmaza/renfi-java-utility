@@ -132,11 +132,11 @@ public final class Constants {
     public static final String LABEL_MATCHING_DIRECTORY = "matching\\";
 
     // Message variables used for displaying states, or actions, in the application...
-    public static final String MESSAGE_INVALID_FLOW_INDEX = "Invalid use of application where the FLOW flag is either misspelled or missing";
-    public static final String MESSAGE_INVALID_BRANCH_INDEX = "Invalid use of application where the BRANCH flag is either misspelled or missing";
-    public static final String MESSAGE_INVALID_RESOURCE_TYPE_INDEX = "Invalid use of application where the RESOURCE TYPE flag is either misspelled or missing";
-    public static final String MESSAGE_INVALID_EXTENSION_RANGES = "Invalid use of application where the EXTENSIONS are either missing or out of bounds";
-    public static final String MESSAGE_INVALID_BOUNDARY_INDEX = "Invalid use of application where the BOUNDARY is either missing or out of bounds";
+    public static final String MESSAGE_INVALID_FLOW_INDEX = "Invalid use of application where the FLOW flag is either misspelled or missing: %s%n";
+    public static final String MESSAGE_INVALID_BRANCH_INDEX = "Invalid use of application where the BRANCH flag is either misspelled or missing: %s%n";
+    public static final String MESSAGE_INVALID_RESOURCE_TYPE_INDEX = "Invalid use of application where the RESOURCE TYPE flag is either misspelled or missing: %s%n";
+    public static final String MESSAGE_INVALID_EXTENSION_RANGES = "Invalid use of application where the EXTENSIONS are either missing or out of bounds: %s%n";
+    public static final String MESSAGE_INVALID_BOUNDARY_INDEX = "Invalid use of application where the BOUNDARY is either missing or out of bounds: %s%n";
     public static final String MESSAGE_DISPLAY_HELP_GUIDE = "Displaying the Help Guide as you might have used the application incorrectly";
     public static final String MESSAGE_DESIRED_EXECUTION = "Are you happy with the current task? (y/n)";
     public static final String MESSAGE_DIRECTORY_UNAVAILABLE = "No directory found with the stated path: %s%n";
@@ -144,7 +144,7 @@ public final class Constants {
     public static final String MESSAGE_RESOURCES_UNAVAILABLE = "No resources found with the desired command and predefined extensions";
     public static final String MESSAGE_SOURCE_UNAVAILABLE = "No source file found under the current path";
     public static final String MESSAGE_LOGGING_UNAVAILABLE = "No logging file was created under the current path";
-    public static final String MESSAGE_SOURCE_AVAILABLE = "A new source file can now be found under the current path";
+    public static final String MESSAGE_SOURCE_AVAILABLE = "A new source file can now be found under the current path: %s%n";
     public static final String MESSAGE_SOURCE_CONTAINS = "Source file contains";
     public static final String MESSAGE_PROCESSING_TASK = "The task you have selected is: '%s' by '%s' of '%s' up to '%s%%' under the following path: '%s'.%n";
     public static final String MESSAGE_PROCESSING_ATTRIBUTES = "The following attributes are also selected: '%s' to '%s', '%s' flag, X='%s' & Y='%s' axis values.%n";

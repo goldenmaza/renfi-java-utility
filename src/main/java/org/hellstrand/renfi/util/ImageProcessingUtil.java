@@ -53,7 +53,7 @@ public final class ImageProcessingUtil extends FileProcessingUtil {
             }
 
             for (Map.Entry<String, String> entry : mapOfFailures.entrySet()) {
-                System.out.println(entry.getValue());
+                printMessage(entry.getValue());
             }
         } catch (ImageProcessingException | IOException e) {
             printMessage(MESSAGE_METADATA_FAILURE);

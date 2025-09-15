@@ -66,7 +66,7 @@ public class NioProcessingUtil {
         }
 
         for (Map.Entry<String, String> entry : mapOfFailures.entrySet()) {
-            System.out.println(entry.getValue());
+            printMessage(entry.getValue());
         }
     }
 }

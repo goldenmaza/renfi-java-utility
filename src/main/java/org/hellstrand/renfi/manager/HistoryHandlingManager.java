@@ -28,7 +28,7 @@ public class HistoryHandlingManager {
         printMessage(MESSAGE_CONVERSION_HISTORY);
         if (!history.isEmpty()) {
             for (Map.Entry<String, String> entry : history.entrySet()) {
-                System.out.println("Entry: " + entry.getKey() + ": " + entry.getValue());
+                printMessage("Entry: " + entry.getKey() + ": " + entry.getValue());
             }
 
             // Begin the renaming process...

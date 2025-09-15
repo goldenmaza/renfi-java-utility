@@ -58,7 +58,7 @@ public abstract class FileProcessingUtil {
             printMessage(MESSAGE_CREATING_PROCESSED_DIRECTORY);
             return true;
         } else {
-            System.out.printf(MESSAGE_DIRECTORY_CREATION_FAILURE, directory);
+            printMessage(MESSAGE_DIRECTORY_CREATION_FAILURE, directory);
             throw new DirectoryUnavailableException(MESSAGE_DIRECTORY_CREATION_FAILURE);
         }
     }
@@ -81,7 +81,7 @@ public abstract class FileProcessingUtil {
         try {
             PrintWriter printWriter = new PrintWriter(sourceFile);
             for (File file : files) {
-                System.out.println(file.getName());
+                printMessage(file.getName());
                 printWriter.println(file.getName());
             }
             printWriter.close();
@@ -97,7 +97,7 @@ public abstract class FileProcessingUtil {
             printMessage(MESSAGE_SORTING_FILES);
             Arrays.sort(files, Comparator.comparingLong(File::lastModified));
             for (File file : files) {
-                System.out.println(file.getName());
+                printMessage(file.getName());
             }
 
             File inputSourceFile = new File(inputSourceName);
@@ -127,9 +127,9 @@ public abstract class FileProcessingUtil {
                 String newName = history.get(previousName);
 
                 if (Objects.nonNull(newName) && file.renameTo(new File(directory.concat(newName)))) {
-                    System.out.printf(MESSAGE_RENAMING_ALERT, previousName, newName);
+                    printMessage(MESSAGE_RENAMING_ALERT, previousName, newName);
                 } else {
-                    System.out.printf(MESSAGE_KEY_PAIR_FAILURE, previousName);
+                    printMessage(MESSAGE_KEY_PAIR_FAILURE, previousName);
                 }
             }
         }
@@ -140,7 +140,7 @@ public abstract class FileProcessingUtil {
         File[] undoList = directory.listFiles((dir, name) -> history.values().stream().anyMatch(n -> n.equals(name)));
         if (Objects.requireNonNull(undoList).length == history.size()) {
             for (File file : undoList) {
-                System.out.println(file.getName());
+                printMessage(file.getName());
             }
 
             printMessage(MESSAGE_UNDO_RESTORING);
@@ -153,7 +153,7 @@ public abstract class FileProcessingUtil {
                     .orElse(null);
 
                 if (Objects.nonNull(previousName) && file.renameTo(new File(path.concat(previousName)))) {
-                    System.out.printf(MESSAGE_UNDO_ALERT, undoName, previousName);
+                    printMessage(MESSAGE_UNDO_ALERT, undoName, previousName);
                 } else {
                     printMessage(MESSAGE_RENAMING_FAILURE);
                     System.out.printf(MESSAGE_KEY_PAIR_FAILURE, undoName);
@@ -218,9 +218,9 @@ public abstract class FileProcessingUtil {
 
                             if (Double.compare(percentageDifference, 0.0) == 0) {
                                 printMessage("Comparison results (DUPLICATES)...");
-                                System.out.println("OriginalFile: " + originalName);
-                                System.out.println("ComparedFile: " + comparedName);
-                                System.out.println("Difference Percentage: " + percentageDifference);
+                                printMessage("OriginalFile: " + originalName);
+                                printMessage("ComparedFile: " + comparedName);
+                                printMessage("Difference Percentage: " + percentageDifference);
                                 printWriter.println("Comparison results (DUPLICATES)...");
                                 printWriter.println("OriginalFile: " + originalName);
                                 printWriter.println("ComparedFile: " + comparedName);
@@ -229,9 +229,9 @@ public abstract class FileProcessingUtil {
                                 duplicates.add(comparedName);
                             } else if (Double.compare(percentageDifference, boundaryLimit) < 0) {
                                 printMessage("Comparison results (MATCHING)...");
-                                System.out.println("OriginalFile: " + originalName);
-                                System.out.println("ComparedFile: " + comparedName);
-                                System.out.println("Difference Percentage: " + percentageDifference);
+                                printMessage("OriginalFile: " + originalName);
+                                printMessage("ComparedFile: " + comparedName);
+                                printMessage("Difference Percentage: " + percentageDifference);
                                 printWriter.println("Comparison results (MATCHING)...");
                                 printWriter.println("OriginalFile: " + originalName);
                                 printWriter.println("ComparedFile: " + comparedName);
@@ -250,25 +250,25 @@ public abstract class FileProcessingUtil {
 
                 float processingStatus = ((Float.intBitsToFloat(processHistory.size()) / Float.intBitsToFloat(files.length)) * 100.0f);
                 printMessage("Processing Thread results...");
-                System.out.println("=== === === === ===");
-                System.out.println("Processing status (%): " + String.format("%.02f", processingStatus));
-                System.out.println("=== === === === ===");
-                System.out.println("Thread name: " + Thread.currentThread().getName());
-                System.out.println("Thread runtime: " + TimeUnit.MILLISECONDS.toSeconds(threadProcessEnd - threadProcessStart));
-                System.out.println("Threads available: " + Thread.activeCount());
-                System.out.println("=== === === === ===");
-                System.out.println("OriginalName: " + originalName);
-                System.out.println("History: " + processHistory.size());
-                System.out.println("Duplicates: " + duplicates.size());
-                System.out.println("Matching: " + matching.size());
+                printMessage("=== === === === ===");
+                printMessage("Processing status (%): " + String.format("%.02f", processingStatus));
+                printMessage("=== === === === ===");
+                printMessage("Thread name: " + Thread.currentThread().getName());
+                printMessage("Thread runtime: " + TimeUnit.MILLISECONDS.toSeconds(threadProcessEnd - threadProcessStart));
+                printMessage("Threads available: " + Thread.activeCount());
+                printMessage("=== === === === ===");
+                printMessage("OriginalName: " + originalName);
+                printMessage("History: " + processHistory.size());
+                printMessage("Duplicates: " + duplicates.size());
+                printMessage("Matching: " + matching.size());
             });
 
             long comparisonProcessEnd = System.currentTimeMillis();
             long comparisonProcessHours = TimeUnit.MILLISECONDS.toHours(comparisonProcessEnd - comparisonProcessStart);
             printMessage("Processing Batch results...");
-            System.out.println("Elapsed time: " + comparisonProcessHours);
-            System.out.println("Duplicates: " + duplicates.size());
-            System.out.println("Matching: " + matching.size());
+            printMessage("Elapsed time: " + comparisonProcessHours);
+            printMessage("Duplicates: " + duplicates.size());
+            printMessage("Matching: " + matching.size());
             printWriter.println("Processing Batch results...");
             printWriter.println("Elapsed time: " + comparisonProcessHours);
             printWriter.println("Duplicates: " + duplicates.size());
@@ -281,7 +281,7 @@ public abstract class FileProcessingUtil {
                     for (String duplicate : duplicates) {
                         for (File file : files) {
                             if (file.getName().equals(duplicate) && file.renameTo(new File(directory.concat(duplicate)))) {
-                                System.out.println("Moved file (duplicates): " + duplicate);
+                                printMessage("Moved file (duplicates): " + duplicate);
                                 printWriter.println("Moved file (duplicates): " + duplicate);
                             }
                         }
@@ -294,7 +294,7 @@ public abstract class FileProcessingUtil {
                     for (String match : matching) {
                         for (File file : files) {
                             if (file.getName().equals(match) && file.renameTo(new File(directory.concat(match)))) {
-                                System.out.println("Moved file (matching): " + match);
+                                printMessage("Moved file (matching): " + match);
                                 printWriter.println("Moved file (matching): " + match);
                             }
                         }
@@ -340,21 +340,21 @@ public abstract class FileProcessingUtil {
 
                     float processingStatus = ((Float.intBitsToFloat(processHistory.size()) / Float.intBitsToFloat(files.length)) * 100.0f);
                     printMessage("Processing Thread results...");
-                    System.out.println("=== === === === ===");
-                    System.out.println("Processing status (%): " + String.format("%.02f", processingStatus));
-                    System.out.println("=== === === === ===");
-                    System.out.println("Thread name: " + Thread.currentThread().getName());
-                    System.out.println("Thread runtime: " + TimeUnit.MILLISECONDS.toSeconds(threadProcessEnd - threadProcessStart));
-                    System.out.println("Threads available: " + Thread.activeCount());
-                    System.out.println("=== === === === ===");
-                    System.out.println("Current: " + originalName);
-                    System.out.println("Processed: " + processHistory.size());
+                    printMessage("=== === === === ===");
+                    printMessage("Processing status (%): " + String.format("%.02f", processingStatus));
+                    printMessage("=== === === === ===");
+                    printMessage("Thread name: " + Thread.currentThread().getName());
+                    printMessage("Thread runtime: " + TimeUnit.MILLISECONDS.toSeconds(threadProcessEnd - threadProcessStart));
+                    printMessage("Threads available: " + Thread.activeCount());
+                    printMessage("=== === === === ===");
+                    printMessage("Current: " + originalName);
+                    printMessage("Processed: " + processHistory.size());
                 });
 
                 long croppingProcessEnd = System.currentTimeMillis();
                 long croppingProcessHours = TimeUnit.MILLISECONDS.toHours(croppingProcessEnd - croppingProcessStart);
                 printMessage("Processing Batch results...");
-                System.out.println("Elapsed time: " + croppingProcessHours);
+                printMessage("Elapsed time: " + croppingProcessHours);
                 printWriter.println("Processing Batch results...");
                 printWriter.println("Elapsed time: " + croppingProcessHours);
                 printWriter.close();
@@ -392,21 +392,21 @@ public abstract class FileProcessingUtil {
 
                     float processingStatus = ((Float.intBitsToFloat(processHistory.size()) / Float.intBitsToFloat(files.length)) * 100.0f);
                     printMessage("Processing Thread results...");
-                    System.out.println("=== === === === ===");
-                    System.out.println("Processing status (%): " + String.format("%.02f", processingStatus));
-                    System.out.println("=== === === === ===");
-                    System.out.println("Thread name: " + Thread.currentThread().getName());
-                    System.out.println("Thread runtime: " + TimeUnit.MILLISECONDS.toSeconds(threadProcessEnd - threadProcessStart));
-                    System.out.println("Threads available: " + Thread.activeCount());
-                    System.out.println("=== === === === ===");
-                    System.out.println("Current: " + originalName);
-                    System.out.println("Processed: " + processHistory.size());
+                    printMessage("=== === === === ===");
+                    printMessage("Processing status (%): " + String.format("%.02f", processingStatus));
+                    printMessage("=== === === === ===");
+                    printMessage("Thread name: " + Thread.currentThread().getName());
+                    printMessage("Thread runtime: " + TimeUnit.MILLISECONDS.toSeconds(threadProcessEnd - threadProcessStart));
+                    printMessage("Threads available: " + Thread.activeCount());
+                    printMessage("=== === === === ===");
+                    printMessage("Current: " + originalName);
+                    printMessage("Processed: " + processHistory.size());
                 });
 
                 long convertingProcessEnd = System.currentTimeMillis();
                 long convertingProcessHours = TimeUnit.MILLISECONDS.toHours(convertingProcessEnd - convertingProcessStart);
                 printMessage("Processing Batch results...");
-                System.out.println("Elapsed time: " + convertingProcessHours);
+                printMessage("Elapsed time: " + convertingProcessHours);
                 printWriter.println("Processing Batch results...");
                 printWriter.println("Elapsed time: " + convertingProcessHours);
                 printWriter.close();
@@ -469,19 +469,19 @@ public abstract class FileProcessingUtil {
 
                 float processingStatus = ((Float.intBitsToFloat(processHistory.size()) / Float.intBitsToFloat(files.length)) * 100.0f);
                 printMessage("Processing Thread results...");
-                System.out.println("=== === === === ===");
-                System.out.println("Processing status (%): " + String.format("%.02f", processingStatus));
-                System.out.println("=== === === === ===");
-                System.out.println("Thread name: " + Thread.currentThread().getName());
-                System.out.println("Thread runtime: " + TimeUnit.MILLISECONDS.toSeconds(threadProcessEnd - threadProcessStart));
-                System.out.println("Threads available: " + Thread.activeCount());
-                System.out.println("=== === === === ===");
+                printMessage("=== === === === ===");
+                printMessage("Processing status (%): " + String.format("%.02f", processingStatus));
+                printMessage("=== === === === ===");
+                printMessage("Thread name: " + Thread.currentThread().getName());
+                printMessage("Thread runtime: " + TimeUnit.MILLISECONDS.toSeconds(threadProcessEnd - threadProcessStart));
+                printMessage("Threads available: " + Thread.activeCount());
+                printMessage("=== === === === ===");
             });
 
             long detectionProcessEnd = System.currentTimeMillis();
             long detectionProcessHours = TimeUnit.MILLISECONDS.toHours(detectionProcessEnd - detectionProcessStart);
             printMessage("Processing Batch results...");
-            System.out.println("Elapsed time: " + detectionProcessHours);
+            printMessage("Elapsed time: " + detectionProcessHours);
             printWriter.println("Processing Batch results...");
             printWriter.println("Elapsed time: " + detectionProcessHours);
 
@@ -494,7 +494,7 @@ public abstract class FileProcessingUtil {
                         for (File originalFile : files) {
                             if (originalName.equals(originalFile.getName())) {
                                 if (originalFile.renameTo(new File(directory.concat(originalName)))) {
-                                    System.out.println("Moved file: " + originalName);
+                                    printMessage("Moved file: " + originalName);
                                     printWriter.println("Moved file: " + originalName);
                                 }
                             }
