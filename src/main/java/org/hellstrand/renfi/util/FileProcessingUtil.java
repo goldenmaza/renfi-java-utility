@@ -10,7 +10,6 @@ import static org.hellstrand.renfi.constant.Constants.MESSAGE_IMAGEIO_FAILURE;
 import static org.hellstrand.renfi.constant.Constants.MESSAGE_KEY_PAIR_FAILURE;
 import static org.hellstrand.renfi.constant.Constants.MESSAGE_LOGGING_UNAVAILABLE;
 import static org.hellstrand.renfi.constant.Constants.MESSAGE_RENAMING_ALERT;
-import static org.hellstrand.renfi.constant.Constants.MESSAGE_RENAMING_FAILURE;
 import static org.hellstrand.renfi.constant.Constants.MESSAGE_SORTING_FILES;
 import static org.hellstrand.renfi.constant.Constants.MESSAGE_SOURCE_AVAILABLE;
 import static org.hellstrand.renfi.constant.Constants.MESSAGE_SOURCE_CONTAINS;
@@ -18,6 +17,7 @@ import static org.hellstrand.renfi.constant.Constants.MESSAGE_SOURCE_UNAVAILABLE
 import static org.hellstrand.renfi.constant.Constants.MESSAGE_UNDO_ALERT;
 import static org.hellstrand.renfi.constant.Constants.MESSAGE_UNDO_RELOADING;
 import static org.hellstrand.renfi.constant.Constants.MESSAGE_UNDO_RESTORING;
+import static org.hellstrand.renfi.util.HelpGuideUtil.formatMessage;
 import static org.hellstrand.renfi.util.HelpGuideUtil.printMessage;
 
 import java.awt.image.BufferedImage;
@@ -45,7 +45,7 @@ import org.hellstrand.renfi.exception.SourceUnavailableException;
 
 /**
  * @author (Mats Richard Hellstrand)
- * @version (15th of September, 2025)
+ * @version (18th of September, 2025)
  */
 public abstract class FileProcessingUtil {
     public static boolean validateTarget(String target) {
@@ -58,8 +58,8 @@ public abstract class FileProcessingUtil {
             printMessage(MESSAGE_CREATING_PROCESSED_DIRECTORY);
             return true;
         } else {
-            printMessage(MESSAGE_DIRECTORY_CREATION_FAILURE, directory);
-            throw new DirectoryUnavailableException(MESSAGE_DIRECTORY_CREATION_FAILURE);
+            printMessage(formatMessage(MESSAGE_DIRECTORY_CREATION_FAILURE, directory));
+            throw new DirectoryUnavailableException(formatMessage(MESSAGE_DIRECTORY_CREATION_FAILURE, directory));
         }
     }
 
@@ -127,9 +127,9 @@ public abstract class FileProcessingUtil {
                 String newName = history.get(previousName);
 
                 if (Objects.nonNull(newName) && file.renameTo(new File(directory.concat(newName)))) {
-                    printMessage(MESSAGE_RENAMING_ALERT, previousName, newName);
+                    printMessage(formatMessage(MESSAGE_RENAMING_ALERT, previousName, newName));
                 } else {
-                    printMessage(MESSAGE_KEY_PAIR_FAILURE, previousName);
+                    printMessage(formatMessage(MESSAGE_KEY_PAIR_FAILURE, previousName));
                 }
             }
         }
@@ -153,10 +153,9 @@ public abstract class FileProcessingUtil {
                     .orElse(null);
 
                 if (Objects.nonNull(previousName) && file.renameTo(new File(path.concat(previousName)))) {
-                    printMessage(MESSAGE_UNDO_ALERT, undoName, previousName);
+                    printMessage(formatMessage(MESSAGE_UNDO_ALERT, undoName, previousName));
                 } else {
-                    printMessage(MESSAGE_RENAMING_FAILURE);
-                    System.out.printf(MESSAGE_KEY_PAIR_FAILURE, undoName);
+                    printMessage(formatMessage(MESSAGE_KEY_PAIR_FAILURE, undoName));
                 }
             }
         } else {

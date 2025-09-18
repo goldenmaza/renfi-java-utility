@@ -1,5 +1,6 @@
 package org.hellstrand.renfi.util;
 
+import static java.lang.String.format;
 import static org.hellstrand.renfi.constant.Constants.BRANCH_FLAGS;
 import static org.hellstrand.renfi.constant.Constants.COMPARE_PROCESSING;
 import static org.hellstrand.renfi.constant.Constants.CONVERT_PROCESSING;
@@ -26,7 +27,7 @@ import java.util.List;
 
 /**
  * @author (Mats Richard Hellstrand)
- * @version (15th of September, 2025)
+ * @version (18th of September, 2025)
  */
 public final class HelpGuideUtil {
     private HelpGuideUtil() {}
@@ -89,7 +90,7 @@ public final class HelpGuideUtil {
             \t%s\tTo display this help guide.
             """;
 
-        printMessage(
+        printMessage(formatMessage(
             guideDisplayed,
             FLOW_FLAGS.toString(), BRANCH_FLAGS.toString(), RESOURCE_FLAGS.toString(), TYPE_FLAGS.toString(),
             printValues(imageExtensions), printValues(videoExtensions),
@@ -97,7 +98,7 @@ public final class HelpGuideUtil {
             FILE_PROCESSING, COMPARE_PROCESSING, CROP_PROCESSING, CONVERT_PROCESSING, DETECT_PROCESSING, SOURCE_PROCESSING,
             DATA_PROCESSING, JAVA_PROCESSING, ORIGIN_PROCESSING, LIST_PROCESSING,
             CREATION_TIME_FLAG, LAST_MODIFIED_TIME_FLAG, LAST_ACCESS_TIME_FLAG,
-            helpFlags);
+            helpFlags));
     }
 
     private static String printValues(List<String> strings) {
@@ -117,7 +118,7 @@ public final class HelpGuideUtil {
         System.out.println(message);
     }
 
-    public static void printMessage(String messageTemplate, String... messageParameters) {
-        System.out.printf(messageTemplate, messageParameters);
+    public static String formatMessage(String messageTemplate, String... messageParameters) {
+        return format(messageTemplate, messageParameters);
     }
 }

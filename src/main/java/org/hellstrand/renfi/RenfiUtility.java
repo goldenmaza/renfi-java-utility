@@ -32,6 +32,7 @@ import static org.hellstrand.renfi.constant.Constants.UPPER_LEFT_X_INDEX;
 import static org.hellstrand.renfi.constant.Constants.UPPER_LEFT_Y_INDEX;
 import static org.hellstrand.renfi.util.FileProcessingUtil.validateTarget;
 import static org.hellstrand.renfi.util.HelpGuideUtil.displayHelpGuide;
+import static org.hellstrand.renfi.util.HelpGuideUtil.formatMessage;
 import static org.hellstrand.renfi.util.HelpGuideUtil.printMessage;
 
 import java.io.File;
@@ -51,7 +52,7 @@ import org.hellstrand.renfi.manager.HistoryHandlingManager;
 
 /**
  * @author (Mats Richard Hellstrand)
- * @version (15th of September, 2025)
+ * @version (18th of September, 2025)
  */
 public final class RenfiUtility {
     public static void main(String[] args) {
@@ -73,35 +74,35 @@ public final class RenfiUtility {
         String boundary = args[BOUNDARY_INDEX];
 
         if (!ALLOWED_FLAGS.contains(flow)) {
-            printMessage(MESSAGE_INVALID_FLOW_INDEX, flow);
-            throw new InvalidUseException(MESSAGE_INVALID_FLOW_INDEX);
+            printMessage(formatMessage(MESSAGE_INVALID_FLOW_INDEX, flow));
+            throw new InvalidUseException(formatMessage(MESSAGE_INVALID_FLOW_INDEX, flow));
         }
 
         if (!ALLOWED_FLAGS.contains(branch)) {
-            printMessage(MESSAGE_INVALID_BRANCH_INDEX, branch);
-            throw new InvalidUseException(MESSAGE_INVALID_BRANCH_INDEX);
+            printMessage(formatMessage(MESSAGE_INVALID_BRANCH_INDEX, branch));
+            throw new InvalidUseException(formatMessage(MESSAGE_INVALID_BRANCH_INDEX, branch));
         }
 
         if (!ALLOWED_FLAGS.contains(resourceType) || !PROCESSING_SUPPORT.containsKey(resourceType)) {
-            printMessage(MESSAGE_INVALID_RESOURCE_TYPE_INDEX, resourceType);
-            throw new InvalidUseException(MESSAGE_INVALID_RESOURCE_TYPE_INDEX);
+            printMessage(formatMessage(MESSAGE_INVALID_RESOURCE_TYPE_INDEX, resourceType));
+            throw new InvalidUseException(formatMessage(MESSAGE_INVALID_RESOURCE_TYPE_INDEX, resourceType));
         }
 
         if (!validateTarget(path)) {
-            printMessage(MESSAGE_DIRECTORY_UNAVAILABLE, path);
-            throw new DirectoryUnavailableException(MESSAGE_DIRECTORY_UNAVAILABLE);
+            printMessage(formatMessage(MESSAGE_DIRECTORY_UNAVAILABLE, path));
+            throw new DirectoryUnavailableException(formatMessage(MESSAGE_DIRECTORY_UNAVAILABLE, path));
         }
 
         List<String> selectedExtensions = PROCESSING_SUPPORT.get(resourceType);
         int extensionFromIndex = Integer.parseInt(fromIndex), extensionToIndex = Integer.parseInt(toIndex);
         if (extensionFromIndex < 0 && extensionToIndex >= selectedExtensions.size()) {
-            printMessage(MESSAGE_INVALID_EXTENSION_RANGES, fromIndex, toIndex);
-            throw new InvalidUseException(MESSAGE_INVALID_EXTENSION_RANGES);
+            printMessage(formatMessage(MESSAGE_INVALID_EXTENSION_RANGES, fromIndex, toIndex));
+            throw new InvalidUseException(formatMessage(MESSAGE_INVALID_EXTENSION_RANGES, fromIndex, toIndex));
         }
 
         if (Integer.parseInt(boundary) < 1 || Integer.parseInt(boundary) > 100) {
-            printMessage(MESSAGE_INVALID_BOUNDARY_INDEX, boundary);
-            throw new InvalidUseException(MESSAGE_INVALID_BOUNDARY_INDEX);
+            printMessage(formatMessage(MESSAGE_INVALID_BOUNDARY_INDEX, boundary));
+            throw new InvalidUseException(formatMessage(MESSAGE_INVALID_BOUNDARY_INDEX, boundary));
         }
 
         String flowTask = ConstantExtractionUtil.extractFlowTask(flow);
@@ -109,10 +110,10 @@ public final class RenfiUtility {
         String resourceTask = ConstantExtractionUtil.extractResourceTask(resourceType);
         String fromExtension = selectedExtensions.get(extensionFromIndex);
         String toExtension = selectedExtensions.get(extensionToIndex);
-        printMessage(MESSAGE_PROCESSING_TASK, flowTask, branchTask, resourceTask, boundary, path);
-        printMessage(
+        printMessage(formatMessage(MESSAGE_PROCESSING_TASK, flowTask, branchTask, resourceTask, boundary, path));
+        printMessage(formatMessage(
             MESSAGE_PROCESSING_ATTRIBUTES,
-            fromExtension.substring(1), toExtension.substring(1), dateType, leftXAxis, leftYAxis);
+            fromExtension.substring(1), toExtension.substring(1), dateType, leftXAxis, leftYAxis));
 
         printMessage(MESSAGE_DESIRED_EXECUTION);
         Scanner scanner = new Scanner(System.in);
@@ -120,11 +121,11 @@ public final class RenfiUtility {
         scanner.close();
         if (key.equals("y")) { // Should the overall task continue?
             // Verify that the target directory exist...
-            printMessage(MESSAGE_LOADING_DIRECTORY, path);
+            printMessage(formatMessage(MESSAGE_LOADING_DIRECTORY, path));
             File directory = new File(path);
             if (!directory.exists() && !directory.isDirectory()) {
-                printMessage(MESSAGE_DIRECTORY_UNAVAILABLE, path);
-                throw new DirectoryUnavailableException(MESSAGE_DIRECTORY_UNAVAILABLE);
+                printMessage(formatMessage(MESSAGE_DIRECTORY_UNAVAILABLE, path));
+                throw new DirectoryUnavailableException(formatMessage(MESSAGE_DIRECTORY_UNAVAILABLE, path));
             }
 
             // Load the files into memory under the target directory...
