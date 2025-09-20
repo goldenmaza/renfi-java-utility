@@ -193,7 +193,9 @@ public final class Constants {
     public static final String MESSAGE_CROPPING_STARTS = "Cropping starts";
     public static final String MESSAGE_CONVERTING_STARTS = "Converting starts";
     public static final String MESSAGE_DETECTION_STARTS = "Detection starts";
+    public static final String MESSAGE_PROCESSING_MOVING_RESOURCES = "Moving resources";
     public static final String MESSAGE_PROCESSING_FILE_MOVED = "Moved file: {}";
+    public static final String MESSAGE_PROCESSING_UNABLE_MOVING = "Was unable to move file: {}";
     public static final String MESSAGE_PROCESSING_LOGGING_INPUT = "Logging: {} => {}";
     public static final String MESSAGE_PROCESSING_LOGGING_OUTPUT = "Writing to file";
     public static final String MESSAGE_PROCESSING_LOGGING_BORDERS = "### == {} == ###";

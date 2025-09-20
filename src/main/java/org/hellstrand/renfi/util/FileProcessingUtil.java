@@ -22,12 +22,14 @@ import static org.hellstrand.renfi.constant.Constants.MESSAGE_PROCESSING_ELAPSED
 import static org.hellstrand.renfi.constant.Constants.MESSAGE_PROCESSING_FILE_MOVED;
 import static org.hellstrand.renfi.constant.Constants.MESSAGE_PROCESSING_HISTORY;
 import static org.hellstrand.renfi.constant.Constants.MESSAGE_PROCESSING_MATCHING;
+import static org.hellstrand.renfi.constant.Constants.MESSAGE_PROCESSING_MOVING_RESOURCES;
 import static org.hellstrand.renfi.constant.Constants.MESSAGE_PROCESSING_ORIGINAL_NAME;
 import static org.hellstrand.renfi.constant.Constants.MESSAGE_PROCESSING_STATUS;
 import static org.hellstrand.renfi.constant.Constants.MESSAGE_PROCESSING_THREADS_AVAILABLE;
 import static org.hellstrand.renfi.constant.Constants.MESSAGE_PROCESSING_THREAD_NAME;
 import static org.hellstrand.renfi.constant.Constants.MESSAGE_PROCESSING_THREAD_RESULTS;
 import static org.hellstrand.renfi.constant.Constants.MESSAGE_PROCESSING_THREAD_RUNTIME;
+import static org.hellstrand.renfi.constant.Constants.MESSAGE_PROCESSING_UNABLE_MOVING;
 import static org.hellstrand.renfi.constant.Constants.MESSAGE_RENAMING_ALERT;
 import static org.hellstrand.renfi.constant.Constants.MESSAGE_SORTING_FILES;
 import static org.hellstrand.renfi.constant.Constants.MESSAGE_SOURCE_AVAILABLE;
@@ -109,6 +111,24 @@ public abstract class FileProcessingUtil {
         } catch (FileNotFoundException e) {
             logger.error(MESSAGE_SOURCE_UNAVAILABLE);
             throw new SourceUnavailableException(MESSAGE_SOURCE_UNAVAILABLE);
+        }
+    }
+
+    public static void moveResources(Set<String> resources, String path, File[] files, LoggingUtil loggingUtil, String parentThreadID) {
+        if (!resources.isEmpty()) {
+            if (createTargetDirectory(path)) {
+                logger.info(MESSAGE_PROCESSING_MOVING_RESOURCES);
+                for (String resource : resources) {
+                    for (File file : files) {
+                        if (resource.equals(file.getName()) && file.renameTo(new File(path.concat(resource)))) {
+                            loggingUtil.log(parentThreadID, formatMessage(MESSAGE_PROCESSING_FILE_MOVED, resource));
+                        } else {
+                            logger.warn(MESSAGE_PROCESSING_UNABLE_MOVING, resource);
+                            loggingUtil.log(parentThreadID, formatMessage(MESSAGE_PROCESSING_UNABLE_MOVING, resource));
+                        }
+                    }
+                }
+            }
         }
     }
 
@@ -276,31 +296,8 @@ public abstract class FileProcessingUtil {
         loggingUtil.log(parentThreadID, formatMessage(MESSAGE_PROCESSING_DUPLICATES, duplicates.size()));
         loggingUtil.log(parentThreadID, formatMessage(MESSAGE_PROCESSING_MATCHING, matching.size()));
 
-        String directory;
-        if (!duplicates.isEmpty()) {
-            directory = path.concat(LABEL_DUPLICATES_DIRECTORY);
-            if (createTargetDirectory(directory)) {
-                for (String duplicate : duplicates) {
-                    for (File file : files) {
-                        if (file.getName().equals(duplicate) && file.renameTo(new File(directory.concat(duplicate)))) {
-                            loggingUtil.log(parentThreadID, formatMessage(MESSAGE_PROCESSING_FILE_MOVED, duplicate));
-                        }
-                    }
-                }
-            }
-        }
-        if (!matching.isEmpty()) {
-            directory = path.concat(LABEL_MATCHING_DIRECTORY);
-            if (createTargetDirectory(directory)) {
-                for (String match : matching) {
-                    for (File file : files) {
-                        if (file.getName().equals(match) && file.renameTo(new File(directory.concat(match)))) {
-                            loggingUtil.log(parentThreadID, formatMessage(MESSAGE_PROCESSING_FILE_MOVED, match));
-                        }
-                    }
-                }
-            }
-        }
+        moveResources(duplicates, path.concat(LABEL_DUPLICATES_DIRECTORY), files, loggingUtil, parentThreadID);
+        moveResources(matching, path.concat(LABEL_MATCHING_DIRECTORY), files, loggingUtil, parentThreadID);
     }
 
     public static void cropResources(LoggingUtil loggingUtil, File[] files, String path, String leftXAxis, String leftYAxis, String toExtension) {
@@ -394,7 +391,7 @@ public abstract class FileProcessingUtil {
 
     public static void detectBlackBorders(LoggingUtil loggingUtil, File[] files, String path) {
         Set<String> processHistory = Collections.synchronizedSet(new HashSet<>());
-        Map<String, List<String>> borderMapping = Collections.synchronizedMap(new HashMap<>());
+        Map<String, Set<String>> borderMapping = Collections.synchronizedMap(new HashMap<>());
 
         logger.info(MESSAGE_DETECTION_STARTS);
         String parentThreadID = "P".concat(String.valueOf(Thread.currentThread().getId()));
@@ -416,15 +413,15 @@ public abstract class FileProcessingUtil {
                     for (int x = 0; x < width; x++) {
                         if ((originalImage.getRGB(x, y) & 0x00FFFFFF) != 0) {
                             if (x == width - 1) {
-                                List<String> values = borderMapping.get(key);
+                                Set<String> values = borderMapping.get(key);
                                 if (values == null) {
-                                    values = new ArrayList<>();
+                                    values = new HashSet<>();
                                 }
                                 values.add(originalName);
                                 borderMapping.put(key, values);
 
                                 String oldKey = String.valueOf(y - 1);
-                                List<String> mappedValues = borderMapping.get(oldKey);
+                                Set<String> mappedValues = borderMapping.get(oldKey);
                                 if (Objects.nonNull(mappedValues) && mappedValues.contains(originalName)) {
                                     borderMapping.get(oldKey).remove(originalName);
                                 }
@@ -457,20 +454,10 @@ public abstract class FileProcessingUtil {
         loggingUtil.log(parentThreadID, formatMessage(MESSAGE_PROCESSING_ELAPSED_TIME, detectionProcessHours));
         loggingUtil.log(parentThreadID, formatMessage(MESSAGE_PROCESSING_HISTORY, processHistory.size()));
 
-        for (Map.Entry<String, List<String>> entry : borderMapping.entrySet()) {
+        for (Map.Entry<String, Set<String>> entry : borderMapping.entrySet()) {
             String target = entry.getKey();
             String directory = path.concat(target);
-            if (createTargetDirectory(directory)) {
-                for (String originalName : entry.getValue()) {
-                    for (File originalFile : files) {
-                        if (originalName.equals(originalFile.getName())) {
-                            if (originalFile.renameTo(new File(directory.concat(originalName)))) {
-                                loggingUtil.log(parentThreadID, formatMessage(MESSAGE_PROCESSING_FILE_MOVED, originalName));
-                            }
-                        }
-                    }
-                }
-            }
+            moveResources(entry.getValue(), directory, files, loggingUtil, parentThreadID);
         }
     }
 }
