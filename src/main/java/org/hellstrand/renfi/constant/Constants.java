@@ -7,7 +7,7 @@ import java.util.Map;
 
 /**
  * @author (Mats Richard Hellstrand)
- * @version (18th of September, 2025)
+ * @version (20th of September, 2025)
  */
 public final class Constants {
     // Application states, actions, attributes...
@@ -132,39 +132,39 @@ public final class Constants {
     public static final String LABEL_MATCHING_DIRECTORY = "matching\\";
 
     // Message variables used for displaying states, or actions, in the application...
-    public static final String MESSAGE_INVALID_FLOW_INDEX = "Invalid use of application where the FLOW flag is either misspelled or missing: %s%n";
-    public static final String MESSAGE_INVALID_BRANCH_INDEX = "Invalid use of application where the BRANCH flag is either misspelled or missing: %s%n";
-    public static final String MESSAGE_INVALID_RESOURCE_TYPE_INDEX = "Invalid use of application where the RESOURCE TYPE flag is either misspelled or missing: %s%n";
-    public static final String MESSAGE_INVALID_EXTENSION_RANGES = "Invalid use of application where the EXTENSIONS are either missing or out of bounds: %s & %s%n";
-    public static final String MESSAGE_INVALID_BOUNDARY_INDEX = "Invalid use of application where the BOUNDARY is either missing or out of bounds: %s%n";
+    public static final String MESSAGE_INVALID_FLOW_INDEX = "Invalid use of application where the FLOW flag is either misspelled or missing: {}";
+    public static final String MESSAGE_INVALID_BRANCH_INDEX = "Invalid use of application where the BRANCH flag is either misspelled or missing: {}";
+    public static final String MESSAGE_INVALID_RESOURCE_TYPE_INDEX = "Invalid use of application where the RESOURCE TYPE flag is either misspelled or missing: {}";
+    public static final String MESSAGE_INVALID_EXTENSION_RANGES = "Invalid use of application where the EXTENSIONS are either missing or out of bounds: {} & {}";
+    public static final String MESSAGE_INVALID_BOUNDARY_INDEX = "Invalid use of application where the BOUNDARY is either missing or out of bounds: {}";
     public static final String MESSAGE_DISPLAY_HELP_GUIDE = "Displaying the Help Guide as you might have used the application incorrectly";
     public static final String MESSAGE_DESIRED_EXECUTION = "Are you happy with the current task? (y/n)";
-    public static final String MESSAGE_DIRECTORY_UNAVAILABLE = "No directory found with the stated path: %s%n";
-    public static final String MESSAGE_DIRECTORY_CREATION_FAILURE = "No directory was created with the stated path: %s%n";
+    public static final String MESSAGE_DIRECTORY_UNAVAILABLE = "No directory found with the stated path: {}";
+    public static final String MESSAGE_DIRECTORY_CREATION_FAILURE = "No directory was created with the stated path: {}";
     public static final String MESSAGE_RESOURCES_UNAVAILABLE = "No resources found with the desired command and predefined extensions";
     public static final String MESSAGE_SOURCE_UNAVAILABLE = "No source file found under the current path";
     public static final String MESSAGE_LOGGING_UNAVAILABLE = "No logging file was created under the current path";
     public static final String MESSAGE_SOURCE_AVAILABLE = "A new source file can now be found under the current path";
     public static final String MESSAGE_SOURCE_CONTAINS = "Source file contains";
-    public static final String MESSAGE_PROCESSING_TASK = "The task you have selected is: '%s' by '%s' of '%s' up to '%s%%' under the following path: '%s'.%n";
-    public static final String MESSAGE_PROCESSING_ATTRIBUTES = "The following attributes are also selected: '%s' to '%s', '%s' flag, X='%s' & Y='%s' axis values.%n";
+    public static final String MESSAGE_PROCESSING_TASK = "The task you have selected is: '{}' by '{}' of '{}' up to '{}%' under the following path: '{}'";
+    public static final String MESSAGE_PROCESSING_ATTRIBUTES = "The following attributes are also selected: '{}' to '{}', '{}' flag, X='{}' & Y='{}' axis values";
     public static final String MESSAGE_LOADING_DIRECTORY = "Loading directory";
     public static final String MESSAGE_LOADING_FILES = "Available files";
     public static final String MESSAGE_SORTING_FILES = "Sorting files";
     public static final String MESSAGE_CONVERSION_HISTORY = "Conversion history";
+    public static final String MESSAGE_CONVERSION_ENTRY_SET = "Entry: {} => {}";
     public static final String MESSAGE_EMPTY_CONVERSION_HISTORY = "Conversion history is empty, aborting the remaining process...";
     public static final String MESSAGE_LOADED_PREPARED = "New names being loaded/prepared";
     public static final String MESSAGE_RESOURCE_MISSING_FIELD = "The resource file was missing the datetime original field: ";
     public static final String MESSAGE_CONTINUE_RENAMING = "Do you want to continue with the renaming process? (y/n)";
     public static final String MESSAGE_RENAMING_PROCESS = "The process of renaming has begun";
     public static final String MESSAGE_CREATING_PROCESSED_DIRECTORY = "Creating the 'processed' directory";
-    public static final String MESSAGE_RENAMING_ALERT = "%s was renamed to %s%n";
-    public static final String MESSAGE_RENAMING_FAILURE = "The renaming process failed with a specific file";
-    public static final String MESSAGE_KEY_PAIR_FAILURE = "The specific file: %s, failed because the key pair could not be found under the conversion history";
+    public static final String MESSAGE_RENAMING_ALERT = "{} was renamed to {}";
+    public static final String MESSAGE_KEY_PAIR_FAILURE = "The specific file: {}, failed because the key pair could not be found under the conversion history";
     public static final String MESSAGE_UNDO_CONTINUE = "Do you want to undo the renaming process? (y/n)";
     public static final String MESSAGE_UNDO_RELOADING = "Reloading undo files";
     public static final String MESSAGE_UNDO_RESTORING = "The process of renaming back has begun";
-    public static final String MESSAGE_UNDO_ALERT = "%s was renamed back to %s%n";
+    public static final String MESSAGE_UNDO_ALERT = "{} was renamed back to {}";
     public static final String MESSAGE_FAILED_UNDO_LOADING = "The amount of reloaded undo files and original files do not match";
     public static final String MESSAGE_UNDO_ABORT = "You chose not to undo the last renaming process, ignoring the undo process";
     public static final String MESSAGE_MISMATCHING_CONVERSION_HISTORY = "The amount of generated names and amount of files do not match";
@@ -174,6 +174,26 @@ public final class Constants {
     public static final String MESSAGE_NIO_FAILURE = "The NIO API was unable to process files";
     public static final String MESSAGE_IMAGEIO_FAILURE = "The ImageIO API was unable to process files";
     public static final String MESSAGE_METADATA_FAILURE = "The Metadata API was unable to process files";
+    public static final String MESSAGE_COMPARE_STARTS = "Comparison starts";
+    public static final String MESSAGE_COMPARE_RESULTS_DUPLICATES = "Comparison results (DUPLICATES)";
+    public static final String MESSAGE_COMPARE_RESULTS_MATCHING = "Comparison results (MATCHING)";
+    public static final String MESSAGE_COMPARE_RESULTS_VS = "{} vs {}";
+    public static final String MESSAGE_COMPARE_RESULTS_DIFFERENCE = "Difference Percentage: {}";
+    public static final String MESSAGE_PROCESSING_THREAD_RESULTS = "Processing Thread results";
+    public static final String MESSAGE_PROCESSING_STATUS = "Processing status: {}%";
+    public static final String MESSAGE_PROCESSING_THREAD_NAME = "Thread name: {}";
+    public static final String MESSAGE_PROCESSING_THREAD_RUNTIME = "Thread runtime: {}";
+    public static final String MESSAGE_PROCESSING_THREADS_AVAILABLE = "Threads available: {}";
+    public static final String MESSAGE_PROCESSING_ORIGINAL_NAME = "OriginalName: {}";
+    public static final String MESSAGE_PROCESSING_HISTORY = "History: {}";
+    public static final String MESSAGE_PROCESSING_DUPLICATES = "Duplicates: {}";
+    public static final String MESSAGE_PROCESSING_MATCHING = "Matching: {}";
+    public static final String MESSAGE_PROCESSING_BATCH_RESULTS = "Processing Batch results";
+    public static final String MESSAGE_PROCESSING_ELAPSED_TIME = "Elapsed time: {}";
+    public static final String MESSAGE_CROPPING_STARTS = "Cropping starts";
+    public static final String MESSAGE_CONVERTING_STARTS = "Converting starts";
+    public static final String MESSAGE_DETECTION_STARTS = "Detection starts";
+    public static final String MESSAGE_PROCESSING_FILE_MOVED = "Moved file: {}";
 
     private Constants() {}
 }

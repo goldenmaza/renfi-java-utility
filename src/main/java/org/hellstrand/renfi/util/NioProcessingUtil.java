@@ -6,7 +6,6 @@ import static org.hellstrand.renfi.constant.Constants.LAST_MODIFIED_TIME_FLAG;
 import static org.hellstrand.renfi.constant.Constants.MESSAGE_LOADED_PREPARED;
 import static org.hellstrand.renfi.constant.Constants.MESSAGE_NIO_FAILURE;
 import static org.hellstrand.renfi.constant.Constants.MESSAGE_RESOURCE_MISSING_FIELD;
-import static org.hellstrand.renfi.util.HelpGuideUtil.printMessage;
 
 import java.io.File;
 import java.io.IOException;
@@ -20,14 +19,18 @@ import java.time.format.DateTimeFormatter;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import org.hellstrand.renfi.exception.SourceUnavailableException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * @author (Mats Richard Hellstrand)
- * @version (15th of September, 2025)
+ * @version (19th of September, 2025)
  */
 public class NioProcessingUtil {
+    private static final Logger logger = LoggerFactory.getLogger(NioProcessingUtil.class);
+
     public static void prepareHistoryByNioProcessing(File[] files, Map<String, String> history, String fromExtension, String dateTypeFlag) {
-        printMessage(MESSAGE_LOADED_PREPARED);
+        logger.info(MESSAGE_LOADED_PREPARED);
         DateTimeFormatter pattern = DateTimeFormatter.ofPattern(DATE_TIMESTAMP_FORMAT);
         Map<String, String> mapOfFailures = new LinkedHashMap<>();
 
@@ -61,12 +64,12 @@ public class NioProcessingUtil {
                 }
             }
         } catch (IOException e) {
-            printMessage(MESSAGE_NIO_FAILURE);
+            logger.error(MESSAGE_NIO_FAILURE);
             throw new SourceUnavailableException(MESSAGE_NIO_FAILURE, e);
         }
 
         for (Map.Entry<String, String> entry : mapOfFailures.entrySet()) {
-            printMessage(entry.getValue());
+            logger.info(entry.getValue());
         }
     }
 }

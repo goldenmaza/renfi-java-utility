@@ -7,7 +7,6 @@ import static org.hellstrand.renfi.constant.Constants.DATE_TIMEZONE;
 import static org.hellstrand.renfi.constant.Constants.MESSAGE_LOADED_PREPARED;
 import static org.hellstrand.renfi.constant.Constants.MESSAGE_METADATA_FAILURE;
 import static org.hellstrand.renfi.constant.Constants.MESSAGE_RESOURCE_MISSING_FIELD;
-import static org.hellstrand.renfi.util.HelpGuideUtil.printMessage;
 
 import com.drew.imaging.ImageMetadataReader;
 import com.drew.imaging.ImageProcessingException;
@@ -24,15 +23,19 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.TimeZone;
 import org.hellstrand.renfi.exception.SourceUnavailableException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * @author (Mats Richard Hellstrand)
- * @version (15th of September, 2025)
+ * @version (19th of September, 2025)
  */
 public final class ImageProcessingUtil extends FileProcessingUtil {
+    private static final Logger logger = LoggerFactory.getLogger(ImageProcessingUtil.class);
+
     public static void prepareHistoryByOrigin(File[] files, Map<String, String> history, String extension) {
         try {
-            printMessage(MESSAGE_LOADED_PREPARED);
+            logger.info(MESSAGE_LOADED_PREPARED);
             Locale locale = new Locale(DATE_LANGUAGE, DATE_COUNTRY);
             SimpleDateFormat simpleDateFormat = new SimpleDateFormat(DATE_TIMESTAMP_FORMAT, locale);
             simpleDateFormat.setTimeZone(TimeZone.getTimeZone(DATE_TIMEZONE));
@@ -53,10 +56,10 @@ public final class ImageProcessingUtil extends FileProcessingUtil {
             }
 
             for (Map.Entry<String, String> entry : mapOfFailures.entrySet()) {
-                printMessage(entry.getValue());
+                logger.info(entry.getValue());
             }
         } catch (ImageProcessingException | IOException e) {
-            printMessage(MESSAGE_METADATA_FAILURE);
+            logger.error(MESSAGE_METADATA_FAILURE);
             throw new SourceUnavailableException(MESSAGE_METADATA_FAILURE, e);
         }
     }

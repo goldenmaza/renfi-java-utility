@@ -15,10 +15,10 @@ import static org.hellstrand.renfi.constant.Constants.LABEL_CROP;
 import static org.hellstrand.renfi.constant.Constants.LABEL_DATA_PROCESSING;
 import static org.hellstrand.renfi.constant.Constants.LABEL_DETECT;
 import static org.hellstrand.renfi.constant.Constants.LABEL_FILE;
-import static org.hellstrand.renfi.constant.Constants.LABEL_JAVA;
-import static org.hellstrand.renfi.constant.Constants.LABEL_SOURCE;
 import static org.hellstrand.renfi.constant.Constants.LABEL_FILE_PROCESSING;
 import static org.hellstrand.renfi.constant.Constants.LABEL_IMAGES;
+import static org.hellstrand.renfi.constant.Constants.LABEL_JAVA;
+import static org.hellstrand.renfi.constant.Constants.LABEL_SOURCE;
 import static org.hellstrand.renfi.constant.Constants.LABEL_UNKNOWN_EXECUTION;
 import static org.hellstrand.renfi.constant.Constants.LABEL_VIDEOS;
 import static org.hellstrand.renfi.constant.Constants.LIST_PROCESSING;
@@ -30,7 +30,7 @@ import java.util.Objects;
 
 /**
  * @author (Mats Richard Hellstrand)
- * @version (10th of September, 2025)
+ * @version (20th of September, 2025)
  */
 public final class ConstantExtractionUtil {
     private ConstantExtractionUtil() {}
