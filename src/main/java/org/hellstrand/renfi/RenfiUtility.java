@@ -36,13 +36,6 @@ import static org.hellstrand.renfi.util.FileProcessingUtil.validateTarget;
 import static org.hellstrand.renfi.util.HelpGuideUtil.displayHelpGuide;
 import static org.hellstrand.renfi.util.LoggingUtil.formatMessage;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Scanner;
 import org.hellstrand.renfi.constant.ConstantExtractionUtil;
 import org.hellstrand.renfi.exception.DirectoryUnavailableException;
 import org.hellstrand.renfi.exception.DisplayHelpGuideException;
@@ -55,6 +48,14 @@ import org.hellstrand.renfi.manager.HistoryHandlingManager;
 import org.hellstrand.renfi.util.LoggingUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Scanner;
 
 /**
  * @author (Mats Richard Hellstrand)
@@ -103,7 +104,7 @@ public final class RenfiUtility {
 
         List<String> selectedExtensions = PROCESSING_SUPPORT.get(resourceType);
         int extensionFromIndex = Integer.parseInt(fromIndex), extensionToIndex = Integer.parseInt(toIndex);
-        if (extensionFromIndex < 0 && extensionToIndex >= selectedExtensions.size()) {
+        if (extensionFromIndex < 0 || extensionToIndex >= selectedExtensions.size()) {
             logger.error(MESSAGE_INVALID_EXTENSION_RANGES, fromIndex, toIndex);
             throw new InvalidUseException(formatMessage(MESSAGE_INVALID_EXTENSION_RANGES, fromIndex, toIndex));
         }
@@ -146,20 +147,20 @@ public final class RenfiUtility {
                 throw new ResourcesUnavailableException(MESSAGE_RESOURCES_UNAVAILABLE);
             }
 
-        try {
-            LoggingUtil loggingUtil = new LoggingUtil(path.concat(OUTPUT_SOURCE));
-            if (flow.equals(FILE_PROCESSING)) { // If we want to modify a file or analyze it...
-                FileHandlingManager.processBranch(loggingUtil, branch, files, path, boundary, leftXAxis, leftYAxis, fromExtension, toExtension);
-            } else if (flow.equals(DATA_PROCESSING)) { // If we want to prepare conversion history and execute renaming...
-                Map<String, String> history = new LinkedHashMap<>();
-                DataHandlingManager.processBranch(branch, resourceType, path, files, history, fromExtension, dateType);
-                HistoryHandlingManager.processHistory(files, history, path, directory);
+            try {
+                LoggingUtil loggingUtil = new LoggingUtil(path.concat(OUTPUT_SOURCE));
+                if (flow.equals(FILE_PROCESSING)) { // If we want to modify a file or analyze it...
+                    FileHandlingManager.processBranch(loggingUtil, branch, files, path, boundary, leftXAxis, leftYAxis, fromExtension, toExtension);
+                } else if (flow.equals(DATA_PROCESSING)) { // If we want to prepare conversion history and execute renaming...
+                    Map<String, String> history = new LinkedHashMap<>();
+                    DataHandlingManager.processBranch(branch, resourceType, path, files, history, fromExtension, dateType);
+                    HistoryHandlingManager.processHistory(files, history, path, directory);
+                }
+                loggingUtil.write();
+            } catch (FileNotFoundException e) {
+                logger.error(MESSAGE_LOGGING_UNAVAILABLE);
+                throw new SourceUnavailableException(MESSAGE_LOGGING_UNAVAILABLE);
             }
-            loggingUtil.write();
-        } catch (FileNotFoundException e) {
-            logger.error(MESSAGE_LOGGING_UNAVAILABLE);
-            throw new SourceUnavailableException(MESSAGE_LOGGING_UNAVAILABLE);
-        }
         } else {
             logger.info(MESSAGE_EXECUTION_ABORT);
         }

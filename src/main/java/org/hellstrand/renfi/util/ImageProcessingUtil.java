@@ -13,6 +13,10 @@ import com.drew.imaging.ImageProcessingException;
 import com.drew.metadata.Directory;
 import com.drew.metadata.Metadata;
 import com.drew.metadata.exif.ExifSubIFDDirectory;
+import org.hellstrand.renfi.exception.SourceUnavailableException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
@@ -22,13 +26,10 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 import java.util.TimeZone;
-import org.hellstrand.renfi.exception.SourceUnavailableException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * @author (Mats Richard Hellstrand)
- * @version (19th of September, 2025)
+ * @version (20th of September, 2025)
  */
 public final class ImageProcessingUtil extends FileProcessingUtil {
     private static final Logger logger = LoggerFactory.getLogger(ImageProcessingUtil.class);

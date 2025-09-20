@@ -11,14 +11,15 @@ import static org.hellstrand.renfi.constant.Constants.MESSAGE_RENAMING_PROCESS;
 import static org.hellstrand.renfi.constant.Constants.MESSAGE_UNDO_ABORT;
 import static org.hellstrand.renfi.constant.Constants.MESSAGE_UNDO_CONTINUE;
 
-import java.io.File;
-import java.util.Map;
-import java.util.Scanner;
 import org.hellstrand.renfi.exception.EmptyConversionHistoryException;
 import org.hellstrand.renfi.exception.MismatchingConversionHistoryException;
 import org.hellstrand.renfi.util.FileProcessingUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.io.File;
+import java.util.Map;
+import java.util.Scanner;
 
 /**
  * @author (Mats Richard Hellstrand)

@@ -1,6 +1,5 @@
 package org.hellstrand.renfi.util;
 
-import static java.lang.String.format;
 import static org.hellstrand.renfi.constant.Constants.BRANCH_FLAGS;
 import static org.hellstrand.renfi.constant.Constants.COMPARE_PROCESSING;
 import static org.hellstrand.renfi.constant.Constants.CONVERT_PROCESSING;
@@ -23,9 +22,10 @@ import static org.hellstrand.renfi.constant.Constants.SOURCE_PROCESSING;
 import static org.hellstrand.renfi.constant.Constants.TYPE_FLAGS;
 import static org.hellstrand.renfi.constant.Constants.VIDEO_PROCESSING;
 
-import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.List;
 
 /**
  * @author (Mats Richard Hellstrand)
@@ -116,13 +116,5 @@ public final class HelpGuideUtil {
         }
 
         return sb.toString();
-    }
-
-    public static void printMessage(String message) {
-        System.out.println(message);
-    }
-
-    public static String formatMessage(String messageTemplate, String... messageParameters) {
-        return format(messageTemplate, messageParameters);
     }
 }

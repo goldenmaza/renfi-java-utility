@@ -20,6 +20,7 @@
         <slf4j-simple.version>2.0.17</slf4j-simple.version>
         <junit-jupiter-engine.version>5.10.0</junit-jupiter-engine.version>
         <mockito-junit-jupiter.version>5.5.0</mockito-junit-jupiter.version>
+        <maven-compiler-plugin.version>3.13.0</maven-compiler-plugin.version>
     </properties>
 
     <!-- +=============================================== -->
@@ -57,9 +58,10 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
+                <version>${maven-compiler-plugin.version}</version>
                 <configuration>
-                    <source>11</source>
-                    <target>11</target>
+                    <source>17</source>
+                    <target>17</target>
                 </configuration>
             </plugin>
         </plugins>

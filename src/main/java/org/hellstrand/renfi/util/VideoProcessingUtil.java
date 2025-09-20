@@ -17,6 +17,10 @@ import com.drew.metadata.Metadata;
 import com.drew.metadata.avi.AviDirectory;
 import com.drew.metadata.mov.QuickTimeDirectory;
 import com.drew.metadata.mp4.Mp4Directory;
+import org.hellstrand.renfi.exception.SourceUnavailableException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.File;
 import java.io.IOException;
 import java.time.Instant;
@@ -26,13 +30,10 @@ import java.time.format.DateTimeFormatter;
 import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.Map;
-import org.hellstrand.renfi.exception.SourceUnavailableException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * @author (Mats Richard Hellstrand)
- * @version (19th of September, 2025)
+ * @version (20th of September, 2025)
  */
 public final class VideoProcessingUtil extends FileProcessingUtil {
     private static final Logger logger = LoggerFactory.getLogger(VideoProcessingUtil.class);

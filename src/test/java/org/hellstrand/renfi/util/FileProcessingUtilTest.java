@@ -7,8 +7,8 @@ import static org.hellstrand.renfi.constant.ConstantTest.IMAGES_PNG_LARGE_RESOUR
 import static org.hellstrand.renfi.constant.ConstantTest.INCORRECT_PATH;
 import static org.hellstrand.renfi.constant.ConstantTest.INPUT_SOURCE_FILE;
 import static org.hellstrand.renfi.constant.ConstantTest.INPUT_SOURCE_FILE_PATH;
-import static org.hellstrand.renfi.constant.ConstantTest.OUTPUT_SOURCE_FILE_PATH;
 import static org.hellstrand.renfi.constant.ConstantTest.LABEL_PROCESSED_DIRECTORY;
+import static org.hellstrand.renfi.constant.ConstantTest.OUTPUT_SOURCE_FILE_PATH;
 import static org.hellstrand.renfi.constant.ConstantTest.RESOURCES_INVALID_PATH;
 import static org.hellstrand.renfi.constant.ConstantTest.RESOURCES_OUTPUT_PATH;
 import static org.hellstrand.renfi.constant.ConstantTest.RESOURCES_PROCESSED_PATH;
@@ -25,10 +25,6 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import java.io.File;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Objects;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
@@ -36,6 +32,11 @@ import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
+
+import java.io.File;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Objects;
 
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class FileProcessingUtilTest {

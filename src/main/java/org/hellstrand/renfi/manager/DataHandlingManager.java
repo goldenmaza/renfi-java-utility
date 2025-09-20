@@ -8,14 +8,15 @@ import static org.hellstrand.renfi.constant.Constants.MESSAGE_INVALID_BRANCH_FAI
 import static org.hellstrand.renfi.constant.Constants.ORIGIN_PROCESSING;
 import static org.hellstrand.renfi.constant.Constants.VIDEO_PROCESSING;
 
-import java.io.File;
-import java.util.Map;
 import org.hellstrand.renfi.exception.InvalidBranchException;
 import org.hellstrand.renfi.util.ImageProcessingUtil;
 import org.hellstrand.renfi.util.NioProcessingUtil;
 import org.hellstrand.renfi.util.VideoProcessingUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.io.File;
+import java.util.Map;
 
 /**
  * @author (Mats Richard Hellstrand)

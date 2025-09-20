@@ -7,6 +7,10 @@ import static org.hellstrand.renfi.constant.Constants.MESSAGE_LOADED_PREPARED;
 import static org.hellstrand.renfi.constant.Constants.MESSAGE_NIO_FAILURE;
 import static org.hellstrand.renfi.constant.Constants.MESSAGE_RESOURCE_MISSING_FIELD;
 
+import org.hellstrand.renfi.exception.SourceUnavailableException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -18,13 +22,10 @@ import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.LinkedHashMap;
 import java.util.Map;
-import org.hellstrand.renfi.exception.SourceUnavailableException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * @author (Mats Richard Hellstrand)
- * @version (19th of September, 2025)
+ * @version (20th of September, 2025)
  */
 public class NioProcessingUtil {
     private static final Logger logger = LoggerFactory.getLogger(NioProcessingUtil.class);

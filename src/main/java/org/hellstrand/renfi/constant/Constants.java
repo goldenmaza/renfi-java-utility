@@ -178,9 +178,9 @@ public final class Constants {
     public static final String MESSAGE_COMPARE_RESULTS_DUPLICATES = "Comparison results (DUPLICATES)";
     public static final String MESSAGE_COMPARE_RESULTS_MATCHING = "Comparison results (MATCHING)";
     public static final String MESSAGE_COMPARE_RESULTS_VS = "{} vs {}";
-    public static final String MESSAGE_COMPARE_RESULTS_DIFFERENCE = "Difference Percentage: {}";
+    public static final String MESSAGE_COMPARE_RESULTS_DIFFERENCE = "Difference Percentage: {}%%";
     public static final String MESSAGE_PROCESSING_THREAD_RESULTS = "Processing Thread results";
-    public static final String MESSAGE_PROCESSING_STATUS = "Processing status: {}%";
+    public static final String MESSAGE_PROCESSING_STATUS = "Processing status: {}%%";
     public static final String MESSAGE_PROCESSING_THREAD_NAME = "Thread name: {}";
     public static final String MESSAGE_PROCESSING_THREAD_RUNTIME = "Thread runtime: {}";
     public static final String MESSAGE_PROCESSING_THREADS_AVAILABLE = "Threads available: {}";
@@ -194,6 +194,9 @@ public final class Constants {
     public static final String MESSAGE_CONVERTING_STARTS = "Converting starts";
     public static final String MESSAGE_DETECTION_STARTS = "Detection starts";
     public static final String MESSAGE_PROCESSING_FILE_MOVED = "Moved file: {}";
+    public static final String MESSAGE_PROCESSING_LOGGING_INPUT = "Logging: {} => {}";
+    public static final String MESSAGE_PROCESSING_LOGGING_OUTPUT = "Writing to file";
+    public static final String MESSAGE_PROCESSING_LOGGING_BORDERS = "### == {} == ###";
 
     private Constants() {}
 }
