@@ -20,9 +20,9 @@ import java.util.Map;
 
 /**
  * @author (Mats Richard Hellstrand)
- * @version (20th of September, 2025)
+ * @version (27th of September, 2025)
  */
-public class DataHandlingManager {
+public final class DataHandlingManager {
     private static final Logger logger = LoggerFactory.getLogger(DataHandlingManager.class);
 
     public static void processBranch(

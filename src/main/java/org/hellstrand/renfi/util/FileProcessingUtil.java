@@ -66,7 +66,7 @@ import javax.imageio.ImageIO;
 
 /**
  * @author (Mats Richard Hellstrand)
- * @version (20th of September, 2025)
+ * @version (27th of September, 2025)
  */
 public abstract class FileProcessingUtil {
     private static final Logger logger = LoggerFactory.getLogger(FileProcessingUtil.class);
@@ -307,8 +307,9 @@ public abstract class FileProcessingUtil {
         if (createTargetDirectory(directory)) {
             logger.info(MESSAGE_CROPPING_STARTS);
             String parentThreadID = "P".concat(String.valueOf(Thread.currentThread().getId()));
+            int coordinateX = Integer.parseInt(leftXAxis), coordinateY = Integer.parseInt(leftYAxis),
+                equalBorderWidthX = coordinateX + coordinateX, equalBorderHeightY = coordinateY + coordinateY;
             long croppingProcessStart = System.currentTimeMillis();
-            int leftX = Integer.parseInt(leftXAxis), leftY = Integer.parseInt(leftYAxis);
 
             Arrays.stream(files).parallel().forEach(originalFile -> {
                 String childThreadID = "C".concat(String.valueOf(Thread.currentThread().getId()));
@@ -317,8 +318,10 @@ public abstract class FileProcessingUtil {
 
                 try {
                     BufferedImage bufferedImage = ImageIO.read(originalFile);
+                    int imageWidth = bufferedImage.getWidth();
+                    int imageHeight = bufferedImage.getHeight();
                     BufferedImage croppedImage = bufferedImage.getSubimage(
-                        leftX, leftY, (bufferedImage.getWidth() - (leftX + leftX)), (bufferedImage.getHeight() - (leftY + leftY)));
+                        coordinateX, coordinateY, imageWidth - equalBorderWidthX, imageHeight - equalBorderHeightY);
                     File toCroppedFile = new File(directory.concat(originalName));
                     ImageIO.write(croppedImage, toExtension.substring(1), toCroppedFile);
                 } catch (IOException e) {
@@ -404,30 +407,23 @@ public abstract class FileProcessingUtil {
 
             try {
                 BufferedImage originalImage = ImageIO.read(originalFile);
-                int height = originalImage.getHeight();
-                int width = originalImage.getWidth();
+                int imageHeight = originalImage.getHeight();
+                int imageWidthFinalPixel = originalImage.getWidth() - 1;
 
-                imageCheck:
-                for (int y = 0; y < height; y++) {
-                    String key = String.valueOf(y);
-                    for (int x = 0; x < width; x++) {
-                        if ((originalImage.getRGB(x, y) & 0x00FFFFFF) != 0) {
-                            if (x == width - 1) {
-                                Set<String> values = borderMapping.get(key);
-                                if (values == null) {
-                                    values = new HashSet<>();
-                                }
-                                values.add(originalName);
-                                borderMapping.put(key, values);
+                for (int y = 0; y < imageHeight; y++) {
+                    if ((originalImage.getRGB(imageWidthFinalPixel, y) & 0x00FFFFFF) != 0) {
+                        String newlyDetectedKey = String.valueOf(y);
+                        Set<String> values = borderMapping.get(newlyDetectedKey);
+                        if (values == null) {
+                            values = new HashSet<>();
+                        }
+                        values.add(originalName);
+                        borderMapping.put(newlyDetectedKey, values);
 
-                                String oldKey = String.valueOf(y - 1);
-                                Set<String> mappedValues = borderMapping.get(oldKey);
-                                if (Objects.nonNull(mappedValues) && mappedValues.contains(originalName)) {
-                                    borderMapping.get(oldKey).remove(originalName);
-                                }
-                            }
-                        } else {
-                            break imageCheck;
+                        String previouslyDetectedKey = String.valueOf(y - 1);
+                        Set<String> mappedValues = borderMapping.get(previouslyDetectedKey);
+                        if (mappedValues.contains(originalName)) {
+                            borderMapping.get(previouslyDetectedKey).remove(originalName);
                         }
                     }
                 }

@@ -1,13 +1,14 @@
 package org.hellstrand.renfi;
 
-import static org.hellstrand.renfi.constant.Constants.ALLOWED_FLAGS;
 import static org.hellstrand.renfi.constant.Constants.BOUNDARY_INDEX;
+import static org.hellstrand.renfi.constant.Constants.BRANCH_FLAGS;
 import static org.hellstrand.renfi.constant.Constants.BRANCH_INDEX;
 import static org.hellstrand.renfi.constant.Constants.DATA_PROCESSING;
 import static org.hellstrand.renfi.constant.Constants.DATE_TYPE_INDEX;
 import static org.hellstrand.renfi.constant.Constants.EXTENSION_FROM_INDEX;
 import static org.hellstrand.renfi.constant.Constants.EXTENSION_TO_INDEX;
 import static org.hellstrand.renfi.constant.Constants.FILE_PROCESSING;
+import static org.hellstrand.renfi.constant.Constants.FLOW_FLAGS;
 import static org.hellstrand.renfi.constant.Constants.FLOW_INDEX;
 import static org.hellstrand.renfi.constant.Constants.HELP_FLAGS;
 import static org.hellstrand.renfi.constant.Constants.MESSAGE_DESIRED_EXECUTION;
@@ -27,7 +28,7 @@ import static org.hellstrand.renfi.constant.Constants.MESSAGE_PROCESSING_TASK;
 import static org.hellstrand.renfi.constant.Constants.MESSAGE_RESOURCES_UNAVAILABLE;
 import static org.hellstrand.renfi.constant.Constants.OUTPUT_SOURCE;
 import static org.hellstrand.renfi.constant.Constants.PATH_INDEX;
-import static org.hellstrand.renfi.constant.Constants.PROCESSING_SUPPORT;
+import static org.hellstrand.renfi.constant.Constants.MEDIA_SUPPORT;
 import static org.hellstrand.renfi.constant.Constants.RESOURCE_TYPE_INDEX;
 import static org.hellstrand.renfi.constant.Constants.SUCCESSFUL;
 import static org.hellstrand.renfi.constant.Constants.UPPER_LEFT_X_INDEX;
@@ -59,13 +60,13 @@ import java.util.Scanner;
 
 /**
  * @author (Mats Richard Hellstrand)
- * @version (20th of September, 2025)
+ * @version (27th of September, 2025)
  */
 public final class RenfiUtility {
     private static final Logger logger = LoggerFactory.getLogger(RenfiUtility.class);
 
     public static void main(String[] args) {
-        if (args.length < 9 || HELP_FLAGS.contains(args[0])) {
+        if (args.length < 10 || HELP_FLAGS.contains(args[0])) {
             displayHelpGuide();
             throw new DisplayHelpGuideException(MESSAGE_DISPLAY_HELP_GUIDE);
         }
@@ -73,8 +74,8 @@ public final class RenfiUtility {
         // "Prepare" the flow of the application...
         String flow = args[FLOW_INDEX];
         String branch = args[BRANCH_INDEX];
-        String path = args[PATH_INDEX];
         String resourceType = args[RESOURCE_TYPE_INDEX];
+        String path = args[PATH_INDEX];
         String fromIndex = args[EXTENSION_FROM_INDEX];
         String toIndex = args[EXTENSION_TO_INDEX];
         String leftXAxis = args[UPPER_LEFT_X_INDEX];
@@ -82,17 +83,17 @@ public final class RenfiUtility {
         String dateType = args[DATE_TYPE_INDEX];
         String boundary = args[BOUNDARY_INDEX];
 
-        if (!ALLOWED_FLAGS.contains(flow)) {
+        if (!FLOW_FLAGS.contains(flow)) {
             logger.error(MESSAGE_INVALID_FLOW_INDEX, flow);
             throw new InvalidUseException(formatMessage(MESSAGE_INVALID_FLOW_INDEX, flow));
         }
 
-        if (!ALLOWED_FLAGS.contains(branch)) {
+        if (!BRANCH_FLAGS.contains(branch)) {
             logger.error(MESSAGE_INVALID_BRANCH_INDEX, branch);
             throw new InvalidUseException(formatMessage(MESSAGE_INVALID_BRANCH_INDEX, branch));
         }
 
-        if (!ALLOWED_FLAGS.contains(resourceType) || !PROCESSING_SUPPORT.containsKey(resourceType)) {
+        if (!MEDIA_SUPPORT.containsKey(resourceType)) {
             logger.error(MESSAGE_INVALID_RESOURCE_TYPE_INDEX, resourceType);
             throw new InvalidUseException(formatMessage(MESSAGE_INVALID_RESOURCE_TYPE_INDEX, resourceType));
         }
@@ -102,16 +103,17 @@ public final class RenfiUtility {
             throw new DirectoryUnavailableException(formatMessage(MESSAGE_DIRECTORY_UNAVAILABLE, path));
         }
 
-        List<String> selectedExtensions = PROCESSING_SUPPORT.get(resourceType);
+        List<String> selectedExtensions = MEDIA_SUPPORT.get(resourceType);
         int extensionFromIndex = Integer.parseInt(fromIndex), extensionToIndex = Integer.parseInt(toIndex);
         if (extensionFromIndex < 0 || extensionToIndex >= selectedExtensions.size()) {
             logger.error(MESSAGE_INVALID_EXTENSION_RANGES, fromIndex, toIndex);
             throw new InvalidUseException(formatMessage(MESSAGE_INVALID_EXTENSION_RANGES, fromIndex, toIndex));
         }
 
-        if (Integer.parseInt(boundary) < 1 || Integer.parseInt(boundary) > 100) {
-            logger.error(MESSAGE_INVALID_BOUNDARY_INDEX, boundary);
-            throw new InvalidUseException(formatMessage(MESSAGE_INVALID_BOUNDARY_INDEX, boundary));
+        int boundaryLimit = Integer.parseInt(boundary);
+        if (boundaryLimit < 1 || boundaryLimit > 100) {
+            logger.error(MESSAGE_INVALID_BOUNDARY_INDEX, boundaryLimit);
+            throw new InvalidUseException(formatMessage(MESSAGE_INVALID_BOUNDARY_INDEX, boundaryLimit));
         }
 
         String flowTask = ConstantExtractionUtil.extractFlowTask(flow);

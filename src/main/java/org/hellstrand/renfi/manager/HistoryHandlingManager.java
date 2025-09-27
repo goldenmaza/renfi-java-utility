@@ -23,9 +23,9 @@ import java.util.Scanner;
 
 /**
  * @author (Mats Richard Hellstrand)
- * @version (20th of September, 2025)
+ * @version (27th of September, 2025)
  */
-public class HistoryHandlingManager {
+public final class HistoryHandlingManager {
     private static final Logger logger = LoggerFactory.getLogger(HistoryHandlingManager.class);
 
     public static void processHistory(File[] files, Map<String, String> history, String path, File directory) {

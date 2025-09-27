@@ -7,15 +7,15 @@ import java.util.Map;
 
 /**
  * @author (Mats Richard Hellstrand)
- * @version (20th of September, 2025)
+ * @version (27th of September, 2025)
  */
 public final class Constants {
     // Application states, actions, attributes...
     public static final int SUCCESSFUL = 0;
     public static final int FLOW_INDEX = 0;
     public static final int BRANCH_INDEX = 1;
-    public static final int PATH_INDEX = 2;
-    public static final int RESOURCE_TYPE_INDEX = 3;
+    public static final int RESOURCE_TYPE_INDEX = 2;
+    public static final int PATH_INDEX = 3;
     public static final int EXTENSION_FROM_INDEX = 4;
     public static final int EXTENSION_TO_INDEX = 5;
     public static final int UPPER_LEFT_X_INDEX = 6;
@@ -62,12 +62,6 @@ public final class Constants {
         add(LAST_MODIFIED_TIME_FLAG);
         add(LAST_ACCESS_TIME_FLAG);
     }};
-    public static final List<String> ALLOWED_FLAGS = new ArrayList<>() {{
-        addAll(FLOW_FLAGS);
-        addAll(BRANCH_FLAGS);
-        addAll(RESOURCE_FLAGS);
-        addAll(TYPE_FLAGS);
-    }};
     public static final String FULL_HELP_FLAG = "help";
     public static final String HYPHEN_HELP_FLAG = "-h";
     public static final String HYPHEN_FULL_HELP_FLAG = "-help";
@@ -90,7 +84,7 @@ public final class Constants {
     public static final String EXTENSION_MPG = ".mpg";//java+7 only
     public static final String EXTENSION_WMV = ".wmv";//java+7 only
     public static final String EXTENSION_MKV = ".mkv";//java+7 only
-    public static final Map<String, List<String>> PROCESSING_SUPPORT = new HashMap<>() {{
+    public static final Map<String, List<String>> MEDIA_SUPPORT = new HashMap<>() {{
         put(IMAGE_PROCESSING, new ArrayList<>() {{
             add(EXTENSION_JPG);
             add(EXTENSION_JPEG);
@@ -147,7 +141,7 @@ public final class Constants {
     public static final String MESSAGE_SOURCE_AVAILABLE = "A new source file can now be found under the current path";
     public static final String MESSAGE_SOURCE_CONTAINS = "Source file contains";
     public static final String MESSAGE_PROCESSING_TASK = "The task you have selected is: '{}' by '{}' of '{}' up to '{}%' under the following path: '{}'";
-    public static final String MESSAGE_PROCESSING_ATTRIBUTES = "The following attributes are also selected: '{}' to '{}', '{}' flag, X='{}' & Y='{}' axis values";
+    public static final String MESSAGE_PROCESSING_ATTRIBUTES = "The following attributes are also selected: '{}' to '{}' format, '{}' date flag, X='{}' & Y='{}' axis values";
     public static final String MESSAGE_LOADING_DIRECTORY = "Loading directory";
     public static final String MESSAGE_LOADING_FILES = "Available files";
     public static final String MESSAGE_SORTING_FILES = "Sorting files";

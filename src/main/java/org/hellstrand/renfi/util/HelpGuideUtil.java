@@ -16,7 +16,7 @@ import static org.hellstrand.renfi.constant.Constants.LAST_ACCESS_TIME_FLAG;
 import static org.hellstrand.renfi.constant.Constants.LAST_MODIFIED_TIME_FLAG;
 import static org.hellstrand.renfi.constant.Constants.LIST_PROCESSING;
 import static org.hellstrand.renfi.constant.Constants.ORIGIN_PROCESSING;
-import static org.hellstrand.renfi.constant.Constants.PROCESSING_SUPPORT;
+import static org.hellstrand.renfi.constant.Constants.MEDIA_SUPPORT;
 import static org.hellstrand.renfi.constant.Constants.RESOURCE_FLAGS;
 import static org.hellstrand.renfi.constant.Constants.SOURCE_PROCESSING;
 import static org.hellstrand.renfi.constant.Constants.TYPE_FLAGS;
@@ -29,7 +29,7 @@ import java.util.List;
 
 /**
  * @author (Mats Richard Hellstrand)
- * @version (20th of September, 2025)
+ * @version (27th of September, 2025)
  */
 public final class HelpGuideUtil {
     private static final Logger logger = LoggerFactory.getLogger(HelpGuideUtil.class);
@@ -37,8 +37,8 @@ public final class HelpGuideUtil {
     private HelpGuideUtil() {}
 
     public static void displayHelpGuide() {
-        List<String> imageExtensions = PROCESSING_SUPPORT.get(IMAGE_PROCESSING);
-        List<String> videoExtensions = PROCESSING_SUPPORT.get(VIDEO_PROCESSING);
+        List<String> imageExtensions = MEDIA_SUPPORT.get(IMAGE_PROCESSING);
+        List<String> videoExtensions = MEDIA_SUPPORT.get(VIDEO_PROCESSING);
         String helpFlags = HELP_FLAGS.toString()
             .replace("[", "(")
             .replace("]", ")");
@@ -49,7 +49,7 @@ public final class HelpGuideUtil {
             \tOperational overview:
             \t=====================
 
-            \tjava -jar Renfi.jar <FLOW> <BRANCH> <PATH> <RESOURCE_TYPE> <FROM_EXTENSION> <TO_EXTENSION> <X_AXIS> <Y_AXIS> <DATE_TYPE>
+            \tjava -jar Renfi.jar <FLOW> <BRANCH> <RESOURCE_TYPE> <PATH> <FROM_EXTENSION> <TO_EXTENSION> <X_AXIS> <Y_AXIS> <DATE_TYPE> <BOUNDARY>
 
             \t(FLOW)\t\t\t\tThe desired flow of the application: {}
             \t(BRANCH)\t\t\tThe desired branch of the application: {}

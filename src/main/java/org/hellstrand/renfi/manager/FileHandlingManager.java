@@ -18,9 +18,9 @@ import java.io.File;
 
 /**
  * @author (Mats Richard Hellstrand)
- * @version (20th of September, 2025)
+ * @version (27th of September, 2025)
  */
-public class FileHandlingManager {
+public final class FileHandlingManager {
     private static final Logger logger = LoggerFactory.getLogger(FileHandlingManager.class);
 
     public static void processBranch(
