@@ -11,6 +11,7 @@ import static org.hellstrand.renfi.constant.Constants.FILE_PROCESSING;
 import static org.hellstrand.renfi.constant.Constants.FLOW_FLAGS;
 import static org.hellstrand.renfi.constant.Constants.FLOW_INDEX;
 import static org.hellstrand.renfi.constant.Constants.HELP_FLAGS;
+import static org.hellstrand.renfi.constant.Constants.MEDIA_SUPPORT;
 import static org.hellstrand.renfi.constant.Constants.MESSAGE_DESIRED_EXECUTION;
 import static org.hellstrand.renfi.constant.Constants.MESSAGE_DIRECTORY_UNAVAILABLE;
 import static org.hellstrand.renfi.constant.Constants.MESSAGE_DISPLAY_HELP_GUIDE;
@@ -28,7 +29,6 @@ import static org.hellstrand.renfi.constant.Constants.MESSAGE_PROCESSING_TASK;
 import static org.hellstrand.renfi.constant.Constants.MESSAGE_RESOURCES_UNAVAILABLE;
 import static org.hellstrand.renfi.constant.Constants.OUTPUT_SOURCE;
 import static org.hellstrand.renfi.constant.Constants.PATH_INDEX;
-import static org.hellstrand.renfi.constant.Constants.MEDIA_SUPPORT;
 import static org.hellstrand.renfi.constant.Constants.RESOURCE_TYPE_INDEX;
 import static org.hellstrand.renfi.constant.Constants.SUCCESSFUL;
 import static org.hellstrand.renfi.constant.Constants.UPPER_LEFT_X_INDEX;
@@ -60,7 +60,7 @@ import java.util.Scanner;
 
 /**
  * @author (Mats Richard Hellstrand)
- * @version (27th of September, 2025)
+ * @version (28th of September, 2025)
  */
 public final class RenfiUtility {
     private static final Logger logger = LoggerFactory.getLogger(RenfiUtility.class);
@@ -71,7 +71,7 @@ public final class RenfiUtility {
             throw new DisplayHelpGuideException(MESSAGE_DISPLAY_HELP_GUIDE);
         }
 
-        // "Prepare" the flow of the application...
+        // Fetch the application's arguments...
         String flow = args[FLOW_INDEX];
         String branch = args[BRANCH_INDEX];
         String resourceType = args[RESOURCE_TYPE_INDEX];
@@ -83,6 +83,7 @@ public final class RenfiUtility {
         String dateType = args[DATE_TYPE_INDEX];
         String boundary = args[BOUNDARY_INDEX];
 
+        // Evaluate the application's arguments...
         if (!FLOW_FLAGS.contains(flow)) {
             logger.error(MESSAGE_INVALID_FLOW_INDEX, flow);
             throw new InvalidUseException(formatMessage(MESSAGE_INVALID_FLOW_INDEX, flow));
@@ -122,6 +123,7 @@ public final class RenfiUtility {
         String fromExtension = selectedExtensions.get(extensionFromIndex);
         String toExtension = selectedExtensions.get(extensionToIndex);
 
+        // Present the application's execution and ask for input...
         logger.info(MESSAGE_PROCESSING_TASK, flowTask, branchTask, resourceTask, boundary, path);
         logger.info(MESSAGE_PROCESSING_ATTRIBUTES, fromExtension.substring(1), toExtension.substring(1), dateType, leftXAxis, leftYAxis);
         logger.info(MESSAGE_DESIRED_EXECUTION);

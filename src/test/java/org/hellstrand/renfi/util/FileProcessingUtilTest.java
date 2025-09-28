@@ -1,24 +1,26 @@
 package org.hellstrand.renfi.util;
 
-import static org.hellstrand.renfi.constant.ConstantTest.EXISTING_PATH_IMAGES;
-import static org.hellstrand.renfi.constant.ConstantTest.FIRST_CHANGED_SOURCE_FILE;
-import static org.hellstrand.renfi.constant.ConstantTest.FIRST_RENAME_SOURCE_FILE;
-import static org.hellstrand.renfi.constant.ConstantTest.IMAGES_PNG_LARGE_RESOURCE_PATH;
 import static org.hellstrand.renfi.constant.ConstantTest.INVALID_INPUT_SOURCE_FILE_PATH;
-import static org.hellstrand.renfi.constant.ConstantTest.INVALID_PATH_VECTORS;
-import static org.hellstrand.renfi.constant.ConstantTest.INPUT_SOURCE_FILE;
-import static org.hellstrand.renfi.constant.ConstantTest.INPUT_SOURCE_FILE_PATH;
-import static org.hellstrand.renfi.constant.ConstantTest.LABEL_PROCESSED_DIRECTORY;
-import static org.hellstrand.renfi.constant.ConstantTest.OUTPUT_SOURCE_FILE_PATH;
-import static org.hellstrand.renfi.constant.ConstantTest.RESOURCES_INVALID_OUTPUT_PATH;
+import static org.hellstrand.renfi.constant.ConstantTest.INVALID_RESOURCES_OUTPUT_PATH;
+import static org.hellstrand.renfi.constant.ConstantTest.INVALID_RESOURCES_PATH_VECTORS;
+import static org.hellstrand.renfi.constant.ConstantTest.PROCESSED_DIRECTORY;
+import static org.hellstrand.renfi.constant.ConstantTest.RESOURCES_IMAGES_PATH;
+import static org.hellstrand.renfi.constant.ConstantTest.RESOURCES_IMAGES_PNG_LARGE_PATH;
+import static org.hellstrand.renfi.constant.ConstantTest.RESOURCES_NOTES_SOURCE_FILE_PATH;
 import static org.hellstrand.renfi.constant.ConstantTest.RESOURCES_OUTPUT_PATH;
-import static org.hellstrand.renfi.constant.ConstantTest.RESOURCES_PROCESSED_PATH;
+import static org.hellstrand.renfi.constant.ConstantTest.RESOURCES_OUTPUT_SOURCE_FILE_PATH;
+import static org.hellstrand.renfi.constant.ConstantTest.RESOURCES_PNG_EXTENSION;
 import static org.hellstrand.renfi.constant.ConstantTest.RESOURCES_RENAME_PATH;
-import static org.hellstrand.renfi.constant.ConstantTest.RESOURCES_SELECTED_EXTENSION;
-import static org.hellstrand.renfi.constant.ConstantTest.SECOND_CHANGED_SOURCE_FILE;
-import static org.hellstrand.renfi.constant.ConstantTest.SECOND_RENAME_SOURCE_FILE;
-import static org.hellstrand.renfi.constant.ConstantTest.THIRD_CHANGED_SOURCE_FILE;
-import static org.hellstrand.renfi.constant.ConstantTest.THIRD_RENAME_SOURCE_FILE;
+import static org.hellstrand.renfi.constant.ConstantTest.RESOURCES_RENAME_PROCESSED_PATH;
+import static org.hellstrand.renfi.constant.ConstantTest.SOURCE_FILE_FIRST_CHANGED_FILE_TXT;
+import static org.hellstrand.renfi.constant.ConstantTest.SOURCE_FILE_FIRST_RENAME_FILE_TXT;
+import static org.hellstrand.renfi.constant.ConstantTest.SOURCE_FILE_INPUT_TXT;
+import static org.hellstrand.renfi.constant.ConstantTest.SOURCE_FILE_SECOND_CHANGED_FILE_TXT;
+import static org.hellstrand.renfi.constant.ConstantTest.SOURCE_FILE_SECOND_RENAME_FILE_TXT;
+import static org.hellstrand.renfi.constant.ConstantTest.SOURCE_FILE_THIRD_CHANGED_FILE_TXT;
+import static org.hellstrand.renfi.constant.ConstantTest.SOURCE_FILE_THIRD_RENAME_FILE_TXT;
+import static org.hellstrand.renfi.constant.ConstantTest.TEST_LOGGING_DIRECTORY_OUTPUT;
+import static org.hellstrand.renfi.constant.ConstantTest.TEST_LOGGING_FILE_OUTPUT;
 import static org.hellstrand.renfi.util.FileProcessingUtil.createSourceFile;
 import static org.hellstrand.renfi.util.FileProcessingUtil.createTargetDirectory;
 import static org.hellstrand.renfi.util.FileProcessingUtil.prepareHistoryByInput;
@@ -42,6 +44,8 @@ import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.IOException;
@@ -56,24 +60,26 @@ import java.util.stream.Stream;
  */
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class FileProcessingUtilTest extends AbstractTest {
+    private static final Logger logger = LoggerFactory.getLogger(FileProcessingUtil.class);
+
     @AfterAll
-    public static void clearAll() {
-        File fileOutput = new File(OUTPUT_SOURCE_FILE_PATH);
+    static void clearAll() {
+        File fileOutput = new File(RESOURCES_OUTPUT_SOURCE_FILE_PATH);
         if (fileOutput.exists() && fileOutput.delete()) {
-            System.out.println("File was deleted: " + OUTPUT_SOURCE_FILE_PATH);
+            logger.info(TEST_LOGGING_FILE_OUTPUT, RESOURCES_OUTPUT_SOURCE_FILE_PATH);
         }
 
         File directoryOutput = new File(RESOURCES_OUTPUT_PATH);
         if (directoryOutput.exists() && directoryOutput.delete()) {
-            System.out.println("Path was deleted: " + RESOURCES_OUTPUT_PATH);
+            logger.info(TEST_LOGGING_DIRECTORY_OUTPUT, RESOURCES_OUTPUT_PATH);
         }
     }
 
     @AfterEach
     void clearEach() {
-        File directoryProcessed = new File(RESOURCES_PROCESSED_PATH);
+        File directoryProcessed = new File(RESOURCES_RENAME_PROCESSED_PATH);
         if (directoryProcessed.exists() && directoryProcessed.delete()) {
-            System.out.println("Path was deleted: " + RESOURCES_PROCESSED_PATH);
+            logger.info(TEST_LOGGING_DIRECTORY_OUTPUT, RESOURCES_RENAME_PROCESSED_PATH);
         }
     }
 
@@ -82,7 +88,7 @@ public class FileProcessingUtilTest extends AbstractTest {
     @DisplayName("We are validating that a directory cannot be found with an invalid path...")
     void validateTargetTest_InvalidPathDirectoryMissing() {
         // Assert & Execute
-        assertFalse(validateTarget(INVALID_PATH_VECTORS));
+        assertFalse(validateTarget(INVALID_RESOURCES_PATH_VECTORS));
     }
 
     @Test
@@ -90,7 +96,7 @@ public class FileProcessingUtilTest extends AbstractTest {
     @DisplayName("We are validating that a directory can be found with an existing path...")
     void validateTargetTest_ExistingPathDirectoryFound() {
         // Assert & Execute
-        assertTrue(validateTarget(EXISTING_PATH_IMAGES));
+        assertTrue(validateTarget(RESOURCES_IMAGES_PATH));
     }
 
     @Test
@@ -98,7 +104,7 @@ public class FileProcessingUtilTest extends AbstractTest {
     @DisplayName("We are validating that a file cannot be found under an existing path...")
     void validateTargetTest_ExistingPathFileMissing() {
         // Assert & Execute
-        assertFalse(validateTarget(EXISTING_PATH_IMAGES.concat(INPUT_SOURCE_FILE)));
+        assertFalse(validateTarget(RESOURCES_IMAGES_PATH.concat(SOURCE_FILE_INPUT_TXT)));
     }
 
     @Test
@@ -106,7 +112,7 @@ public class FileProcessingUtilTest extends AbstractTest {
     @DisplayName("We are validating that a file can be found under an existing path...")
     void validateTargetTest_ExistingPathFileFound() {
         // Assert & Execute
-        assertTrue(validateTarget(INPUT_SOURCE_FILE_PATH));
+        assertTrue(validateTarget(RESOURCES_NOTES_SOURCE_FILE_PATH));
     }
 
     @Test
@@ -114,7 +120,7 @@ public class FileProcessingUtilTest extends AbstractTest {
     @DisplayName("We are validating that a directory cannot be created with an invalid path...")
     void createTargetDirectoryTest_CreateDirectoryWithInvalidPathThrowsException() {
         // Prepare
-        File directory = new File(RESOURCES_INVALID_OUTPUT_PATH);
+        File directory = new File(INVALID_RESOURCES_OUTPUT_PATH);
         String absolutePathToDirectory = directory.getAbsolutePath();
 
         // Assert & Execute
@@ -150,7 +156,7 @@ public class FileProcessingUtilTest extends AbstractTest {
     @DisplayName("We are validating that a source file can be created under an existing path...")
     void createSourceFileTest_CreateSourceFileWithExistingPathPassesValidation2() {
         // Prepare
-        File file = new File(OUTPUT_SOURCE_FILE_PATH);
+        File file = new File(RESOURCES_OUTPUT_SOURCE_FILE_PATH);
         String absolutePathToOutput = file.getAbsolutePath();
 
         // Execute
@@ -165,9 +171,9 @@ public class FileProcessingUtilTest extends AbstractTest {
     @DisplayName("We are validating that a source file can be populated with existing file names...")
     void writeSourceFileTest_PopulateSourceFileWithFilenames() {
         // Prepare
-        File directory = new File(IMAGES_PNG_LARGE_RESOURCE_PATH);
-        File[] files = directory.listFiles((dir, name) -> name.toLowerCase().endsWith(RESOURCES_SELECTED_EXTENSION));
-        File file = new File(OUTPUT_SOURCE_FILE_PATH);
+        File directory = new File(RESOURCES_IMAGES_PNG_LARGE_PATH);
+        File[] files = directory.listFiles((dir, name) -> name.toLowerCase().endsWith(RESOURCES_PNG_EXTENSION));
+        File file = new File(RESOURCES_OUTPUT_SOURCE_FILE_PATH);
         assertDoesNotThrow(() -> {
             try {
                 // Assert
@@ -191,12 +197,12 @@ public class FileProcessingUtilTest extends AbstractTest {
     void prepareHistoryByInput_HistoryPopulatedByInputSourceFile() {
         // Prepare
         Map<String, String> history = new HashMap<>();
-        File directory = new File(IMAGES_PNG_LARGE_RESOURCE_PATH);
-        File[] files = directory.listFiles((dir, name) -> name.toLowerCase().endsWith(RESOURCES_SELECTED_EXTENSION));
+        File directory = new File(RESOURCES_IMAGES_PNG_LARGE_PATH);
+        File[] files = directory.listFiles((dir, name) -> name.toLowerCase().endsWith(RESOURCES_PNG_EXTENSION));
 
         // Execute
         assert files != null;
-        prepareHistoryByInput(files, history, INPUT_SOURCE_FILE_PATH, RESOURCES_SELECTED_EXTENSION);
+        prepareHistoryByInput(files, history, RESOURCES_NOTES_SOURCE_FILE_PATH, RESOURCES_PNG_EXTENSION);
 
         // Assert
         assertEquals(history.size(), files.length);
@@ -208,18 +214,18 @@ public class FileProcessingUtilTest extends AbstractTest {
     void renamingProcess_MultipleFilesAreRenamed() {
         // Prepare
         Map<String, String> history = Map.of(
-            FIRST_RENAME_SOURCE_FILE, FIRST_CHANGED_SOURCE_FILE,
-            SECOND_RENAME_SOURCE_FILE, SECOND_CHANGED_SOURCE_FILE,
-            THIRD_RENAME_SOURCE_FILE, THIRD_CHANGED_SOURCE_FILE);
+            SOURCE_FILE_FIRST_RENAME_FILE_TXT, SOURCE_FILE_FIRST_CHANGED_FILE_TXT,
+            SOURCE_FILE_SECOND_RENAME_FILE_TXT, SOURCE_FILE_SECOND_CHANGED_FILE_TXT,
+            SOURCE_FILE_THIRD_RENAME_FILE_TXT, SOURCE_FILE_THIRD_CHANGED_FILE_TXT);
         File renameDirectory = new File(RESOURCES_RENAME_PATH);
         File[] renameFiles = renameDirectory.listFiles();
-        File processedDirectory = new File(RESOURCES_PROCESSED_PATH);
+        File processedDirectory = new File(RESOURCES_RENAME_PROCESSED_PATH);
 
         // Assert
         verifyRenameDirectoryStatus(renameDirectory, history.size());
 
         // Execute
-        renamingProcess(renameFiles, history, RESOURCES_RENAME_PATH, LABEL_PROCESSED_DIRECTORY);
+        renamingProcess(renameFiles, history, RESOURCES_RENAME_PATH, PROCESSED_DIRECTORY);
 
         // Assert
         verifyProcessedDirectoryStatus(processedDirectory, history.size());
@@ -231,18 +237,18 @@ public class FileProcessingUtilTest extends AbstractTest {
     void renamingProcess_MultipleFilesAreRenamedButOneFails() {
         // Prepare
         Map<String, String> history = Map.of(
-            FIRST_RENAME_SOURCE_FILE, FIRST_CHANGED_SOURCE_FILE,
-            INPUT_SOURCE_FILE, SECOND_CHANGED_SOURCE_FILE,
-            THIRD_RENAME_SOURCE_FILE, THIRD_CHANGED_SOURCE_FILE);
+            SOURCE_FILE_FIRST_RENAME_FILE_TXT, SOURCE_FILE_FIRST_CHANGED_FILE_TXT,
+            SOURCE_FILE_INPUT_TXT, SOURCE_FILE_SECOND_CHANGED_FILE_TXT,
+            SOURCE_FILE_THIRD_RENAME_FILE_TXT, SOURCE_FILE_THIRD_CHANGED_FILE_TXT);
         File renameDirectory = new File(RESOURCES_RENAME_PATH);
         File[] renameFiles = renameDirectory.listFiles();
-        File processedDirectory = new File(RESOURCES_PROCESSED_PATH);
+        File processedDirectory = new File(RESOURCES_RENAME_PROCESSED_PATH);
 
         // Assert
         verifyRenameDirectoryStatus(renameDirectory, history.size());
 
         // Execute
-        renamingProcess(renameFiles, history, RESOURCES_RENAME_PATH, LABEL_PROCESSED_DIRECTORY);
+        renamingProcess(renameFiles, history, RESOURCES_RENAME_PATH, PROCESSED_DIRECTORY);
 
         // Assert
         verifyProcessedDirectoryStatus(processedDirectory, history.size() - 1);
@@ -261,7 +267,7 @@ public class FileProcessingUtilTest extends AbstractTest {
         verifyRenameDirectoryStatus(renameDirectory, 3);
 
         // Execute
-        renamingProcess(renameFiles, history, RESOURCES_RENAME_PATH, LABEL_PROCESSED_DIRECTORY);
+        renamingProcess(renameFiles, history, RESOURCES_RENAME_PATH, PROCESSED_DIRECTORY);
 
         // Assert
         verifyRenameDirectoryStatus(renameDirectory, 4);
@@ -273,10 +279,10 @@ public class FileProcessingUtilTest extends AbstractTest {
     void renamingUndoProcessTest_MultipleFilesAreRestored() {
         // Prepare
         Map<String, String> history = Map.of(
-            FIRST_RENAME_SOURCE_FILE, FIRST_CHANGED_SOURCE_FILE,
-            SECOND_RENAME_SOURCE_FILE, SECOND_CHANGED_SOURCE_FILE,
-            THIRD_RENAME_SOURCE_FILE, THIRD_CHANGED_SOURCE_FILE);
-        File processedDirectory = new File(RESOURCES_PROCESSED_PATH);
+            SOURCE_FILE_FIRST_RENAME_FILE_TXT, SOURCE_FILE_FIRST_CHANGED_FILE_TXT,
+            SOURCE_FILE_SECOND_RENAME_FILE_TXT, SOURCE_FILE_SECOND_CHANGED_FILE_TXT,
+            SOURCE_FILE_THIRD_RENAME_FILE_TXT, SOURCE_FILE_THIRD_CHANGED_FILE_TXT);
+        File processedDirectory = new File(RESOURCES_RENAME_PROCESSED_PATH);
         File renameDirectory = new File(RESOURCES_RENAME_PATH);
 
         // Assert
@@ -295,10 +301,10 @@ public class FileProcessingUtilTest extends AbstractTest {
     void renamingUndoProcessTest_MultipleFilesAreRestoredSpecifically() {
         // Prepare
         Map<String, String> history = Map.of(
-            FIRST_RENAME_SOURCE_FILE, FIRST_CHANGED_SOURCE_FILE,
-            INPUT_SOURCE_FILE, SECOND_CHANGED_SOURCE_FILE,
-            THIRD_RENAME_SOURCE_FILE, THIRD_CHANGED_SOURCE_FILE);
-        File processedDirectory = new File(RESOURCES_PROCESSED_PATH);
+            SOURCE_FILE_FIRST_RENAME_FILE_TXT, SOURCE_FILE_FIRST_CHANGED_FILE_TXT,
+            SOURCE_FILE_INPUT_TXT, SOURCE_FILE_SECOND_CHANGED_FILE_TXT,
+            SOURCE_FILE_THIRD_RENAME_FILE_TXT, SOURCE_FILE_THIRD_CHANGED_FILE_TXT);
+        File processedDirectory = new File(RESOURCES_RENAME_PROCESSED_PATH);
         File renameDirectory = new File(RESOURCES_RENAME_PATH);
 
         // Assert

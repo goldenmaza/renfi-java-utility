@@ -7,7 +7,7 @@ import java.util.Map;
 
 /**
  * @author (Mats Richard Hellstrand)
- * @version (27th of September, 2025)
+ * @version (28th of September, 2025)
  */
 public final class Constants {
     // Application states, actions, attributes...
@@ -152,7 +152,7 @@ public final class Constants {
     public static final String MESSAGE_RESOURCE_MISSING_FIELD = "The resource file was missing the datetime original field: ";
     public static final String MESSAGE_CONTINUE_RENAMING = "Do you want to continue with the renaming process? (y/n)";
     public static final String MESSAGE_RENAMING_PROCESS = "The process of renaming has begun";
-    public static final String MESSAGE_CREATING_PROCESSED_DIRECTORY = "Creating the 'processed' directory";
+    public static final String MESSAGE_CREATING_PROCESSED_DIRECTORY = "Creating the directory named: {}";
     public static final String MESSAGE_RENAMING_ALERT = "{} was renamed to {}";
     public static final String MESSAGE_KEY_PAIR_FAILURE = "The specific file: {}, failed because the key pair could not be found under the conversion history";
     public static final String MESSAGE_UNDO_CONTINUE = "Do you want to undo the renaming process? (y/n)";

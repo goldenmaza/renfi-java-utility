@@ -66,7 +66,7 @@ import javax.imageio.ImageIO;
 
 /**
  * @author (Mats Richard Hellstrand)
- * @version (27th of September, 2025)
+ * @version (28th of September, 2025)
  */
 public abstract class FileProcessingUtil {
     private static final Logger logger = LoggerFactory.getLogger(FileProcessingUtil.class);
@@ -78,7 +78,7 @@ public abstract class FileProcessingUtil {
     public static boolean createTargetDirectory(String directory) {
         File targetDirectory = new File(directory);
         if (targetDirectory.mkdir()) {
-            logger.info(MESSAGE_CREATING_PROCESSED_DIRECTORY);
+            logger.info(MESSAGE_CREATING_PROCESSED_DIRECTORY, directory);
             return true;
         } else {
             logger.error(MESSAGE_DIRECTORY_CREATION_FAILURE, directory);
@@ -178,7 +178,7 @@ public abstract class FileProcessingUtil {
     public static void renamingUndoProcess(Map<String, String> history, File directory, String path) {
         logger.info(MESSAGE_UNDO_RELOADING);
         File[] undoList = directory.listFiles((dir, name) -> history.values().stream().anyMatch(n -> n.equals(name)));
-        if (Objects.requireNonNull(undoList).length == history.size()) {
+        if (Objects.requireNonNull(undoList).length > 0) {
             for (File file : undoList) {
                 logger.info(file.getName());
             }

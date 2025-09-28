@@ -5,31 +5,57 @@ package org.hellstrand.renfi.constant;
  * @version (28th of September, 2025)
  */
 public final class ConstantTest {
-    public static final String RESOURCES_PATH = "src/test/resources";
-    public static final String RESOURCES_SELECTED_EXTENSION = ".png";
-    public static final String EXISTING_PATH_IMAGES = RESOURCES_PATH.concat("/images/");
-    public static final String INVALID_PATH_VECTORS = RESOURCES_PATH.concat("/vectors/");
-    public static final String RESOURCES_OUTPUT_PATH = RESOURCES_PATH.concat("/output/");
-    public static final String RESOURCES_INVALID_OUTPUT_PATH = RESOURCES_PATH.concat("/out*put/");
-    public static final String IMAGES_PNG_LARGE_RESOURCE_PATH = EXISTING_PATH_IMAGES.concat("/png/1000by1000/");
-    public static final String OUTPUT_SOURCE_FILE = "output.txt";
-    public static final String OUTPUT_SOURCE_FILE_PATH = RESOURCES_OUTPUT_PATH.concat(OUTPUT_SOURCE_FILE);
-    public static final String LABEL_NOTES_DIRECTORY = "/notes/";
-    public static final String RESOURCES_NOTES_PATH = RESOURCES_PATH.concat(LABEL_NOTES_DIRECTORY);
-    public static final String INPUT_SOURCE_FILE = "input.txt";
-    public static final String INPUT_SOURCE_INVALID_FILE = "in*ut.txt";
-    public static final String INPUT_SOURCE_FILE_PATH = RESOURCES_NOTES_PATH.concat(INPUT_SOURCE_FILE);
-    public static final String INVALID_INPUT_SOURCE_FILE_PATH = RESOURCES_NOTES_PATH.concat(INPUT_SOURCE_INVALID_FILE);
-    public static final String LABEL_RENAME_DIRECTORY = "/rename/";
-    public static final String RESOURCES_RENAME_PATH = RESOURCES_PATH.concat(LABEL_RENAME_DIRECTORY);
-    public static final String LABEL_PROCESSED_DIRECTORY = "processed/";
-    public static final String RESOURCES_PROCESSED_PATH = RESOURCES_RENAME_PATH.concat(LABEL_PROCESSED_DIRECTORY);
-    public static final String FIRST_RENAME_SOURCE_FILE = "firstRenameFile.txt";
-    public static final String FIRST_CHANGED_SOURCE_FILE = "firstChangedFile.txt";
-    public static final String SECOND_RENAME_SOURCE_FILE = "secondRenameFile.txt";
-    public static final String SECOND_CHANGED_SOURCE_FILE = "secondChangedFile.txt";
-    public static final String THIRD_RENAME_SOURCE_FILE = "thirdRenameFile.txt";
-    public static final String THIRD_CHANGED_SOURCE_FILE = "thirdChangedFile.txt";
+    // Default canonical path and extensions...
+    public static final String RESOURCES_DIRECTORY_PATH = "src/test/resources/";
+    public static final String RESOURCES_PNG_EXTENSION = ".png";
+
+    // Valid filenames...
+    public static final String SOURCE_FILE_OUTPUT_TXT = "output.txt";
+    public static final String SOURCE_FILE_INPUT_TXT = "input.txt";
+    public static final String SOURCE_FILE_FIRST_RENAME_FILE_TXT = "firstRenameFile.txt";
+    public static final String SOURCE_FILE_FIRST_CHANGED_FILE_TXT = "firstChangedFile.txt";
+    public static final String SOURCE_FILE_SECOND_RENAME_FILE_TXT = "secondRenameFile.txt";
+    public static final String SOURCE_FILE_SECOND_CHANGED_FILE_TXT = "secondChangedFile.txt";
+    public static final String SOURCE_FILE_THIRD_RENAME_FILE_TXT = "thirdRenameFile.txt";
+    public static final String SOURCE_FILE_THIRD_CHANGED_FILE_TXT = "thirdChangedFile.txt";
+
+    // Invalid filenames...
+    public static final String SOURCE_FILE_INVALID_INPUT_TXT = "in*ut.txt";
+
+    // Valid directory names...
+    public static final String IMAGES_DIRECTORY = "images/";
+    public static final String OUTPUT_DIRECTORY = "output/";
+    public static final String NOTES_DIRECTORY = "notes/";
+    public static final String RENAME_DIRECTORY = "rename/";
+    public static final String PROCESSED_DIRECTORY = "processed/";
+    public static final String PNG_LARGE_DIRECTORY = "png/1000by1000/";
+
+    // Invalid directory names...
+    public static final String INVALID_VECTORS_DIRECTORY = "vectors/";
+    public static final String INVALID_OUTPUT_DIRECTORY = "out*put/";
+
+    // Valid canonical paths (directories only)...
+    public static final String RESOURCES_IMAGES_PATH = RESOURCES_DIRECTORY_PATH.concat(IMAGES_DIRECTORY);
+    public static final String RESOURCES_OUTPUT_PATH = RESOURCES_DIRECTORY_PATH.concat(OUTPUT_DIRECTORY);
+    public static final String RESOURCES_NOTES_PATH = RESOURCES_DIRECTORY_PATH.concat(NOTES_DIRECTORY);
+    public static final String RESOURCES_RENAME_PATH = RESOURCES_DIRECTORY_PATH.concat(RENAME_DIRECTORY);
+    public static final String RESOURCES_RENAME_PROCESSED_PATH = RESOURCES_RENAME_PATH.concat(PROCESSED_DIRECTORY);
+    public static final String RESOURCES_IMAGES_PNG_LARGE_PATH = RESOURCES_IMAGES_PATH.concat(PNG_LARGE_DIRECTORY);
+
+    // Valid canonical paths (directories and files)...
+    public static final String RESOURCES_OUTPUT_SOURCE_FILE_PATH = RESOURCES_OUTPUT_PATH.concat(SOURCE_FILE_OUTPUT_TXT);
+    public static final String RESOURCES_NOTES_SOURCE_FILE_PATH = RESOURCES_NOTES_PATH.concat(SOURCE_FILE_INPUT_TXT);
+
+    // Invalid canonical paths (directories only)...
+    public static final String INVALID_RESOURCES_PATH_VECTORS = RESOURCES_DIRECTORY_PATH.concat(INVALID_VECTORS_DIRECTORY);
+    public static final String INVALID_RESOURCES_OUTPUT_PATH = RESOURCES_DIRECTORY_PATH.concat(INVALID_OUTPUT_DIRECTORY);
+
+    // Invalid canonical paths (directories and files)...
+    public static final String INVALID_INPUT_SOURCE_FILE_PATH = RESOURCES_NOTES_PATH.concat(SOURCE_FILE_INVALID_INPUT_TXT);
+
+    // Logging variables...
+    public static final String TEST_LOGGING_DIRECTORY_OUTPUT = "Directory was deleted: {}";
+    public static final String TEST_LOGGING_FILE_OUTPUT = "File was deleted: {}";
 
     private ConstantTest() {}
 }
